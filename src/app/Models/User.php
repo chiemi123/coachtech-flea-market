@@ -12,6 +12,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +22,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_image', // プロフィール画像
+        'username',      // ユーザー名
+        'postal_code',   // 郵便番号
+        'address',       // 住所
+        'building_name', // 建物名
+        'profile_completed', // プロフィール完了状態
+
     ];
 
     /**
@@ -40,5 +48,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'profile_completed' => 'boolean', // プロフィール完了状態をboolean型にキャスト
     ];
 }

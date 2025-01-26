@@ -1,0 +1,127 @@
+.login__content {
+    margin: 0 auto;
+    position: relative; /* 絶対位置を解除 */
+    padding: 30px 15px;
+    width: 680px;
+    height: auto; /* 高さを自動調整 */
+    top: auto;
+    left: auto;
+}
+
+.login-form__heading {
+    margin-bottom: 20px;
+    text-align: center;
+    color: black;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 43.57px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+}
+
+.form {
+    margin: 30px auto;
+    width: 100%;
+    text-align: center;
+}
+
+.form__group {
+    margin-bottom: 15px; /* 間隔を広げる */
+}
+
+.form__group-title {
+    text-align: left;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 29.05px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+}
+
+.form__error {
+    height: 20px;
+    color: #ff0000;
+    text-align: left;
+}
+
+.form__input--text input {
+    padding: 10px;
+    width: 100%;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+
+    appearance: none;
+}
+
+.form__button {
+    margin-top: 20px;
+}
+
+.form__button-submit {
+    padding: 10px;
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 3px;
+    background: #ff5555;
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 31.47px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    cursor: pointer;
+}
+
+.register__link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.register__button-submit {
+    margin-top: 20px;
+    font-family: Inter;
+    color: #0073cc;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24.2px;
+    text-align: center;
+    text-decoration: none;
+}
+
+/* スマホ用スタイル（レスポンシブ） */
+@media screen and (max-width: 768px) {
+    .login__content {
+        width: 90%; /* スマホで横幅を画面に合わせる */
+        padding: 20px; /* 内側の余白を調整 */
+        height: auto; /* 高さを自動調整 */
+        top: auto; /* 絶対位置を解除 */
+        left: auto;
+    }
+
+    .login-form__heading {
+        font-size: 24px; /* ヘッダーサイズを縮小 */
+        margin-bottom: 15px;
+    }
+
+    .form__group-title {
+        font-size: 16px; /* フォントサイズを縮小 */
+    }
+
+    .form__error {
+        font-size: 12px; /* エラー表示のフォントサイズを縮小 */
+    }
+
+    .form__button-submit {
+        font-size: 18px; /* ボタンの文字サイズを調整 */
+        height: 45px; /* ボタンの高さを調整 */
+    }
+
+    .register__button-submit {
+        font-size: 14px; /* フォントサイズをさらに小さく */
+    }
+}
