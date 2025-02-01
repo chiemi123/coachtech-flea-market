@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@section('header-extra')
+<li class="header-nav__item">
+    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
+</li>
+@endsection
+
 @section('content')
 <div class="container">
     <h1>プロフィール設定</h1>

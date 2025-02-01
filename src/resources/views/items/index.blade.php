@@ -6,7 +6,7 @@
 
 @section('header-extra')
 <li class="header-nav__item">
-    <a class="header-nav__link" href="">出品</a>
+    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
 </li>
 @endsection
 
@@ -24,4 +24,5 @@
         <p>商品名</p>
     </div>
 </div>
+
 @endsection
