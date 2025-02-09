@@ -1,0 +1,112 @@
+/* 全体のコンテナ */
+.profile-container {
+    max-width: 1512px; /* ヘッダーの幅に合わせる */
+    margin: 0 auto; /* 中央寄せ */
+    padding: 20px;
+}
+
+/* プロフィールヘッダー */
+.profile-header {
+    width: 1017px; /* 指定された幅 */
+    height: 150px; /* 指定された高さ */
+    margin: 0 auto; /* 中央寄せ */
+    display: flex;
+    align-items: center; /* 縦方向の中央揃え */
+    justify-content: space-between; /* 左右の要素を均等に配置 */
+    padding: 20px;
+}
+
+/* プロフィール画像 */
+.profile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+/* ユーザー情報 */
+.profile-info h2 {
+    font-size: 24px;
+    color: #333;
+}
+
+/* プロフィール編集ボタン */
+.profile-edit .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    border: 1px solid red;
+    color: red;
+    background-color: white;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.profile-edit .btn:hover {
+    background-color: red;
+    color: white;
+}
+
+/* タブメニューの全体スタイル */
+.nav-tabs {
+    display: flex; /* タブを横並びに配置 */
+    padding-left: 29px;
+    list-style: none; /* リストのデフォルトスタイルを削除 */
+    margin: 20px 0; /* 上下に余白 */
+    border-bottom: 1px solid #ddd; /* 下線を追加 */
+}
+
+.nav-tabs .nav-item {
+    margin-right: 10px;
+}
+
+/* 各タブのリンクスタイル（通常状態: 黒文字） */
+.nav-tabs .nav-link {
+    color: #333; /* 黒文字 */
+    text-decoration: none; /* アンダーラインを消す */
+    font-size: 24px; /* フォントサイズ */
+    padding: 10px 20px;
+    border: none; /* ボーダーを消す */
+    transition: color 0.3s; /* カラー変更にアニメーションを追加 */
+    font-weight: bold; /* 太字 */
+}
+
+/* 選択時のリンクスタイル */
+.nav-tabs .nav-link:target {
+    color: red; /* 赤字 */
+}
+
+/* タブのホバー時のスタイル */
+.nav-tabs .nav-link:hover {
+    color: red;
+}
+
+/* 商品リスト */
+.item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+}
+
+.item-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    padding: 15px;
+}
+
+.item-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.item-card h3 {
+    font-size: 14px;
+    color: #333;
+}

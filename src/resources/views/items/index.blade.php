@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
+@section('title', '商品一覧')
+
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/index.css') }}">
+<link rel="stylesheet" href="{{ asset('css/items/item-index.css') }}">
 @endsection
 
 @section('header-extra')
@@ -18,11 +20,15 @@
 </div>
 
 <!-- 商品リスト -->
-<div class="product-list">
-    <div class="product-item">
-        <img src="" alt="商品画像" class="product-item">
-        <p>商品名</p>
+<div class="item-list">
+    @foreach ($items as $item)
+    <div class="item-card">
+        <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
+        <h3>{{ $item->name }}</h3>
+        <p>¥{{ number_format($item->price) }}</p>
+        <a href="{{ route('items.show', $item->id) }}">詳細を見る</a>
     </div>
+    @endforeach
 </div>
 
 @endsection

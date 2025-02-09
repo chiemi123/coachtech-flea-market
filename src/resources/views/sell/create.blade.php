@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/sell/create.css') }}">
+@endsection
+
 @section('header-extra')
 <li class="header-nav__item">
     <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
@@ -9,79 +13,99 @@
 @section('title', '商品出品')
 
 @section('content')
-<div style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
-    <h1 style="text-align: center;">商品の出品</h1>
+<div class="container">
+    <h1>商品の出品</h1>
     <form action="{{ route('sell.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <!-- 商品画像 -->
-        <div style="margin-bottom: 20px;">
-            <label for="image" style="display: block; font-weight: bold; margin-bottom: 5px;">商品画像</label>
-            <input type="file" name="image" id="image" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <div>
+            <label for="image">商品画像</label>
+            <input type="file" name="image" id="image">
             @error('image')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="error">{{ $message }}</p>
             @enderror
         </div>
 
-        <!-- カテゴリー -->
-        <div style="margin-bottom: 20px;">
-            <label for="category" style="display: block; font-weight: bold; margin-bottom: 5px;">カテゴリー</label>
-            <div>
-                @foreach ($categories as $category)
-                <label style="margin-right: 10px;">
-                    <input type="radio" name="category" value="{{ $category }}"> {{ $category }}
-                </label>
-                @endforeach
-            </div>
-            @error('category')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+        <h2 class="section-title">商品の詳細</h2>
+
+        <div class="category-group">
+            <label for="category">カテゴリー</label>
+            @foreach ($categories as $category)
+            <!-- チェックボックス -->
+            <input
+                type="checkbox"
+                name="category_id[]"
+                id="category-{{ $category->id }}"
+                value="{{ $category->id }}"
+                {{ is_array(old('category_id')) && in_array($category->id, old('category_id')) ? 'checked' : '' }}>
+
+            <!-- ラベル -->
+            <label for="category-{{ $category->id }}" class="category-label">
+                {{ $category->name }}
+            </label>
+            @endforeach
+            @error('category_id')
+            <p class="error">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- 商品の状態 -->
-        <div style="margin-bottom: 20px;">
-            <label for="condition" style="display: block; font-weight: bold; margin-bottom: 5px;">商品の状態</label>
-            <select name="condition" id="condition" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <div>
+            <label for="condition">商品の状態</label>
+            <select name="condition_id" id="condition">
                 <option value="" disabled selected>選択してください</option>
-                <option value="新品">新品</option>
-                <option value="中古">中古</option>
-                <option value="ジャンク">ジャンク</option>
+                @foreach ($conditions as $condition)
+                <option value="{{ $condition->id }}" {{ old('condition_id') == $condition->id ? 'selected' : '' }}>
+                    {{ $condition->name }}
+                </option>
+                @endforeach
             </select>
-            @error('condition')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            @error('condition_id')
+            <p class="error">{{ $message }}</p>
             @enderror
         </div>
 
-        <!-- 商品名と説明 -->
-        <div style="margin-bottom: 20px;">
-            <label for="name" style="display: block; font-weight: bold; margin-bottom: 5px;">商品名</label>
-            <input type="text" name="name" id="name" value="{{ old('name') }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <h2 class="section-title">商品名と説明</h2>
+
+        <!-- 商品名 -->
+        <div>
+            <label for="name">商品名</label>
+            <input type="text" name="name" id="name" value="{{ old('name') }}">
             @error('name')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="error">{{ $message }}</p>
             @enderror
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label for="description" style="display: block; font-weight: bold; margin-bottom: 5px;">商品の説明</label>
-            <textarea name="description" id="description" rows="5" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">{{ old('description') }}</textarea>
+        <!-- 商品名 -->
+        <div>
+            <label for="brand">ブランド名</label>
+            <input type="text" name="brand" id="name" value="{{ old('brand') }}">
+            @error('brand')
+            <p class="error">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- 商品の説明 -->
+        <div>
+            <label for="description">商品の説明</label>
+            <textarea name="description" id="description" rows="5">{{ old('description') }}</textarea>
             @error('description')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="error">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- 販売価格 -->
-        <div style="margin-bottom: 20px;">
-            <label for="price" style="display: block; font-weight: bold; margin-bottom: 5px;">販売価格</label>
-            <input type="number" name="price" id="price" value="{{ old('price') }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <div>
+            <label for="price">販売価格</label>
+            <input type="number" name="price" id="price" value="{{ old('price') }}">
             @error('price')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="error">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- 出品ボタン -->
-        <button type="submit" style="background-color: red; color: white; padding: 10px 20px; border: none; border-radius: 5px; width: 100%; cursor: pointer;">
-            出品する
-        </button>
+        <button type="submit">出品する</button>
     </form>
 </div>
 @endsection

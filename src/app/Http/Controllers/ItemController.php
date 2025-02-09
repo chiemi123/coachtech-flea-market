@@ -2,40 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
+use App\Models\Comment;
+use App\Models\Category;
+use App\Models\Condition;
+use App\Http\Requests\CommentRequest;
+use App\Http\Requests\ExhibitionRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-
     // 商品一覧画面
     public function index()
     {
-        // 仮のデータ
-        $items = [
-            ['id' => 1, 'name' => '商品1', 'price' => 47000, 'image' => '/images/item1.png'],
-            ['id' => 2, 'name' => '商品2', 'price' => 32000, 'image' => '/images/item2.png']
-        ];
-
-        return view('items.index', compact('items'));
+        $items = Item::with(['user', 'brand', 'condition', 'categories', 'likes', 'comments'])->get();
+        return view('items.index', compact('items')); // ビューへデータを渡す
     }
 
     // 商品詳細画面
     public function show($item_id)
     {
-        // 仮のデータ
-        $item = [
-            'id' => $item_id,
-            'name' => '商品名がここに入る',
-            'brand' => 'ブランド名',
-            'price' => 47000,
-            'description' => '商品の状態は良好です。傷ありません。',
-            'condition' => '良好',
-            'categories' => ['洋服', 'メンズ'],
-            'image' => '/images/item1.png',
-            'comments' => [
-                ['user' => 'admin', 'comment' => 'こちらにコメントが入ります。']
-            ]
-        ];
+        // 商品情報をデータベースから取得
+        $item = Item::with(['categories', 'comments.user'])->findOrFail($item_id);
 
         return view('items.show', compact('item'));
     }
@@ -43,36 +32,47 @@ class ItemController extends Controller
     // 商品出品画面の表示
     public function create()
     {
-        // カテゴリー一覧の仮データ（本来はデータベースから取得）
-        $categories = ['ファッション', '家電', 'キッチン用品', 'レディース', 'メンズ', 'スポーツ', 'コスメ', 'ゲーム', 'アウトドア', 'アクセサリー', 'その他'];
+        // カテゴリー一覧を取得
+        $categories = Category::all();
+        //　コンディション一覧を取得
+        $conditions = Condition::all();
 
-        return view('sell.create', compact('categories'));
+        return view('sell.create', compact('categories', 'conditions'));
     }
 
     // 商品出品処理
-    public function store(Request $request)
+    public function store(ExhibitionRequest $request)
     {
-        // バリデーション
-        $validated = $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'category' => 'required|string',
-            'condition' => 'required|string',
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:1',
-        ]);
+        // バリデーション済みデータを取得
+        $validated = $request->validated();
 
-        // 画像を保存する処理
+        // 画像を保存
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('public/images');
             $validated['image'] = str_replace('public/', 'storage/', $imagePath);
         }
 
-        // 商品情報を保存する処理（仮）
-        // 本来はデータベースに保存します。
-        // 商品情報を仮にセッションに保存しておく例：
-        session()->flash('success', '商品が出品されました！');
+        // 商品をデータベースに保存
+        $validated['user_id'] = Auth::id();
+        Item::create($validated);
 
-        return redirect()->route('items.index');
+        return redirect()->route('items.index')->with('success', '商品が出品されました！');
+    }
+
+    // 商品へのコメント投稿
+    public function addComment(CommentRequest $request, $item_id)
+    {
+        $item = Item::findOrFail($item_id);
+
+        Comment::create([
+            'user_id' => Auth::id(),
+            'item_id' => $item->id,
+            'content' => $request->content,
+        ]);
+
+        // コメント数を増加
+        $item->increment('comments_count');
+
+        return back()->with('success', 'コメントを投稿しました！');
     }
 }

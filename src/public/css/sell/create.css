@@ -1,0 +1,100 @@
+/* フォーム全体 */
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* 見出し */
+.container h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* 見出し（商品の詳細）スタイル */
+.section-title {
+    font-size: 18px; /* 文字サイズ */
+    font-weight: bold; /* 太字 */
+    color: #333; /* テキストの色 */
+    margin-bottom: 10px; /* 下部の余白 */
+    border-bottom: 2px solid #ddd; /* 下線のスタイル */
+    padding-bottom: 5px; /* 下線との間隔 */
+}
+
+/* カテゴリーグループのスタイル */
+.category-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-group input[type="checkbox"] {
+    display: none; /* チェックボックス自体を非表示 */
+}
+
+/* ボタン風のカテゴリーラベル */
+.category-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* チェックボックスが選択されたときのスタイル */
+.category-group input[type="checkbox"]:checked + .category-label {
+    background-color: red;
+    color: white;
+    border-color: red;
+}
+
+.category-label:hover {
+    background-color: #f1f1f1;
+}
+
+/* 入力フィールド共通 */
+.container input[type="text"],
+.container input[type="number"],
+.container select,
+.container textarea,
+.container input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* エラーメッセージ */
+.container p.error {
+    color: red;
+    font-size: 12px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+/* 出品ボタン */
+.container button {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.container button:hover {
+    background-color: darkred;
+}

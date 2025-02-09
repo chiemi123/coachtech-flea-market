@@ -50,4 +50,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'profile_completed' => 'boolean', // プロフィール完了状態をboolean型にキャスト
     ];
+
+    /**
+     * ユーザーが出品した商品
+     */
+    public function listedItems()
+    {
+        return $this->hasMany(Item::class, 'user_id');
+    }
+
+    /**
+     * ユーザーが購入した商品
+     */
+    public function purchasedItems()
+    {
+        return $this->belongsToMany(Item::class, 'purchases', 'user_id', 'item_id')
+            ->withTimestamps(); // 中間テーブルを利用
+    }
 }

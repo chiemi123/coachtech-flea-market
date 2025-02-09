@@ -24,9 +24,8 @@ class AddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'username' => 'required|string|max:255',
-            'postal_code' => 'required|string|regex:/^\d{4}-\d{4}$/|max:10',
+            'postal_code' => 'required|string|regex:/^\d{3}-\d{4}$/|max:10',
             'address' => 'required|string|max:255',
             'building_name' => 'required|string|max:255',
         ];

@@ -34,11 +34,14 @@ Route::get('/', [ItemController::class, 'index'])->name('items.index');
 // 商品詳細画面
 Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('items.show');
 
+// 商品のコメント投稿ルート
+Route::post('/item/{item}/comment', [ItemController::class, 'addComment'])->name('items.comment');
+
 
 Route::middleware(['auth', 'profile.complete'])->group(function () {
-    Route::get('/', function () {
-        return view('items.index'); // トップ画面
-    })->name('home');
+
+    // 商品一覧画面
+    Route::get('/', [ItemController::class, 'index'])->name('items.index');
 
     // プロフィール画面
     Route::get('/mypage', [UserController::class, 'index'])->name('profile.index');

@@ -1,0 +1,145 @@
+/* 全体のコンテナ */
+.profile-edit-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* タイトル */
+.profile-edit-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* エラーメッセージ */
+.error-messages {
+    margin-bottom: 20px;
+    color: red;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* フォーム全体 */
+.profile-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 各入力項目 */
+.form-group {
+    text-align: left;
+}
+
+/* ラベル */
+.form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* 入力フィールド */
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+/* フォーカス時のスタイル */
+.form-input:focus {
+    border-color: red;
+    outline: none;
+}
+
+/* プロフィール画像グループのスタイル */
+.profile-image-group {
+    display: flex;
+    align-items: center; /* 中央揃え */
+    gap: 20px; /* 画像とボタンの間隔 */
+    margin-bottom: 20px;
+    min-height: 120px; /* 親要素の高さを確保 */
+}
+
+/* プロフィール画像プレビュー */
+.image-preview {
+    width: 150px; /* 幅を固定 */
+    height: 150px; /* 高さを固定 */
+    border-radius: 50%; /* 丸くする */
+    object-fit: cover; /* 画像の縦横比を維持 */
+    border: 1px solid #ddd; /* 枠線 */
+    background: #d9d9d9;
+}
+
+.image-preview img {
+    width: 150px; /* 幅を固定 */
+    height: 150px; /* 高さを固定 */
+    border-radius: 50%; /* 丸くする */
+    object-fit: cover; /* 画像の縦横比を維持 */
+    background-size: cover; /* 背景画像を全体にフィット */
+    background-position: center; /* 背景画像の中央を表示 */
+    overflow: hidden; /* 内容がはみ出さないように隠す */
+}
+
+/* ファイル選択ボタンのスタイル */
+.profile-image-group input[type="file"] {
+    display: none; /* デフォルトのファイル選択ボタンを非表示 */
+}
+
+/* カスタムボタン */
+.profile-image-group label[for="profile_image"] {
+    display: inline-block;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: red;
+    border: 1px solid red;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer; /* クリック可能に */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.profile-image-group label[for="profile_image"]:hover {
+    background-color: red;
+    color: white;
+}
+
+/* 更新ボタン */
+.btn-submit {
+    background-color: red;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+.alert {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}

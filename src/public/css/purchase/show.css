@@ -1,0 +1,136 @@
+/* 購入ページの全体レイアウト */
+.purchase-container {
+    max-width: 900px; /* 全体の最大幅 */
+    margin: 0 auto; /* 中央配置 */
+    padding: 20px;
+    display: flex;
+    justify-content: space-between; /* 左右に分割 */
+    gap: 30px;
+}
+
+/* 左側の購入情報（商品画像・支払い方法・配送先） */
+.purchase-info {
+    flex: 2; /* 左側を大きめに設定 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 要素の間隔 */
+}
+
+/* 商品情報のボックス */
+.item-box {
+    display: flex;
+    align-items: center; /* 商品画像と情報を揃える */
+    gap: 15px; /* 画像とテキストの間隔 */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd; /* 下線を追加 */
+}
+
+/* 商品画像 */
+.item-box img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* 商品名と価格 */
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.item-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.item-price {
+    font-size: 16px;
+    color: #000;
+}
+
+/* 支払い方法 */
+.payment-method {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 支払い方法の選択ボックス */
+.payment-method select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* 配送先情報 */
+.shipping-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.shipping-address {
+    font-size: 14px;
+    color: #333;
+}
+
+.shipping-edit {
+    font-size: 14px;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* 右側の購入概要（合計金額・購入ボタン） */
+.purchase-summary {
+    flex: 1; /* 右側はコンパクトに */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+/* 合計金額の表示 */
+.total-price {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 購入ボタン */
+.purchase-button {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: red;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.purchase-button:hover {
+    background-color: #cc0000;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .purchase-container {
+        flex-direction: column;
+    }
+
+    .purchase-summary {
+        order: -1; /* 購入ボタンを上に配置 */
+    }
+}
