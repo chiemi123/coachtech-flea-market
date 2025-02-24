@@ -24,7 +24,7 @@ class AddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:255',
+            'username' => 'sometimes|required|string|max:255', // 入力された場合のみ必須
             'postal_code' => 'required|string|regex:/^\d{3}-\d{4}$/|max:10',
             'address' => 'required|string|max:255',
             'building_name' => 'required|string|max:255',

@@ -12,12 +12,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Laravel\Fortify\Actions\AttemptToAuthenticate;
 use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
 use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
@@ -40,22 +35,30 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
+        //Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        //Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+        //Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         // 会員登録画面
         Fortify::registerView(function () {
             return view('auth.register');
+        });
 
+        Fortify::redirects('register', function () {
+            $user = Auth::user(); // Auth::check() ではなく、Auth::user() を使用
 
-            Fortify::redirects('register', '/mypage/profile'); // プロフィール設定画面にリダイレクト
+            if ($user && is_null(Auth::user()->email_verified_at)) {
+                return '/email/verify';  // メール認証が未完了の場合、メール認証画面へ
+            }
+
+            return '/mypage/profile';  // メール認証済みの場合、プロフィール画面へ
         });
 
 
+
         Fortify::authenticateThrough(function (Request $request) {
-            
+
             return array_filter([
                 // ログイン時のレート制限チェック
                 config('fortify.limiters.login') ? null : EnsureLoginIsNotThrottled::class,
@@ -71,14 +74,27 @@ class FortifyServiceProvider extends ServiceProvider
             ]);
         });
 
-
-
         // ログイン画面
         Fortify::loginView(function () {
             return view('auth.login');
         });
 
-        Fortify::redirects('login', '/'); // ログイン後は商品一覧画面へリダイレクト
+        Fortify::redirects('login', function () {
+            $user = Auth::user();
+
+            if (is_null($user)) {
+                return '/'; // 未ログインの場合はトップページへ（または適切なページ）
+            }
+
+            if (is_null($user->email_verified_at)) {
+                return '/email/verify';  // メール未認証の場合
+            }
+
+            return '/'; // メール認証済みの場合
+        });
+
+        // メール認証画面のリダイレクト
+        Fortify::redirects('email-verification', '/mypage/profile');  // メール認証後のリダイレクト先
 
         Fortify::redirects('failed-login', '/login'); // ログイン失敗時のリダイレクト先をURLで明示的に指定
 

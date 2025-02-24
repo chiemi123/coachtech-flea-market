@@ -11,9 +11,9 @@ class Item extends Model
 
     protected $fillable = [
         'user_id',
-        'brand_id',
         'condition_id',
         'name',
+        'brand',
         'description',
         'price',
         'item_image',
@@ -28,11 +28,6 @@ class Item extends Model
         return $this->belongsTo(User::class);
     }
 
-    // ブランド
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
-    }
 
     // 状態
     public function condition()
@@ -65,5 +60,11 @@ class Item extends Model
     {
         return $this->belongsToMany(User::class, 'purchases', 'item_id', 'user_id')
             ->withTimestamps(); // 中間テーブルを利用
+    }
+
+    // 商品が売り切れかどうか判定するアクセサ
+    public function getIsSoldAttribute()
+    {
+        return $this->sold_out == true;
     }
 }

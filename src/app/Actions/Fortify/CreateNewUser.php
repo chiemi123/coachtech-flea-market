@@ -5,8 +5,8 @@ namespace App\Actions\Fortify;
 use App\Http\Requests\RegisterRequest; // フォームリクエストをインポート
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log; // 🔹 追加！
+use Illuminate\Auth\Events\Registered;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -44,10 +44,16 @@ class CreateNewUser implements CreatesNewUsers
         $validatedData = $request->validated(); // バリデーション済みデータを取得
 
         // ユーザーを作成
-        return User::create([
+        $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
+        
+        Log::info('Registered event fired for user: ' . $user->email); // 🔹 ログ出力
+
+        event(new Registered($user)); // 🔹 ユーザー登録イベントを発火（これが重要！）
+
+        return $user;
     }
 }

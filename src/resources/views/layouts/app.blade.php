@@ -13,34 +13,55 @@
 </head>
 
 <body>
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <header class="header">
         <div class="header__inner">
             <div class="header-utilities">
                 <!-- ロゴ画像 -->
-                <img src="{{ asset('images/logo.svg') }}" alt="coachtech" class="logo">
-                <nav>
-                    <ul class="header-nav">
-                        @if (Auth::check())
-                        <!-- 会員登録画面・ログイン画面を除くページで検索ボックスを表示 -->
-                        @if (!in_array(Route::currentRouteName(), ['register', 'login']))
-                        <div class="search-box">
-                            <form action="" method="GET">
-                                <input type="text" name="query" placeholder="なにをお探しですか？">
-                            </form>
-                        </div>
-                        @endif
-                        <li class="header-nav__item">
-                            <form class="form" action="/logout" method="post">
-                                @csrf
-                                <button class="header-nav__button">ログアウト</button>
-                            </form>
-                        </li>
-                        <li class="header-nav__item">
-                            <a class="header-nav__link" href="/mypage">マイページ</a>
-                        </li>
-                        @yield('header-extra')
-                        @endif
-                    </ul>
+                <a href="{{ url('/') }}">
+                    <img src="{{ asset('images/logo.svg') }}" alt="COACHTECH" class="logo">
+                </a>
+
+                <!-- 中央: 検索フォーム（商品一覧画面と商品詳細画面のみ表示） -->
+                @if (request()->routeIs('items.index') || request()->routeIs('items.show') || request()->routeIs('items.mylist'))
+                <form action="{{ request()->routeIs('items.mylist') ? route('items.mylist') : route('items.index') }}" method="GET" class="search-form">
+                    <input type="text" name="search" placeholder="なにをお探しですか？" value="{{ request('search') }}" oninput="this.form.submit()">
+                </form>
+                @endif
+
+                <!-- 右側: ナビゲーション -->
+                <nav class="header-nav">
+                    @auth
+                    <form class="form" action="{{ route('logout') }}" method="post">
+                        @csrf
+                        <button class="header-nav__button">ログアウト</button>
+                    </form>
+                    <a href="{{ route('profile.index') }}">マイページ</a>
+                    <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
+                    @yield('header-extra') <!-- 他のページで追加メニューを入れられる -->
+                    @else
+                    <!-- ログインページと会員登録ページでは非表示 -->
+                    @if (!request()->routeIs('login') && !request()->routeIs('register'))
+                    <a href="{{ route('login') }}">ログイン</a>
+                    <a href="{{ route('profile.index') }}">マイページ</a>
+                    <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
+                    @endif
+                    @endauth
                 </nav>
             </div>
         </div>

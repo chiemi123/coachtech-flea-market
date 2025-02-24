@@ -2,105 +2,148 @@
 *,
 *::before,
 *::after {
-    font-family: 'Inter', sans-serif; /* 親のフォント設定を継承 */
+    font-family: "Inter", sans-serif; /* 親のフォント設定を継承 */
     box-sizing: border-box; /* パディングやボーダーを含めた幅計算にする */
-
 }
 
 .header {
     background: #000;
-    height: 82px;
+    height: 80px;
+    width: 1512px;
+    margin: 0 auto; /* 水平中央に配置 */
+    display: flex;
+    align-items: center; /* ヘッダー内の全要素を垂直中央に配置 */
 }
 
 .header__inner {
-    padding: 20px 15px;
-    max-width: 1230px;
-    margin: 0 auto; /* 中央寄せ */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .header-utilities {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
 }
 
-.header__logo {
+/* ロゴのスタイル */
+.logo {
+    height: 36px;
+    width: auto;
+    max-width: 370px;
+    margin-left: 40px;
     color: #fff;
     text-decoration: none;
     font-weight: bold;
     font-size: 24px;
 }
 
-/* ロゴのスタイル */
-.logo {
-    position: absolute; /* topとleftを有効にするための指定 */
-    height: 36px; /* ロゴの高さを指定 */
-    margin-left: 0; /* 左端にぴったり付ける */
-    width: 370px;
-    top: 22px;
-    left: 25px;
-}
-
-.header-utilities nav {
-    text-align: right;
+/* 検索バー */
+.search-form {
+    position: relative; /* 子要素の絶対配置の基準にする */
+    height: 80px;
     width: 100%;
+    max-width: 563px;
 }
 
+.search-form input[type="text"] {
+    position: absolute; /* 絶対配置で位置を指定 */
+    /* ヘッダー高さ 80px から入力欄高さ 29px の半分 */
+    top: calc((80px - 50px) / 2);
+    /* 必要なら left も調整。ここでは left: 0; や指定値を設定 */
+    left: 31px; /* 例として left を 31px に設定 */
+    width: 500px;
+    height: 50px;
+    padding-left: 31px;
+    font-size: 24px;
+    font-weight: 400;
+    color: #000000;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
+/* ナビゲーション */
 .header-nav {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    gap: 15px;
 }
 
-.header-nav__link {
+.header-nav a:not(.sell-button),
+.header-nav__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 135px;
+    height: 47px;
     color: #fff;
     text-decoration: none;
-    padding-right: 20px;
+    font-size: 24px;
+    margin-right: 15px; /* 各項目の間隔 */
 }
 
 .header-nav__button {
+    width: 135px;
+    background: none; /* 背景を透明に */
     border: none;
     background: transparent;
-    color: #fff;
-    font-size: 16px;
     cursor: pointer;
+    padding: 0; /* 余白を削除 */
 }
 
-/* スマホ用スタイル（レスポンシブデザイン） */
-@media screen and (max-width: 768px) {
-    .header {
-        width: 100%; /* ヘッダーの幅を親要素に合わせる */
-        max-width: 100vw; /* ビューポートの幅を超えない */
-        overflow: hidden; /* 内容がはみ出ないように */
-    }
+/* ホバー時のエフェクト */
+.header-nav a:hover,
+.header-nav__button:hover {
+    opacity: 0.7; /* ほんの少し薄くなる */
+}
 
+/* 出品ボタンのスタイル */
+.sell-button {
+    display: inline-block; /* インライン要素をブロック要素風に */
+    width: 100px; /* 幅 */
+    height: 50px; /* 高さ */
+    line-height: 50px; /* テキストを縦方向に中央配置 */
+    text-align: center; /* 文字を中央揃え */
+    background-color: #fff; /* ボタンの背景色 */
+    color: #000000; /* 文字色 */
+    font-size: 24px; /* 文字サイズ */
+    font-weight: bold; /* 文字を太字に */
+    border-radius: 4px; /* 角を丸く */
+    text-decoration: none; /* 下線を消す */
+    margin-right: 20px; /* 左側に余白を追加 */
+    transition: background-color 0.3s, transform 0.2s; /* ホバー時のエフェクト */
+}
+
+/* ホバー時のスタイル */
+.sell-button:hover {
+    background-color: #cc0000; /* 濃い赤に変化 */
+    transform: scale(1.05); /* ほんの少し拡大 */
+}
+
+/* スマホ用のスタイル */
+@media screen and (max-width: 768px) {
     .header__inner {
-        padding: 10px;
-        width: 100%; /* フル幅に収める */
-        max-width: 768px; /* スマホ用の最大幅を指定 */
-        margin: 0 auto; /* 中央寄せ */
+        flex-direction: column;
+        align-items: center;
     }
 
     .logo {
-        position: relative; /* 固定位置を解除 */
-        width: 100%; /* ロゴが幅いっぱいに広がらないよう調整 */
-        max-width: 150px; /* 最大幅を制限 */
+        max-width: 150px;
         height: auto;
     }
 
-    .header-utilities {
-        display: flex;
-        flex-direction: column; /* 垂直レイアウト */
-        align-items: flex-start; /* 左寄せ */
+    .search-form {
+        width: 90%;
+        margin: 10px 0;
     }
 
     .header-nav {
-        display: block; /* ナビゲーションを縦に並べる */
-    }
-
-    .header-nav__link {
-        padding: 10px 0; /* ナビゲーションの間隔を調整 */
-        margin: 0; /* 不要なマージンを削除 */
-        width: auto; /* 必要以上に幅を広げない */
+        flex-direction: column;
+        text-align: center;
     }
 }

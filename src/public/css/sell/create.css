@@ -25,11 +25,66 @@
     padding-bottom: 5px; /* 下線との間隔 */
 }
 
-/* カテゴリーグループのスタイル */
-.category-group {
+/* 画像アップロードボタンをカスタマイズ */
+.image-upload {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid#ccc;
+    gap: 5px;
+}
+
+.custom-file-label {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    color: #ff6f61;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    border: 1px solid #ff6f61;
+    width: 200px; /* ✅ ボタンの幅を固定 */
+}
+
+/* ボタンのホバー時 */
+.custom-file-label:hover {
+    background-color: #e65c50;
+    background-color: #e65c50;
+}
+
+/* デフォルトのファイル選択を非表示 */
+.custom-file-input {
+    display: none;
+}
+
+/* 選択されたファイル名 */
+#file-name {
+    font-size: 14px;
+    color: #666;
+}
+
+/* カテゴリータイトル */
+.category-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px; /* ✅ タイトルの下に余白をつける */
+}
+
+/* カテゴリーの選択項目を横に並べる */
+.category-options {
+    display: flex; /* ✅ 横並びにする */
+    flex-wrap: wrap; /* ✅ 必要に応じて折り返す */
+    gap: 8px; /* ✅ タグの間隔を調整 */
+}
+
+/* 各カテゴリのアイテム */
+.category-item {
+    display: inline-flex; /* ✅ ラベルとチェックボックスを適切に配置 */
+    align-items: center;
+    gap: 5px; /* ✅ チェックボックスとラベルの間隔を調整 */
 }
 
 .category-group input[type="checkbox"] {
@@ -39,12 +94,14 @@
 /* ボタン風のカテゴリーラベル */
 .category-label {
     display: inline-block;
+    width: 100%;
     padding: 10px 20px;
     background-color: #f8f8f8;
     color: #333;
     border: 1px solid #ddd;
     border-radius: 20px;
     font-size: 14px;
+    text-align: center;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -74,6 +131,46 @@
     font-size: 16px;
 }
 
+.price-input-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column; /* ✅ 子要素を縦に並べる */
+    align-items: flex-start; /* ✅ 左寄せにする */
+    gap: 5px; /* ✅ ラベルと入力欄の間に余白を追加 */
+}
+
+.price-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.price-input-wrapper::before {
+    content: "￥"; /* ￥を表示 */
+    position: absolute;
+    left: 10px; /* 価格入力欄の左側に配置 */
+    font-size: 18px;
+    color: #333;
+    top: 63%;
+    transform: translateY(-50%);
+}
+
+/* 入力欄のスピナー非表示 */
+.container input[type="number"]::-webkit-outer-spin-button,
+.container input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0;
+}
+
+.container input[type="number"] {
+    -moz-appearance: textfield !important; /* Firefox 対応 */
+    appearance: none !important; /* 標準プロパティ スピナーを非表示 */
+    padding-left: 25px; /* ￥の表示分だけ内側に余白を確保 */
+    width: 100%;
+    height: 40px;
+    font-size: 16px;
+}
+
 /* エラーメッセージ */
 .container p.error {
     color: red;
@@ -97,4 +194,16 @@
 
 .container button:hover {
     background-color: darkred;
+}
+
+/* ✅ レスポンシブ対応（スマホでは間隔を調整） */
+@media (max-width: 768px) {
+    .category-options {
+        gap: 6px;
+    }
+
+    .category-label {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
 }

@@ -7,28 +7,64 @@
 @endsection
 
 @section('header-extra')
-<li class="header-nav__item">
-    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
-</li>
+
 @endsection
 
 @section('content')
 <!-- タブ -->
 <div class="tabs">
-    <div class="tab">おすすめ</div>
-    <div class="tab active">マイリスト</div>
+    <div class="tab {{ request()->routeIs('items.index') ? 'active' : '' }}">
+        <a href="{{ route('items.index', ['search' => request('search')]) }}">おすすめ</a>
+    </div>
+    <div class="tab {{ request()->routeIs('items.mylist') ? 'active' : '' }}">
+        <a href="{{ route('items.mylist', ['search' => request('search')]) }}">マイリスト</a>
+    </div>
 </div>
 
 <!-- 商品リスト -->
 <div class="item-list">
-    @foreach ($items as $item)
+    @if(request()->routeIs('items.index'))
+    {{-- ここはログイン不要（おすすめ） --}}
+    @forelse ($items as $item)
     <div class="item-card">
-        <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
-        <h3>{{ $item->name }}</h3>
-        <p>¥{{ number_format($item->price) }}</p>
-        <a href="{{ route('items.show', $item->id) }}">詳細を見る</a>
+        @if ($item->sold_out)
+        <span class="sold-label">sold</span>
+        @endif
+        <a href="{{ route('items.show', $item->id) }}">
+            @php
+            $isStorageImage = !Str::startsWith($item->item_image, ['http://', 'https://']);
+            @endphp
+            <img src="{{ $isStorageImage ? asset('storage/' . $item->item_image) : asset($item->item_image) }}" alt="{{ $item->name }}">
+            <h3>{{ $item->name }}</h3>
+        </a>
     </div>
-    @endforeach
+    @empty
+    <p class="no-items">現在、おすすめの商品はありません。</p>
+    @endforelse
+    @elseif(request()->routeIs('items.mylist'))
+    {{-- ここはログイン必須（マイリスト） --}}
+    @auth
+    @forelse ($items as $item)
+    <div class="item-card">
+        @if ($item->sold_out)
+        <span class="sold-label">sold</span>
+        @endif
+        <a href="{{ route('items.show', $item->id) }}">
+            @php
+            $isStorageImage = !Str::startsWith($item->item_image, ['http://', 'https://']);
+            @endphp
+
+            <img src="{{ $isStorageImage ? asset('storage/' . $item->item_image) : asset($item->item_image) }}" alt="{{ $item->name }}">
+            <h3>{{ $item->name }}</h3>
+        </a>
+    </div>
+    @empty
+    <p class="no-items">マイリストに登録された商品はありません。</p>
+    @endforelse
+    @else
+    <p class="login-message">マイリストを見るには <a href="{{ route('login') }}">ログイン</a> してください。</p>
+    @endauth
+    @endif
 </div>
 
 @endsection

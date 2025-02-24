@@ -1,6 +1,12 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025" # SMTP ポート
+      - "8025:8025" # Web UI ポート
+
   nginx:
     image: nginx:1.21.1
     ports:
@@ -23,8 +29,7 @@ services:
       MYSQL_DATABASE: laravel_db
       MYSQL_USER: laravel_user
       MYSQL_PASSWORD: laravel_pass
-    command:
-      mysqld --default-authentication-plugin=mysql_native_password
+    command: mysqld --default-authentication-plugin=mysql_native_password
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf

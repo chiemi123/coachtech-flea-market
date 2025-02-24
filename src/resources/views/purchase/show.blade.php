@@ -5,51 +5,108 @@
 @endsection
 
 @section('header-extra')
-<li class="header-nav__item">
-    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
-</li>
+
 @endsection
 
 @section('title', '商品購入')
 
 @section('content')
+
+
 <div class="purchase-container">
-    <!-- 左側の購入情報 -->
-    <div class="purchase-info">
-        <!-- 商品情報 -->
-        <div class="item-box">
-            <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
-            <div class="item-info">
-                <p class="item-name">{{ $item->name }}</p>
-                <p class="item-price">¥{{ number_format($item->price) }}</p>
+    <form action="{{ route('purchase.confirm', $item->id) }}" method="POST">
+        @csrf
+        <!-- 左側の購入情報 -->
+        <div class="purchase-info">
+            <!-- 商品情報 -->
+            <div class="item-box">
+                <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
+                <div class="item-info">
+                    <p class="item-name">{{ $item->name }}</p>
+                    <p class="item-price">¥{{ number_format($item->price) }}</p>
+                </div>
             </div>
-        </div>
 
-        <!-- 支払い方法 -->
-        <div class="payment-method">
-            <label for="payment">支払い方法</label>
-            <select id="payment">
-                <option value="">選択してください</option>
-                <option value="credit">クレジットカード</option>
-                <option value="convenience">コンビニ払い</option>
-            </select>
-        </div>
+            <!-- 支払い方法 -->
+            <div class="payment-method">
+                <label class="label">支払い方法</label>
+                <div class="payment-options">
 
-        <!-- 配送先 -->
-        <div class="shipping-info">
+                    <!-- トグル用チェックボックス（ドロップダウンの開閉に利用） -->
+                    <input type="checkbox" id="toggle-dropdown" class="toggle-checkbox">
+                    <label class="dropdown-label" for="toggle-dropdown">
+                        選択してください
+                    </label>
+
+                    <!-- 支払い方法の選択肢 -->
+                    <div class="payment-options-dropdown">
+                        <div class="option">
+                            <input type="radio" id="convenience" name="payment_method" value="コンビニ払い"
+                                {{ session('payment_method') === 'コンビニ払い' ? 'checked' : '' }}
+                                onchange="submitWithDelay(this.form, 300)">
+                            <label for="convenience">コンビニ払い</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="credit_card" name="payment_method" value="クレジットカード"
+                                {{ session('payment_method') === 'クレジットカード' ? 'checked' : '' }}
+                                onchange="submitWithDelay(this.form, 300)">
+                            <label for="credit_card">クレジットカード</label>
+                        </div>
+
+                        <script>
+                            function submitWithDelay(form, delay) {
+                                setTimeout(function() {
+                                    form.submit();
+                                }, delay);
+                            }
+                        </script>
+
+                    </div>
+                </div>
+
+                <!-- 隠しフィールドで住所IDを渡す -->
+                <input type="hidden" name="address_id" value="{{ session('address_id', $address->id ?? '') }}">
+            </div>
+
+            <!-- 配送先 -->
+            <div class="shipping-info">
+                <label for="shipping">配送先</label>
+                <a href="{{ route('address.edit', ['item_id' => $item->id]) }}" class="shipping-edit">変更する</a>
+            </div>
+
             <div class="shipping-address">
-                <p>〒 XXX-YYYY</p>
-                <p>ここには住所詳細が入ります</p>
+                @auth
+                <p>〒 {{ $address->postal_code ?? 'XXX-YYYY' }}</p>
+                <p>{{ $address->address ?? 'ここには住所が入ります' }}</p>
+                <p>{{ $address->building_name ?? '' }}</p>
+                @else
+                <p>ログインしてください</p>
+                @endauth
             </div>
-            <a href="#" class="shipping-edit">変更する</a>
-        </div>
-    </div>
 
-    <!-- 右側の購入概要 -->
-    <div class="purchase-summary">
-        <p class="total-price">商品代金　¥{{ number_format($item->price) }}</p>
-        <p class="total-payment">支払い方法　コンビニ払い</p>
-        <a href="#" class="purchase-button">購入する</a>
-    </div>
+        </div>
+
+    </form>
+
+
+    <!-- 右側の購入概要（表のようなデザイン） -->
+    <form action="{{ route('purchase.checkout', $item->id) }}" method="POST">
+        @csrf
+        <div class="purchase-summary">
+            <table class="purchase-table">
+                <tr>
+                    <th>商品代金</th>
+                    <td>¥{{ number_format($item->price) }}</td>
+                </tr>
+                <tr>
+                    <th>支払い方法</th>
+                    <td>{{ session('payment_method', '') }}</td> <!-- 選択した支払い方法を表示 -->
+                </tr>
+            </table>
+            <input type="hidden" name="address_id" value="{{ session('address_id', $address->id ?? '') }}">
+            <input type="hidden" name="payment_method" value="{{ session('payment_method', '') }}">
+            <button type="submit" class="purchase-button">購入する</button>
+        </div>
+    </form>
 </div>
 @endsection

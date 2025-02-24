@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -66,5 +66,21 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Item::class, 'purchases', 'user_id', 'item_id')
             ->withTimestamps(); // 中間テーブルを利用
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    // 最新の住所を取得
+    public function latestAddress()
+    {
+        return $this->hasOne(Address::class)->latestOfMany(); // addresses テーブルの最新の住所を取得
     }
 }

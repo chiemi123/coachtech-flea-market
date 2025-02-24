@@ -1,10 +1,10 @@
 /* 全体のコンテナ（横並びに変更） */
 .item-detail-container {
-    max-width: 1100px;
+    max-width: 1380px;
     margin: 0 auto;
     padding: 20px;
     display: flex;
-    flex-direction: column; /* 縦並びに変更 */
+    flex-direction: row; /* 縦並びに変更 */
     gap: 30px;
 }
 
@@ -13,54 +13,70 @@
     display: flex;
     flex-direction: row; /* 横並び */
     gap: 30px;
+    width: 100%;
+    height: 1704px;
 }
 
 /* 商品画像 */
 .item-image {
     flex: 1; /* 画像部分を縮小 */
-    max-width: 400px;
+    max-width: 600px;
+    margin: 36px 45px;
 }
 
 /* 商品画像 */
 .item-image img {
-    width: 400px;
-    height: 400px;
+    width: 600px;
+    height: 600px;
     object-fit: cover;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-/* 商品詳細情報 */
+/* 商品情報全体のスタイル */
 .item-details {
     flex: 2; /* 商品情報を画像より広く */
+    width: 690px; /* 幅を指定 */
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: column; /* 縦方向に整列 */
+    padding: 60px;
+}
+
+/* 商品情報全体を囲む */
+.item-summary {
+    width: 100%;
+    height: 273px; /* 高さを273pxに固定 */
+    padding: 15px;
 }
 
 .item-name {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+    font-size: 45px;
+    font-weight: 700;
+    color: #000000;
+    margin: 16px 0;
 }
 
 .brand-name {
-    font-size: 16px;
-    color: #666;
+    font-size: 20px;
+    font-weight: 400;
+    color: #000000;
+    margin: 4px 0;
 }
 
 .item-price {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 30px;
+    font-weight: 400;
     color: #000000;
+    margin: 7.5px 0;
 }
 
 /* いいね数とコメント数のコンテナ */
 .item-stats {
     display: flex; /* 横並びに配置 */
     align-items: center;
-    gap: 15px;
-    margin: 10px 0;
+    gap: 54px;
+    margin: 2.5px 0;
+    margin-left: 30px;
     font-size: 14px;
     color: #555;
 }
@@ -73,28 +89,71 @@
     text-align: center;
 }
 
-/* SVGアイコン */
+/* いいねボタン全体 */
+.like-button {
+    background: none; /* 背景なし */
+    border: none; /* 枠線なし */
+    cursor: pointer; /* クリック可能に */
+    padding: 5px; /* 余白 */
+    display: flex; /* フレックスボックスを適用 */
+    flex-direction: column; /* 縦並びにする */
+    align-items: center; /* 中央揃え */
+    justify-content: center; /* 中央配置 */
+    transition: color 0.3s; /* 色の変化をスムーズに */
+}
+
+/* 星のアイコン */
+.star-icon {
+    width: 40px;
+    height: 40px;
+    transition: filter 0.3s, transform 0.2s;
+    filter: grayscale(100%) brightness(1.2); /* 白黒にする（未いいね時） */
+}
+
+/* いいね済みのときに赤色に変更 */
+.like-button.active .star-icon {
+    filter: sepia(80%) hue-rotate(-50deg) saturate(800%) brightness(1.5);
+    transform: scale(1.1); /* クリック時に少し大きく */
+}
+
+/* カウント数のスタイル */
+.like-count {
+    font-size: 18px; /* いいねのカウントの文字サイズ */
+    margin: 2px 0; /* 星との間隔をあける */
+    color: #000000; /* 文字色 */
+    font-weight: 700;
+}
+
+/* ホバー時のスタイル */
+.like-button:hover {
+    color: orange; /* ホバー時の色 */
+}
+
+/* コメント数アイコン */
 .stat-icon {
     width: 40px;
     height: 40px;
     fill: #333;
-    margin-bottom: 5px;
 }
 
 /* カウント数のスタイル */
 .stat-count {
-    font-size: 14px; /* フォントサイズ */
-    color: #555; /* カウントの色 */
-    font-weight: bold; /* 太字にする */
+    font-size: 18px; /* フォントサイズ */
+    color: #000000; /* カウントの色 */
+    margin: 2px 0;
+    font-weight: 700;
 }
 
 .purchase-button {
     display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
+    width: 570px;
+    padding: 13px 20px;
+    font-size: 30px;
+    font-weight: 700;
     color: #fff;
     background-color: red;
     text-align: center;
+    margin: 22px 0;
     border-radius: 5px;
     text-decoration: none;
     transition: background-color 0.3s;
@@ -105,11 +164,29 @@
 }
 
 /* 商品説明と情報 */
-.item-description,
-.item-info {
-    border-top: 1px solid #ddd;
+.item-description {
+    height: 321px;
     padding-top: 10px;
-    margin-top: 10px;
+}
+
+/* 商品情報 */
+.item-info {
+    height: 230px;
+}
+
+/* 商品説明・商品の情報のタイトル */
+.item-description h2,
+.item-info h2 {
+    font-size: 36px; /* フォントサイズを 36px に */
+    font-weight: 700;
+    margin: 23px 0;
+}
+
+.item-info P {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 3px 0;
 }
 
 /* カテゴリーのタグ */
@@ -122,6 +199,14 @@
     margin-right: 5px;
 }
 
+/* 商品の状態のスタイル */
+.item-condition {
+    display: flex;
+    align-items: center;
+    height: 100px; /* 高さを 100px に */
+    line-height: 100px; /* テキストを中央に配置 */
+}
+
 /* コメントセクションを商品詳細の下に配置 */
 .comment-section {
     flex: 2;
@@ -130,28 +215,68 @@
     margin-top: 30px; /* 商品詳細の下に配置 */
 }
 
+/* 商品のコメントのタイトル */
+.comment-section h2 {
+    font-size: 28px; /* フォントサイズを 28px に */
+    font-weight: 700;
+    margin: 8px 0;
+}
+
 .comment-title {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
+/* コメント一覧 */
 .comment {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    margin-bottom: 10px;
     border-radius: 5px;
+    width: 570;
+    height: 743;
 }
 
-.comment-user {
-    font-weight: bold;
+/* コメントヘッダー */
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 5px;
 }
 
-.comment-form textarea {
+/* ユーザーアイコン */
+.comment-user-icon img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ユーザー名 */
+.comment-user {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+/* コメント内容 */
+.comment-content {
     width: 100%;
-    height: 80px;
-    padding: 10px;
+    height: 70px;
+    font-size: 20px;
+    color: #000000;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* コメント投稿フォーム */
+.comment-form textarea {
+    width: 570px;
+    height: 246px;
+    font-size: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -160,12 +285,15 @@
 
 .comment-submit {
     display: inline-block;
-    padding: 10px 20px;
-    font-size: 14px;
+    width: 570px;
+    padding: 9.2px 20px;
+    font-size: 25px;
+    font-weight: 700;
     color: #fff;
     background-color: red;
     border: none;
-    border-radius: 5px;
+    border-radius: 4%;
+    margin: 22px 0;
     cursor: pointer;
     transition: background-color 0.3s;
 }

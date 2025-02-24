@@ -5,9 +5,7 @@
 @endsection
 
 @section('header-extra')
-<li class="header-nav__item">
-    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
-</li>
+
 @endsection
 
 @section('title', '商品出品')
@@ -19,10 +17,11 @@
         @csrf
 
         <!-- 商品画像 -->
-        <div>
-            <label for="image">商品画像</label>
-            <input type="file" name="image" id="image">
-            @error('image')
+        <div class="image-upload">
+            <label for="item_image" class="custom-file-label">画像を選択する</label>
+            <input type="file" name="item_image" id="item_image" class="custom-file-input" accept="image/*">
+
+            @error('item_image')
             <p class="error">{{ $message }}</p>
             @enderror
         </div>
@@ -30,21 +29,27 @@
         <h2 class="section-title">商品の詳細</h2>
 
         <div class="category-group">
-            <label for="category">カテゴリー</label>
-            @foreach ($categories as $category)
-            <!-- チェックボックス -->
-            <input
-                type="checkbox"
-                name="category_id[]"
-                id="category-{{ $category->id }}"
-                value="{{ $category->id }}"
-                {{ is_array(old('category_id')) && in_array($category->id, old('category_id')) ? 'checked' : '' }}>
+            <p class="category-title">カテゴリー</p> <!-- ✅ `for="category"` の代わりに `p` で表記 -->
 
-            <!-- ラベル -->
-            <label for="category-{{ $category->id }}" class="category-label">
-                {{ $category->name }}
-            </label>
-            @endforeach
+            <div class="category-options">
+                @foreach ($categories as $category)
+                <div class="category-item">
+                    <!-- チェックボックス -->
+                    <input
+                        type="checkbox"
+                        name="category_id[]"
+                        id="category-{{ $category->id }}"
+                        value="{{ $category->id }}"
+                        {{ is_array(old('category_id')) && in_array($category->id, old('category_id')) ? 'checked' : '' }}>
+
+                    <!-- ラベル -->
+                    <label for="category-{{ $category->id }}" class="category-label">
+                        {{ $category->name }}
+                    </label>
+                </div>
+                @endforeach
+            </div>
+
             @error('category_id')
             <p class="error">{{ $message }}</p>
             @enderror
@@ -77,10 +82,10 @@
             @enderror
         </div>
 
-        <!-- 商品名 -->
+        <!-- ブランド名 -->
         <div>
             <label for="brand">ブランド名</label>
-            <input type="text" name="brand" id="name" value="{{ old('brand') }}">
+            <input type="text" name="brand" id="brand" value="{{ old('brand') }}">
             @error('brand')
             <p class="error">{{ $message }}</p>
             @enderror
@@ -96,8 +101,8 @@
         </div>
 
         <!-- 販売価格 -->
-        <div>
-            <label for="price">販売価格</label>
+        <div class="price-input-wrapper">
+            <label for="price" class="price-label">販売価格</label>
             <input type="number" name="price" id="price" value="{{ old('price') }}">
             @error('price')
             <p class="error">{{ $message }}</p>

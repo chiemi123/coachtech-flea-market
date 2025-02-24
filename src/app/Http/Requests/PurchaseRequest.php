@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class PurchaseRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class PurchaseRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check(); // 認証済みユーザーのみ許可
     }
 
     /**
@@ -25,7 +27,11 @@ class PurchaseRequest extends FormRequest
     {
         return [
             'payment_method' => ['required', 'in:コンビニ払い,クレジットカード'],
-            'address_id' => ['required', 'exists:addresses,id'],
+            'address_id' => ['required', 'exists:addresses,id', function ($value, $fail) {
+                if (!$value && !session('address_id') && !auth()->user()->address) {
+                    $fail('配送先を選択してください。');
+                }
+            }],
         ];
     }
 
@@ -38,4 +44,6 @@ class PurchaseRequest extends FormRequest
             'address_id.exists' => '選択した配送先が存在しません。',
         ];
     }
+
+    
 }
