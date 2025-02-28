@@ -23,7 +23,7 @@
             @if ($user->profile_image)
             <img src="{{ asset('storage/' . $user->profile_image) }}" alt="プロフィール画像">
             @else
-            <img src="{{ asset('images/default-avatar.jpg') }}" alt="デフォルトプロフィール画像">
+            <img src="{{ asset('images/default-avatar.png') }}" alt="デフォルトプロフィール画像">
             @endif
         </div>
 

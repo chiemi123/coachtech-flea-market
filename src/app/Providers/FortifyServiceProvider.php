@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Fortify\Actions\AttemptToAuthenticate;
 use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
 use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
@@ -45,18 +46,18 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.register');
         });
 
-        Fortify::redirects('register', function () {
-            $user = Auth::user(); // Auth::check() ではなく、Auth::user() を使用
-
-            if ($user && is_null(Auth::user()->email_verified_at)) {
-                return '/email/verify';  // メール認証が未完了の場合、メール認証画面へ
-            }
-
-            return '/mypage/profile';  // メール認証済みの場合、プロフィール画面へ
+        // メール認証画面のビューを指定
+        Fortify::verifyEmailView(function () {
+            return view('auth.verify-email');
         });
 
+        Log::info('verifyEmailView: 成功');
 
+        // メール認証画面のリダイレクト
+        Fortify::redirects('email-verification', '/mypage/profile');  // メール認証後のリダイレクト先
+        Log::info('email-verification: 成功');
 
+    
         Fortify::authenticateThrough(function (Request $request) {
 
             return array_filter([
@@ -79,23 +80,7 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.login');
         });
 
-        Fortify::redirects('login', function () {
-            $user = Auth::user();
-
-            if (is_null($user)) {
-                return '/'; // 未ログインの場合はトップページへ（または適切なページ）
-            }
-
-            if (is_null($user->email_verified_at)) {
-                return '/email/verify';  // メール未認証の場合
-            }
-
-            return '/'; // メール認証済みの場合
-        });
-
-        // メール認証画面のリダイレクト
-        Fortify::redirects('email-verification', '/mypage/profile');  // メール認証後のリダイレクト先
-
+        
         Fortify::redirects('failed-login', '/login'); // ログイン失敗時のリダイレクト先をURLで明示的に指定
 
         // ログイン時のレートリミット

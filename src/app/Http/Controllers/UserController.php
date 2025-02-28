@@ -39,9 +39,9 @@ class UserController extends Controller
         $user = Auth::user();
 
         // メール認証が完了していない場合は /email/verify にリダイレクト
-        if ($user instanceof \App\Models\User && !$user->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
-        }
+        //if ($user instanceof \App\Models\User && !$user->hasVerifiedEmail()) {
+        //    return redirect()->route('verification.notice');
+        //}
 
         return view('profile.edit', compact('user'));
     }

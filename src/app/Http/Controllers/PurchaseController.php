@@ -42,37 +42,19 @@ class PurchaseController extends Controller
 
         $user = auth()->user();
 
-        // `address_id` がリクエストに無い場合は `users` テーブルの住所を使う
-        $addressId = $request->input('address_id', session('address_id'));
+        // ✅ フォームの `address_id` を取得し、未選択なら `users` テーブルのデフォルト住所を使用
+        $addressId = $request->input('address_id') ?? $user->address->id ?? null;
 
-        // ✅ ここで `address_id` の値を確認！
-        //dd($addressId);
-
+        // 🚨 住所がない場合はエラー
         if (!$addressId) {
-            $defaultAddress = $user->address ?? null;
-
-            if ($defaultAddress) {
-                $addressId = $defaultAddress->id;
-                session(['address_id' => $addressId]); // セッションに保存
-            } else {
-                return redirect()->route('purchase.show', ['item_id' => $item_id])
-                    ->withErrors(['address_id' => '配送先を選択してください。']);
-            }
+            return redirect()->route('purchase.show', ['item_id' => $item_id])
+                ->withErrors(['address_id' => '配送先を選択してください。']);
         }
 
+        // ✅ セッションに `address_id` と `payment_method` を保存
+        session(['address_id' => $addressId, 'payment_method' => $request->payment_method]);
+        session()->save(); // 明示的にセッションを保存
 
-        // セッションに支払い方法を保存
-        session()->put('payment_method', $request->payment_method);
-        session()->save();
-
-        // ✅ `session('address_id')` に保存
-        session(['address_id' => $addressId]);
-        session()->save();  // ← 明示的にセッションを保存
-
-        // ✅ セッションの `address_id` をデバッグ
-        //dd(session('address_id')); // 🎯 セッションに正しく保存されたか確認！
-
-        // 商品詳細ページにリダイレクト（選択内容を反映）
         return redirect()->route('purchase.show', ['item_id' => $item_id]);
     }
 
@@ -81,31 +63,19 @@ class PurchaseController extends Controller
         $user = auth()->user();
         $item = Item::findOrFail($item_id);
 
-        // 住所情報を取得
-        $addressId = session('address_id') ?? $request->input('address_id');
-
-        if (!$addressId) {
-            return redirect()->route('purchase.show', ['item_id' => $item_id])
-                ->withErrors(['address_id' => '配送先を選択してください。']);
+        // ✅ 住所情報 & 支払い方法を取得
+        if (!$addressId = session('address_id') ?: $request->input('address_id')) {
+            return redirect()->route('purchase.show', $item_id)->withErrors(['address_id' => '配送先を選択してください。']);
         }
 
-        // 支払い方法を取得
-        $paymentMethod = session('payment_method');
-
-        if (!$paymentMethod) {
-            return redirect()->route('purchase.show', ['item_id' => $item_id])
-                ->withErrors(['payment_method' => '支払い方法を選択してください。']);
+        if (!$paymentMethod = session('payment_method')) {
+            return redirect()->route('purchase.show', $item_id)->withErrors(['payment_method' => '支払い方法を選択してください。']);
         }
 
-        // Stripe APIキー設定
+        // ✅ Stripe APIキー設定 & Checkout セッション作成
         Stripe::setApiKey(config('services.stripe.secret'));
-
-        // 支払い方法の設定
-        $payment_methods = ($paymentMethod === 'クレジットカード') ? ['card'] : ['konbini'];
-
-        // Stripe Checkout セッション作成
         $checkoutSession = StripeSession::create([
-            'payment_method_types' => $payment_methods,
+            'payment_method_types' => [$paymentMethod === 'クレジットカード' ? 'card' : 'konbini'],
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'jpy',
@@ -115,18 +85,14 @@ class PurchaseController extends Controller
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'metadata' => [ // ✅ ここに `item_id` を追加！
+            'metadata' => [
                 'item_id' => $item->id,
-                'address_id' => session('address_id'),
+                'address_id' => $addressId,
             ],
             'success_url' => url('/purchase/success') . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('purchase.cancel'),
         ]);
 
-        // ✅ ここで Checkout の URL を確認
-        //dd($checkoutSession->url);
-
-        // StripeのCheckoutページにリダイレクト
         return redirect($checkoutSession->url);
     }
 
@@ -150,43 +116,41 @@ class PurchaseController extends Controller
         $address_id = $checkoutSession->metadata->address_id ?? null;
 
         // ✅ デバッグ
-        //dd($item_id, $address_id); // 🎯 ここで取得した値を確認！
+        dd($item_id, $address_id); // 🎯 ここで取得した値を確認！
 
         // ✅ `item_id` が取得できない場合はエラー
         if (!$item_id || !$address_id) {
             return redirect()->route('items.index')->withErrors(['error' => '商品情報が見つかりませんでした。']);
         }
 
-        $payment_intent_id = $checkoutSession->payment_intent;
+        // ✅ 支払いステータスを取得
         $payment_status = $checkoutSession->payment_status;
-
-        if ($payment_intent_id) {
-            $paymentIntent = \Stripe\PaymentIntent::retrieve($payment_intent_id);
-            $payment_status = $paymentIntent->status;
+        if ($checkoutSession->payment_intent) {
+            $payment_status = \Stripe\PaymentIntent::retrieve($checkoutSession->payment_intent)->status;
         }
 
+        // ✅ 決済成功時に購入情報を保存
         if ($payment_status === 'succeeded') {
-            // 購入データをDBに保存
-            Purchase::create([
+            $purchase = Purchase::create([
                 'user_id' => auth()->id(),
-                'item_id' => $checkoutSession->metadata->item_id,
-                'address_id' => session('address_id'),
+                'item_id' => $item_id,
+                'address_id' => $address_id,
                 'payment_method' => session('payment_method'),
-                'status' => 'completed', // 決済成功！
+                'status' => 'completed',
                 'transaction_id' => $session_id,
             ]);
 
-            return redirect()->route('profile.index')->with('success', '購入が完了しました！');
-        } else {
-            return redirect()->route('items.index')->withErrors(['error' => '決済が完了していません。']);
+            // ✅ `purchase.success` ビューを表示
+            return view('purchase.success', compact('purchase'));
         }
+
+        return redirect()->route('items.index')->withErrors(['error' => '決済が完了していません。']);
     }
+
+
 
     public function cancel()
     {
         return view('purchase.cancel');
     }
-
-    // 商品購入処理
-    public function complete(Request $request, $item_id) {}
 }

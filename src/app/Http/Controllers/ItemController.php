@@ -27,9 +27,24 @@ class ItemController extends Controller
             $query->where('user_id', '<>', auth()->id());
         }
 
-        // 検索ワードがある場合はフィルタリング
-        if ($search) {
-            $query->where('name', 'LIKE', "%{$search}%");
+        // スペースのみの検索を防ぐ
+        if (!empty($search)) {
+            $convertedSearch = mb_convert_kana($search, 's'); // 全角スペースを半角に変換
+            $trimmedSearch = trim($convertedSearch); // 前後のスペースを削除
+
+            // スペースのみの検索は無視
+            if ($trimmedSearch === '') {
+                return redirect()->back()->with('error', '検索キーワードを入力してください');
+            }
+
+            // 検索履歴をセッションに保存
+            session(['last_search' => $trimmedSearch]);
+
+            // スペース区切りで分割し、各キーワードを検索条件に適用
+            $keywords = explode(' ', $trimmedSearch);
+            foreach ($keywords as $keyword) {
+                $query->where('name', 'LIKE', "%{$keyword}%");
+            }
         }
 
         $items = $query->get();
@@ -41,14 +56,24 @@ class ItemController extends Controller
     public function myList(Request $request)
     {
         $user = Auth::user();
-        $search = $request->input('search');
+        $search = mb_convert_kana($request->input('search'), 's'); // 全角スペースを半角に
+
+        // スペースのみの検索を防ぐ
+        $trimmedSearch = trim($search);
+        if ($trimmedSearch === '') {
+            return redirect()->back()->with('error', '検索キーワードを入力してください');
+        }
 
         // いいねした商品から「自分が出品した商品」は除外
         $items = Item::whereHas('likes', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->where('user_id', '!=', $user->id)
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'LIKE', "%{$search}%");
+            ->when($trimmedSearch, function ($query, $trimmedSearch) {
+                $keywords = explode(' ', $trimmedSearch); // スペースで分割
+                foreach ($keywords as $keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                }
+                return $query;
             })->get();
 
         return view('items.index', compact('items'));

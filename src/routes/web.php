@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 // ===========================
 
 // 商品一覧画面
-Route::get('/', [ItemController::class, 'index'])->name('items.index');
+Route::get('/', [ItemController::class, 'index'])->name('items.index')->middleware('verified.if.loggedin');
 // 商品詳細画面
 Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('items.show');
 // 商品のコメント投稿ルート
@@ -40,25 +40,42 @@ Route::get('/purchase/cancel', [PurchaseController::class, 'cancel'])->name('pur
 //  ログイン必須のルート
 // ===========================
 
-Route::middleware(['auth'])->group(function () {
+//Route::middleware(['auth'])->group(function () {
 
-    // メール認証の画面
-    Route::get('/email/verify', function () {
-        return view('auth.verify-email');
-    })->name('verification.notice');
+// メール認証の画面
+//Route::get('/email/verify', function () {
+//    return view('auth.verify-email');
+//})->name('verification.notice');
 
-    // 認証メールの送信
-    Route::post('/email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
-        return back()->with('status', 'verification-link-sent');
-    })->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+// メール認証通知画面（ユーザーに「認証メールを送信しました」などを表示）
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
 
-    // メール認証の処理
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill(); // 認証を完了
-        return redirect()->intended('/mypage/profile'); // 認証後にプロフィール設定画面へ
-    })->middleware(['auth', 'signed', 'throttle:6,1'])->name('verification.verify');
-});
+// メール認証リンクをクリックしたときのルート
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); // 認証完了
+    return redirect('/mypage/profile'); // 認証後のリダイレクト先
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// 認証メールの再送信ルート
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+
+// 認証メールの送信
+//Route::post('/email/verification-notification', function (Request $request) {
+//    $request->user()->sendEmailVerificationNotification();
+//    return back()->with('status', 'verification-link-sent');
+//})->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+
+// メール認証の処理
+//Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//    $request->fulfill(); // 認証を完了
+//    return redirect()->intended('/mypage/profile'); // 認証後にプロフィール設定画面へ
+//})->middleware(['auth', 'signed', 'throttle:6,1'])->name('verification.verify');
+// });
 
 // ===========================
 //  認証済みユーザー向けのルート
@@ -76,9 +93,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
-
-    // トップページをログインユーザーに制限
-    //Route::get('/', [ItemController::class, 'index'])->name('items.index');
 
     //　マイリスト表示
     Route::get('/mylist', [ItemController::class, 'myList'])->name('items.mylist');

@@ -15,7 +15,7 @@ class ValidateCustomLoginRequest
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    public function handle(Request $request,\Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
         try {
             Log::info('ValidateCustomLoginRequest: バリデーション開始', $request->all());
@@ -30,6 +30,7 @@ class ValidateCustomLoginRequest
                 'password.min' => 'パスワードは8文字以上で入力してください。',
             ])->validate();
 
+            Log::info('ValidateCustomLoginRequest: バリデーション成功');
             // バリデーション成功時、次のアクションへ進む
             return $next($request);
 

@@ -40,7 +40,7 @@
                 <!-- 中央: 検索フォーム（商品一覧画面と商品詳細画面のみ表示） -->
                 @if (request()->routeIs('items.index') || request()->routeIs('items.show') || request()->routeIs('items.mylist'))
                 <form action="{{ request()->routeIs('items.mylist') ? route('items.mylist') : route('items.index') }}" method="GET" class="search-form">
-                    <input type="text" name="search" placeholder="なにをお探しですか？" value="{{ request('search') }}" oninput="this.form.submit()">
+                    <input type="text" name="search" id="searchInput" placeholder="なにをお探しですか？" value="{{ request('search') }}">
                 </form>
                 @endif
 
@@ -70,6 +70,33 @@
     <main>
         @yield('content')
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+
+            // 日本語入力確定時（IME変換確定時）に検索を実行
+            searchInput.addEventListener('compositionend', function() {
+                if (searchInput.value.trim() !== '') { // スペースのみの検索を防ぐ
+                    searchInput.form.submit(); // フォームを送信
+                }
+            });
+
+            // 英数字や直接入力でも、1秒間入力がなければ検索を実行
+            let typingTimer;
+            const typingDelay = 1000; // 1秒後に検索を実行
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    if (searchInput.value.trim() !== '') { // スペースのみの検索を防ぐ
+                        searchInput.form.submit();
+                    }
+                }, typingDelay);
+            });
+        });
+    </script>
+
 </body>
 
 </html>
