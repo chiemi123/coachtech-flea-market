@@ -17,14 +17,20 @@
     <div class="item-info-container">
         <!-- 左側: 商品画像 -->
         <div class="item-image">
-            <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
+            @if (Str::startsWith($item->item_image, 'http'))
+            <!-- 画像がURLの場合（外部URLやアイテムテーブルに保存されている画像） -->
+            <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
+            @else
+            <!-- 画像がストレージ内に保存されている場合 -->
+            <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+            @endif
         </div>
 
         <!-- 右側: 商品情報 -->
         <div class="item-details">
             <div class="item-summary">
                 <h1 class="item-name">{{ $item->name }}</h1>
-                <p class="brand-name">{{ $item->brand->name ?? 'ブランドなし' }}</p>
+                <p class="brand-name">{{ $item->brand ?? 'ブランドなし' }}</p>
                 <p class="item-price">¥{{ number_format($item->price) }} (税込)</p>
 
                 <!-- いいね数とコメント数 -->
@@ -39,9 +45,12 @@
                             </button>
                         </form>
                         @else
-                        <p class="login-message">
-                            いいねするには <a href="{{ route('login') }}">ログイン</a> してください。
-                        </p>
+                        <form action="{{ route('login') }}" method="GET">
+                            <button type="submit" class="like-button">
+                                <img src="{{ asset('images/star-outline.png') }}" alt="いいね" class="star-icon">
+                                <span class="like-count">{{ $item->likes_count }}</span>
+                            </button>
+                        </form>
                         @endauth
                     </div>
 
@@ -101,7 +110,9 @@
                     <button type="submit" class="comment-submit">コメントを送信する</button>
                 </form>
                 @else
-                <p class="login-message">コメントを投稿するには <a href="{{ route('login') }}">ログイン</a> してください。</p>
+                <form action="{{ route('login') }}" method="GET">
+                    <button type="submit" class="comment-submit">コメントを投稿する</button>
+                </form>
                 @endauth
             </div>
         </div>

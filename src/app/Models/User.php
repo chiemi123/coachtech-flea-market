@@ -81,6 +81,6 @@ class User extends Authenticatable implements MustVerifyEmail
     // 最新の住所を取得
     public function latestAddress()
     {
-        return $this->hasOne(Address::class)->latestOfMany(); // addresses テーブルの最新の住所を取得
+        return $this->hasOne(Address::class)->latestOfMany('created_at'); // addresses テーブルの最新の住所を取得
     }
 }

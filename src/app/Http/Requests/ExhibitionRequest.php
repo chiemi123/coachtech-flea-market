@@ -27,7 +27,8 @@ class ExhibitionRequest extends FormRequest
             'name' => ['required', 'string'],
             'description' => ['required', 'string', 'max:255'],
             'item_image' => ['required', 'image', 'mimes:jpg,png', 'max:2048'],
-            'category_id' => ['required', 'exists:categories,id'],
+            'category_ids' => ['required', 'array'], // ✅ 配列として受け取る
+            'category_ids.*' => ['exists:categories,id'], // ✅ 各要素が `categories` テーブルに存在するかチェック
             'condition_id' => ['required', 'exists:conditions,id'],
             'price' => ['required', 'numeric', 'min:0'],
         ];
@@ -43,8 +44,8 @@ class ExhibitionRequest extends FormRequest
             'item_image.image' => '画像ファイルをアップロードしてください。',
             'item_image.mimes' => 'アップロードできる画像は JPG または PNG のみです。',
             'item_image.max' => '画像サイズは最大 2MB までです。',
-            'category_id.required' => '商品のカテゴリーを選択してください。',
-            'category_id.exists' => '選択されたカテゴリーが存在しません。',
+            'category_ids.required' => '商品のカテゴリーを選択してください。',
+            'category_ids.exists' => '選択されたカテゴリーが存在しません。',
             'condition_id.required' => '商品の状態を選択してください。',
             'condition_id.exists' => '選択された商品の状態が存在しません。',
             'price.required' => '価格を入力してください。',

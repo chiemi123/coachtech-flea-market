@@ -32,18 +32,15 @@ class ItemController extends Controller
             $convertedSearch = mb_convert_kana($search, 's'); // 全角スペースを半角に変換
             $trimmedSearch = trim($convertedSearch); // 前後のスペースを削除
 
-            // スペースのみの検索は無視
-            if ($trimmedSearch === '') {
-                return redirect()->back()->with('error', '検索キーワードを入力してください');
-            }
+            if ($trimmedSearch !== '') {
+                // 検索履歴をセッションに保存
+                session(['last_search' => $trimmedSearch]);
 
-            // 検索履歴をセッションに保存
-            session(['last_search' => $trimmedSearch]);
-
-            // スペース区切りで分割し、各キーワードを検索条件に適用
-            $keywords = explode(' ', $trimmedSearch);
-            foreach ($keywords as $keyword) {
-                $query->where('name', 'LIKE', "%{$keyword}%");
+                // スペース区切りで分割し、各キーワードをAND検索
+                $keywords = preg_split('/\s+/u', $trimmedSearch);
+                foreach ($keywords as $keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                }
             }
         }
 
@@ -57,27 +54,25 @@ class ItemController extends Controller
     {
         $user = Auth::user();
         $search = mb_convert_kana($request->input('search'), 's'); // 全角スペースを半角に
-
-        // スペースのみの検索を防ぐ
         $trimmedSearch = trim($search);
-        if ($trimmedSearch === '') {
-            return redirect()->back()->with('error', '検索キーワードを入力してください');
-        }
 
         // いいねした商品から「自分が出品した商品」は除外
         $items = Item::whereHas('likes', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->where('user_id', '!=', $user->id)
             ->when($trimmedSearch, function ($query, $trimmedSearch) {
-                $keywords = explode(' ', $trimmedSearch); // スペースで分割
-                foreach ($keywords as $keyword) {
-                    $query->where('name', 'LIKE', "%{$keyword}%");
+                if ($trimmedSearch !== '') {
+                    $keywords = preg_split('/\s+/u', $trimmedSearch); // スペースで分割
+                    foreach ($keywords as $keyword) {
+                        $query->where('name', 'LIKE', "%{$keyword}%");
+                    }
                 }
                 return $query;
             })->get();
 
         return view('items.index', compact('items'));
     }
+
 
     // 商品詳細画面
     public function show($item_id)
@@ -147,7 +142,10 @@ class ItemController extends Controller
 
         // 商品をデータベースに保存
         $validated['user_id'] = Auth::id();
-        Item::create($validated);
+        $item = Item::create($validated);
+
+        // **カテゴリーを紐付ける**
+        $item->categories()->attach($validated['category_ids']); // ✅ カテゴリーを登録
 
         return redirect()->route('profile.index')->with('success', '商品が出品されました！');
     }

@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Condition;
+use App\Models\Category;
+use App\Models\Item;
 
 class ItemSeeder extends Seeder
 {
@@ -15,17 +17,46 @@ class ItemSeeder extends Seeder
      */
     public function run()
     {
-        // 各コンディションの ID を取得
-        $conditionGood = Condition::where('name', '良好')->first();
-        $conditionNoDamage = Condition::where('name', '目立った傷や汚れなし')->first();
-        $conditionSlightDamage = Condition::where('name', 'やや傷や汚れあり')->first();
-        $conditionBad = Condition::where('name', '状態が悪い')->first();
+        // ======= 修正前（個別に `where('name', ...)->first()` で取得）=======
+        // $conditionGood = Condition::where('name', '良好')->first();
+        // $conditionNoDamage = Condition::where('name', '目立った傷や汚れなし')->first();
+        // $conditionSlightDamage = Condition::where('name', 'やや傷や汚れあり')->first();
+        // $conditionBad = Condition::where('name', '状態が悪い')->first();
 
+        // ======= 修正後（`pluck('id', 'name')` を使って一括取得）=======
+        // 各コンディションの ID を取得
+        $conditions = Condition::whereIn('name', [
+            '良好',
+            '目立った傷や汚れなし',
+            'やや傷や汚れあり',
+            '状態が悪い'
+        ])->pluck('id', 'name');
+
+        // ======= 各カテゴリの ID を一括取得 =======
+        $categories = Category::whereIn('name', [
+            'ファッション',
+            '家電',
+            'インテリア',
+            'レディース',
+            'メンズ',
+            'コスメ',
+            '本',
+            'ゲーム',
+            'スポーツ',
+            'キッチン',
+            'ハンドメイド',
+            'アクセサリー',
+            'おもちゃ',
+            'ベビー・キッズ'
+        ])->pluck('id', 'name');
+
+
+        /* ======= 修正前（商品データを直接挿入していたコード）======= */
         // ダミーデータを一括で追加
-        DB::table('items')->insert([
+        /*    DB::table('items')->insert([
             [
                 'user_id' => 1,
-                'condition_id' => $conditionGood->id,
+                'condition_id' => $conditions['良好'], // ← 修正後
                 'name' => '腕時計',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => 'スタイリッシュなデザインのメンズ腕時計',
@@ -37,7 +68,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionNoDamage->id,
+                'condition_id' => $conditions['目立った傷や汚れなし'], // ← 修正後
                 'name' => 'HDD',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '高速で信頼性の高いハードディスク',
@@ -49,7 +80,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionSlightDamage->id,
+                'condition_id' => $conditions['やや傷や汚れあり'], // ← 修正後
                 'name' => '玉ねぎ3束',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '新鮮な玉ねぎ3束のセット',
@@ -61,7 +92,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionBad->id,
+                'condition_id' => $conditions['状態が悪い'], // ← 修正後
                 'name' => '革靴',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => 'クラシックなデザインの革靴',
@@ -73,7 +104,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionGood->id,
+                'condition_id' => $conditions['良好'], // ← 修正後
                 'name' => 'ノートPC',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '高性能なノートパソコン',
@@ -85,7 +116,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionNoDamage->id,
+                'condition_id' => $conditions['目立った傷や汚れなし'], // ← 修正後
                 'name' => 'マイク',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '高音質のレコーディング用マイク',
@@ -97,7 +128,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionSlightDamage->id,
+                'condition_id' => $conditions['やや傷や汚れあり'], // ← 修正後
                 'name' => 'ショルダーバッグ',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => 'おしゃれなショルダーバッグ',
@@ -109,7 +140,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionBad->id,
+                'condition_id' => $conditions['状態が悪い'], // ← 修正後
                 'name' => 'タンブラー',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '使いやすいタンブラー',
@@ -121,7 +152,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionGood->id,
+                'condition_id' => $conditions['良好'], // ← 修正後
                 'name' => 'コーヒーミル',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '手動のコーヒーミル',
@@ -133,7 +164,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'user_id' => 1,
-                'condition_id' => $conditionNoDamage->id, // 修正！
+                'condition_id' => $conditions['目立った傷や汚れなし'], // ← 修正後
                 'name' => 'メイクセット',
                 'brand' => 'ノーブランド', // ブランドなし
                 'description' => '便利なメイクアップセット',
@@ -145,5 +176,38 @@ class ItemSeeder extends Seeder
             ],
 
         ]);
+        */
+
+        // 既存のアイテムにカテゴリを追加
+        $itemsWithCategories = [
+            '腕時計' => ['ファッション', 'メンズ'],
+            'HDD' => ['家電'],
+            '玉ねぎ3束' => ['キッチン', 'インテリア'],
+            '革靴' => ['ファッション', 'メンズ'],
+            'ノートPC' => ['家電'],
+            'マイク' => ['家電'],
+            'ショルダーバッグ' => ['ファッション'],
+            'タンブラー' => ['キッチン'],
+            'コーヒーミル' => ['キッチン'],
+            'メイクセット' => ['コスメ'],
+        ];
+
+        foreach ($itemsWithCategories as $itemName => $categoryNames) {
+            // 既存のアイテムを取得
+            $item = Item::where('name', $itemName)->first();
+
+            if ($item) {
+                // カテゴリIDを取得
+                $categoryIds = [];
+                foreach ($categoryNames as $categoryName) {
+                    if (isset($categories[$categoryName])) {
+                        $categoryIds[] = $categories[$categoryName];
+                    }
+                }
+
+                // カテゴリを追加（既存カテゴリは維持）
+                $item->categories()->syncWithoutDetaching($categoryIds);
+            }
+        }
     }
 }

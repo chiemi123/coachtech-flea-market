@@ -16,14 +16,21 @@
     <form action="{{ route('sell.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <!-- 商品画像 -->
+        <!-- 商品画像のアップロード -->
         <div class="image-upload">
+            <!-- ファイル選択のラベル -->
             <label for="item_image" class="custom-file-label">画像を選択する</label>
+
+            <!-- ファイル選択ボタン（見えないようにする） -->
             <input type="file" name="item_image" id="item_image" class="custom-file-input" accept="image/*">
+
+            <!-- 選択されたファイル名を表示 -->
+            <span id="file-name" class="file-name">選択された画像はありません</span>
 
             @error('item_image')
             <p class="error">{{ $message }}</p>
             @enderror
+
         </div>
 
         <h2 class="section-title">商品の詳細</h2>
@@ -37,10 +44,10 @@
                     <!-- チェックボックス -->
                     <input
                         type="checkbox"
-                        name="category_id[]"
+                        name="category_ids[]"
                         id="category-{{ $category->id }}"
                         value="{{ $category->id }}"
-                        {{ is_array(old('category_id')) && in_array($category->id, old('category_id')) ? 'checked' : '' }}>
+                        {{ is_array(old('category_ids')) && in_array($category->id, old('category_ids')) ? 'checked' : '' }}>
 
                     <!-- ラベル -->
                     <label for="category-{{ $category->id }}" class="category-label">
@@ -112,5 +119,12 @@
         <!-- 出品ボタン -->
         <button type="submit">出品する</button>
     </form>
+
+    <script>
+        document.getElementById('item_image').addEventListener('change', function() {
+            document.getElementById('file-name').textContent = this.files.length ? this.files[0].name : "選択された画像はありません";
+        });
+    </script>
+
 </div>
 @endsection

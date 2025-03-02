@@ -28,11 +28,20 @@ class PurchaseController extends Controller
         // 購入する商品情報を取得
         $item = Item::findOrFail($item_id);
 
-        // 変更履歴があれば最新の住所を取得、なければ `users` テーブルの住所を使う
-        $address = Address::where('user_id', $user->id)->latest()->first() ?? $user;
+        // ✅ ユーザーの最新の住所を取得
+        $address = $user->latestAddress ?? ($user->postal_code ? $user : null);
 
-        // セッションに保存された支払い方法を取得（デフォルトを null にする）
-        $payment_method = session()->has('payment_method') ? session('payment_method') : null;
+        // 🚀 `session('address_id')` に `user_table` をセット（デフォルトの住所を識別）
+        if (!session()->has('address_id')) {
+            session(['address_id' => optional($address)->id ?? 'user_table']);
+        }
+
+        // 🚀 `session('address_id')` が `user_table` の場合、`users` の住所を使用
+        $addressId = session('address_id');
+        $address = ($addressId === 'user_table') ? $user : $address;
+
+        // ✅ セッションに保存された支払い方法を取得
+        $payment_method = session('payment_method', null);
 
         return view('purchase.show', compact('item', 'address', 'payment_method'));
     }
@@ -42,14 +51,20 @@ class PurchaseController extends Controller
 
         $user = auth()->user();
 
-        // ✅ フォームの `address_id` を取得し、未選択なら `users` テーブルのデフォルト住所を使用
-        $addressId = $request->input('address_id') ?? $user->address->id ?? null;
+        $addressId = $request->input('address_id', session('address_id'));
+
+
+        // 🚀 `address_id` が `null` なら `users` テーブルの住所を使用
+        if (!$addressId) {
+            $addressId = 'user_table'; // ユーザーのデフォルト住所を識別
+        }
 
         // 🚨 住所がない場合はエラー
         if (!$addressId) {
             return redirect()->route('purchase.show', ['item_id' => $item_id])
                 ->withErrors(['address_id' => '配送先を選択してください。']);
         }
+
 
         // ✅ セッションに `address_id` と `payment_method` を保存
         session(['address_id' => $addressId, 'payment_method' => $request->payment_method]);

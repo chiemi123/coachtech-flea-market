@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coachtech</title>
+    <!-- Alpine.js の読み込み（CDN版） -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
     <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
@@ -13,22 +16,6 @@
 </head>
 
 <body>
-    @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
-
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
     <header class="header">
         <div class="header__inner">
             <div class="header-utilities">
@@ -37,14 +24,21 @@
                     <img src="{{ asset('images/logo.svg') }}" alt="COACHTECH" class="logo">
                 </a>
 
-                <!-- 中央: 検索フォーム（商品一覧画面と商品詳細画面のみ表示） -->
+                <!-- 検索フォーム（商品一覧画面、商品詳細画面、マイリスト画面のみ表示） -->
                 @if (request()->routeIs('items.index') || request()->routeIs('items.show') || request()->routeIs('items.mylist'))
-                <form action="{{ request()->routeIs('items.mylist') ? route('items.mylist') : route('items.index') }}" method="GET" class="search-form">
-                    <input type="text" name="search" id="searchInput" placeholder="なにをお探しですか？" value="{{ request('search') }}">
+                <form action="{{ request()->routeIs('items.mylist') ? route('items.mylist') : route('items.index') }}"
+                    method="GET" class="search-form"
+                    x-data="{ search: '{{ request('search') }}', timeout: null }">
+
+                    <input type="text" name="search" id="searchInput"
+                        placeholder="なにをお探しですか？"
+                        x-model="search"
+                        @input.debounce.500ms="clearTimeout(timeout); timeout = setTimeout(() => $event.target.form.submit(), 500)">
                 </form>
                 @endif
 
                 <!-- 右側: ナビゲーション -->
+                @if (!request()->routeIs('verification.notice'))
                 <nav class="header-nav">
                     @auth
                     <form class="form" action="{{ route('logout') }}" method="post">
@@ -53,49 +47,37 @@
                     </form>
                     <a href="{{ route('profile.index') }}">マイページ</a>
                     <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
-                    @yield('header-extra') <!-- 他のページで追加メニューを入れられる -->
                     @else
-                    <!-- ログインページと会員登録ページでは非表示 -->
                     @if (!request()->routeIs('login') && !request()->routeIs('register'))
                     <a href="{{ route('login') }}">ログイン</a>
                     <a href="{{ route('profile.index') }}">マイページ</a>
                     <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
                     @endif
                     @endauth
+                    @yield('header-extra') <!-- 他のページで追加メニューを入れられる -->
                 </nav>
+                @endif
             </div>
         </div>
     </header>
 
     <main>
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         @yield('content')
     </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-
-            // 日本語入力確定時（IME変換確定時）に検索を実行
-            searchInput.addEventListener('compositionend', function() {
-                if (searchInput.value.trim() !== '') { // スペースのみの検索を防ぐ
-                    searchInput.form.submit(); // フォームを送信
-                }
-            });
-
-            // 英数字や直接入力でも、1秒間入力がなければ検索を実行
-            let typingTimer;
-            const typingDelay = 1000; // 1秒後に検索を実行
-
-            searchInput.addEventListener('input', function() {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(() => {
-                    if (searchInput.value.trim() !== '') { // スペースのみの検索を防ぐ
-                        searchInput.form.submit();
-                    }
-                }, typingDelay);
-            });
-        });
-    </script>
 
 </body>
 

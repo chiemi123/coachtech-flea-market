@@ -68,12 +68,6 @@
         <!-- 保存ボタン -->
         <button type="submit" class="btn-submit">更新する</button>
 
-        @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-        @endif
-
     </form>
 </div>
 @endsection

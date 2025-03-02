@@ -8,8 +8,9 @@
 
 .header {
     background: #000;
-    height: 80px;
-    width: 1512px;
+    height: 82px;
+    width: 100%;
+    max-width: 1515px;
     margin: 0 auto; /* 水平中央に配置 */
     display: flex;
     align-items: center; /* ヘッダー内の全要素を垂直中央に配置 */
@@ -125,25 +126,83 @@
     transform: scale(1.05); /* ほんの少し拡大 */
 }
 
-/* スマホ用のスタイル */
-@media screen and (max-width: 768px) {
-    .header__inner {
-        flex-direction: column;
+.alert {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    /* 📌 ヘッダー全体の幅を画面サイズにフィット */
+    .header {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 5px;
+    }
+
+    /* 📌 ヘッダー全体のレイアウト調整 */
+    .header-utilities {
+        display: flex;
         align-items: center;
+        justify-content: flex-start; /* ロゴと検索フォームを左寄せ */
+        width: 100%;
     }
 
+    /* 📌 ロゴのサイズ調整 */
     .logo {
-        max-width: 150px;
-        height: auto;
+        max-width: 200px;
+        font-size: 10px;
+        margin-left: 10px;
     }
 
+    /* 📌 検索フォームの幅調整 */
     .search-form {
-        width: 90%;
-        margin: 10px 0;
+        height: 45px; /* PCの80pxをリセット */
+        flex-grow: 1; /* ナビゲーションとの間のスペースを活用 */
+        margin-left: 20px; /* ロゴとの間に余白を確保 */
     }
 
+    .search-form input[type="text"] {
+        position: relative; /* PCの絶対配置を無効化 */
+        top: auto; /* PC用の `top` をリセット */
+        left: auto; /* PC用の `left` をリセット */
+        width: 90%;
+        height: 100%; /* `.search-form` の高さと一致させる */
+        font-size: 18px;
+        padding: 8px 10px;
+        border-radius: 5px;
+    }
+
+    /* 📌 ナビゲーションの位置を調整 */
     .header-nav {
-        flex-direction: column;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-width: 320px; /* 幅を適切に調整 */
+        gap: 15px;
+    }
+
+    .header-nav a:not(.sell-button),
+    .header-nav__button {
+        width: 80px;
+        font-size: 15px;
+        height: 45px; /* ナビゲーションの高さを統一 */
+        line-height: 45px; /* テキストを中央に配置 */
+    }
+
+    /* 📌 出品ボタンの調整 */
+    .sell-button {
+        width: 80px;
+        height: 45px;
+        font-size: 15px;
+        line-height: 45px;
     }
 }

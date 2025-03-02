@@ -23,8 +23,9 @@
 /* 商品一覧ページのスタイル */
 .item-list {
     position: absolute;
-    top: 250.39px;
-    left: 69px;
+    top: calc(250.39px - 82px); /* ヘッダーの高さ82pxを考慮 */
+    left: 50%; /* 中央配置 */
+    transform: translateX(-50%); /* 完全に中央に寄せる */
     width: 1374.52px;
     /* 高さは複数行に対応するため自動に任せる */
     display: grid;
@@ -85,4 +86,51 @@
     border-radius: 4px;
     text-align: center;
     width: fit-content;
+}
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    /* 📌 タブのサイズを調整 */
+    .tabs {
+        font-size: 20px;
+        gap: 10px;
+    }
+
+    /* 📌 商品一覧リストのサイズを調整 */
+    .item-list {
+        position: relative; /* absolute を解除して通常のフローに */
+        top: 20px; /* ヘッダーの下に適切な余白を作る */
+        left: auto;
+        transform: none;
+        width: 95%; /* 画面幅にフィット */
+        max-width: 1000px; /* 最大幅を1000pxに変更 */
+        padding: 10px 20px; /* 左右の余白を調整 */
+        margin: 0 auto; /* 中央寄せ */
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(250px, 1fr)
+        ); /* カラムを均等配置 */
+        grid-auto-rows: 320px; /* 高さを維持 */
+        column-gap: 35px; /* 横の間隔を適切に調整 */
+        row-gap: 40px; /* 縦の間隔を調整 */
+        justify-content: center; /* グリッド全体を中央に配置 */
+    }
+
+    /* 📌 商品カードのサイズを調整 */
+    .item-card {
+        width: auto;
+        max-width: 340px; /* 最大幅を設定 */
+        height: 380px;
+    }
+
+    /* 📌 商品名のサイズを調整 */
+    .item-card h3 {
+        font-size: 20px;
+    }
+
+    /* 📌 SOLDラベルのサイズを調整 */
+    .sold-label {
+        font-size: 18px;
+        padding: 4px 12px;
+    }
 }

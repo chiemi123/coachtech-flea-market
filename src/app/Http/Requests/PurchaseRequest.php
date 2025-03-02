@@ -27,11 +27,20 @@ class PurchaseRequest extends FormRequest
     {
         return [
             'payment_method' => ['required', 'in:コンビニ払い,クレジットカード'],
-            'address_id' => ['required', 'exists:addresses,id', function ($value, $fail) {
-                if (!$value && !session('address_id') && !auth()->user()->address) {
-                    $fail('配送先を選択してください。');
+            'address_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    // 🚀 `user_table` ならバリデーションを通す（`users` の住所を使用）
+                    if ($value === 'user_table') {
+                        return;
+                    }
+
+                    // 🚀 `addresses` テーブルに `address_id` が存在するかチェック
+                    if (!\App\Models\Address::where('id', $value)->exists()) {
+                        $fail('選択した配送先が存在しません。');
+                    }
                 }
-            }],
+            ],
         ];
     }
 
@@ -44,6 +53,4 @@ class PurchaseRequest extends FormRequest
             'address_id.exists' => '選択した配送先が存在しません。',
         ];
     }
-
-    
 }

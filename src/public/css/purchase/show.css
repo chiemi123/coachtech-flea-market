@@ -1,5 +1,6 @@
 /* 購入ページの全体レイアウト */
 .purchase-container {
+    position: relative;
     max-width: 1347px; /* 全体の最大幅 */
     margin: 0 auto; /* 中央配置 */
     display: flex;
@@ -21,7 +22,7 @@
     gap: 15px; /* 画像とテキストの間隔 */
     margin-top: 73px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #000000; /* 下線を追加 */
+    border-bottom: 1px solid #000000;
 }
 
 /* 商品画像 */
@@ -55,13 +56,20 @@
 
 /* 支払い方法 */
 .payment-method {
-    width: 326px; /* 支払い方法のボックスの幅 */
+    width: 805px; /* 支払い方法のボックスの幅 */
     height: 190px;
+    border-bottom: 1px solid #000000; /* 下線を追加 */
 }
 
-.label {
+.payment-label {
+    position: absolute;
+    top: 321px; /* 403px - 82px */
+    left: 115px;
+    width: 326px;
+    height: 85px;
     font-size: 20px;
     font-weight: 700;
+    line-height: 85px; /* 高さと同じ値を設定して中央寄せ */
 }
 
 /* トグル用チェックボックスは非表示 */
@@ -71,9 +79,9 @@
 
 /* ドロップダウンスタイル */
 .payment-options {
-    position: relative;
-    top: 16px;
-    left: 176px;
+    position: absolute;
+    top: 417px; /* 499px - 82px */
+    left: 176px; /* 左からの距離を指定 */
     width: 265px;
     height: 31px;
 }
@@ -118,12 +126,12 @@
     display: none;
     position: absolute;
     top: 35px;
-    width: 269px;
-    height: 62px;
-    z-index: 1;
+    width: 100%;
+    min-width: 265px;
     border: 1.5px solid #b1b1b1;
     border-radius: 4px;
     background-color: #636769;
+    padding: 5px 0; /* 選択肢間の余白を調整 */
 }
 
 /* 各選択肢のラッパー */
@@ -139,14 +147,13 @@
 
 /* デフォルトのラベル */
 .option label {
-    display: block;
-    width: 240.36px;
+    display: flex;
+    align-items: center;
+    width: 100%;
     height: 30px;
-    top: 2.5px;
-    left: 27px;
-    padding: 5px 0;
+    padding: 5px 10px;
     background-color: #636769;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: #eaeaea;
     cursor: pointer;
@@ -167,10 +174,6 @@
 
 /* チェックされた場合のスタイル */
 .option input[type="radio"]:checked + label {
-    width: 256.73px;
-    height: 22px;
-    top: 5px;
-    left: 6.14px;
     background-color: #5599eb;
     border-radius: 5px;
     color: white;
@@ -179,8 +182,8 @@
 .option input[type="radio"]:checked + label::before {
     content: "\2713"; /* Unicodeのチェックマーク */
     width: 15.34px;
-    top: 5px;
-    left: 10.23px;
+    width: 16px;
+    height: 16px;
     text-align: center;
     line-height: 12px;
     color: white;
@@ -197,34 +200,32 @@
 
 /* 配送先情報 */
 .shipping-info {
+    position: relative; /* 子要素の absolute 配置を適用するため */
+    width: 805px; /* 画像に合わせた幅 */
+    height: 215px; /* 高さを可変にする */
     display: flex;
-    align-items: center; /* 要素を中央揃え */
-    justify-content: space-between; /* 両端に配置 */
-    width: 100%; /* 横幅を最大に */
-    border-top: 1px solid #000000;
+    align-items: center; /* 垂直方向の中央揃え */
+    justify-content: space-between; /* ラベルと変更ボタンを左右に配置 */
+    padding: 10px 0;
 }
 
-.shipping-info label {
-    font-size: 20px;
-    font-weight: 700;
+.shipping-label {
+    position: absolute;
+    top: 5px;
+    left: 115px;
     width: 326px;
     height: 85px;
-    display: flex; /* コンテンツを中央揃えするために flexbox を使用 */
-    align-items: center; /* 垂直方向に中央揃え */
-}
-
-.shipping-edit {
     font-size: 20px;
-    font-weight: 400;
-    color: blue;
-    text-decoration: none;
-    cursor: pointer;
+    font-weight: 700;
+    line-height: 85px; /* 高さと同じ値を設定して中央寄せ */
 }
 
 .shipping-address {
+    position: absolute; /* 絶対配置 */
+    top: 98px;
+    left: 176px;
     width: 280px;
     height: 58px;
-    margin-left: 176px;
     display: flex;
     flex-direction: column; /* 縦並びに */
     justify-content: flex-start; /* 上から配置 */
@@ -245,11 +246,17 @@
 }
 
 .shipping-edit {
+    position: absolute;
+    top: 5px;
+    left: 655px;
+    width: 115px;
+    height: 85px;
     font-size: 20px;
     font-weight: 400;
     color: blue;
     text-decoration: none;
     cursor: pointer;
+    line-height: 85px;
 }
 
 /* 右側の購入情報を表のようなデザインに */
