@@ -54,7 +54,19 @@
                     @foreach ($listedItems as $item)
                     <li class="item-card">
                         <a href="{{ route('items.show', $item->id) }}">
-                            <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+                            <div class="item-image-wrapper">
+                                @if (Str::startsWith($item->item_image, ['http://', 'https://']))
+                                <!-- 🔹 S3などの外部URLの場合は、そのまま表示 -->
+                                <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
+                                @else
+                                <!-- 🔹 ローカルストレージの場合 -->
+                                <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+                                @endif
+
+                                @if ($item->sold_out)
+                                <span class="sold-label">sold</span>
+                                @endif
+                            </div>
                             <h3>{{ $item->name }}</h3>
                         </a>
                     </li>
@@ -71,11 +83,22 @@
                 <ul class="item-list">
                     @foreach ($purchasedItems as $item)
                     <li class="item-card">
-                        <span class="sold-label">sold</span>
                         <a href="{{ route('items.show', $item->id) }}">
-                            <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
+                            <div class="item-image-wrapper">
+                                @if (Str::startsWith($item->item_image, ['http://', 'https://']))
+                                <!-- 🔹 S3などの外部URLの場合は、そのまま表示 -->
+                                <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
+                                @else
+                                <!-- 🔹 ローカルストレージの場合 -->
+                                <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+                                @endif
+
+                                @if ($item->sold_out)
+                                <span class="sold-label">sold</span>
+                                @endif
+
+                            </div>
                             <h3>{{ $item->name }}</h3>
-                            <span class="sold-label">sold</span>
                         </a>
                     </li>
                     @endforeach

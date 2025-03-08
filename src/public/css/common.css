@@ -122,8 +122,8 @@
 
 /* ホバー時のスタイル */
 .sell-button:hover {
-    background-color: #cc0000; /* 濃い赤に変化 */
-    transform: scale(1.05); /* ほんの少し拡大 */
+    background-color: #ffffff;
+    transform: scale(1.05);
 }
 
 .alert {
@@ -152,7 +152,6 @@
     .header-utilities {
         display: flex;
         align-items: center;
-        justify-content: flex-start; /* ロゴと検索フォームを左寄せ */
         width: 100%;
     }
 

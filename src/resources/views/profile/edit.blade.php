@@ -44,7 +44,7 @@
         <!-- ユーザー名 -->
         <div class="form-group">
             <label for="username" class="form-label">ユーザー名</label>
-            <input type="text" name="username" id="username" value="{{ old('username', $user->username) }}" class="form-input" required>
+            <input type="text" name="username" id="username" value="{{ old('username', $user->name ?? '') }}" class="form-input" required>
         </div>
 
         <!-- 郵便番号 -->
@@ -69,5 +69,6 @@
         <button type="submit" class="btn-submit">更新する</button>
 
     </form>
+
 </div>
 @endsection

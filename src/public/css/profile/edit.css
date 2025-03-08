@@ -1,17 +1,23 @@
 /* 全体のコンテナ */
 .profile-edit-container {
-    max-width: 600px;
+    max-width: 680px;
+    width: 90%;
     margin: 0 auto;
     padding: 20px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 子要素を中央配置 */
 }
 
 /* タイトル */
 .profile-edit-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
+    width: 299px;
+    height: 47px;
+    font-size: 36px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 47px;
 }
 
 /* エラーメッセージ */
@@ -26,20 +32,23 @@
 .profile-edit-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
 }
 
 /* 各入力項目 */
 .form-group {
+    width: 680px;
+    height: 92px;
     text-align: left;
+    margin-bottom: 62px;
 }
 
 /* ラベル */
 .form-label {
     display: block;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 700;
     margin-bottom: 5px;
-    color: #333;
+    color: #000000;
 }
 
 /* 入力フィールド */
@@ -62,9 +71,10 @@
 /* プロフィール画像グループのスタイル */
 .profile-image-group {
     display: flex;
+    flex-direction: row;
     align-items: center; /* 中央揃え */
     gap: 20px; /* 画像とボタンの間隔 */
-    margin-bottom: 20px;
+    margin-bottom: 76px;
     min-height: 120px; /* 親要素の高さを確保 */
 }
 
@@ -95,16 +105,19 @@
 
 /* カスタムボタン */
 .profile-image-group label[for="profile_image"] {
+    width: 179px;
+    height: 48.43px;
     display: inline-block;
-    padding: 8px 20px;
-    font-size: 14px;
-    font-weight: bold;
-    color: red;
-    border: 1px solid red;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ff5555;
+    border: 1px solid #ff5555;
     border-radius: 5px;
-    background-color: white;
+    background-color: #ffffff;
     cursor: pointer; /* クリック可能に */
     transition: background-color 0.3s, color 0.3s;
+    margin-left: 40px;
 }
 
 .profile-image-group label[for="profile_image"]:hover {
@@ -114,10 +127,12 @@
 
 /* 更新ボタン */
 .btn-submit {
-    background-color: red;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
+    width: 680px;
+    height: 60px;
+    background-color: #ff5555;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -126,8 +141,51 @@
 }
 
 .btn-submit:hover {
-    background-color: #cc0000;
+    background-color: #f33535;
     transform: scale(1.05);
 }
 
+/* タブレット用のレスポンシブ調整 */
+@media (max-width: 850px) {
+    .profile-edit-container {
+        width: 95%;
+        max-width: 450px; /* 横幅を狭める */
+    }
 
+    .profile-edit-title {
+        font-size: 28px;
+    }
+
+    .form-group {
+        max-width: 450px;
+        margin-bottom: 25px;
+    }
+
+    /* プロフィール画像とボタンの間隔を調整 */
+    .profile-image-group {
+        gap: 20px;
+    }
+
+    .image-preview {
+        width: 120px;
+        height: 120px;
+    }
+
+    .image-preview img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile-image-group label[for="profile_image"] {
+        width: 160px;
+        height: 45px;
+        font-size: 16px;
+    }
+
+    .btn-submit {
+        max-width: 450px;
+        font-size: 20px;
+        height: 50px;
+        margin-top: 40px;
+    }
+}

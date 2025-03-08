@@ -30,13 +30,13 @@ class PurchaseRequest extends FormRequest
             'address_id' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    // 🚀 `user_table` ならバリデーションを通す（`users` の住所を使用）
-                    if ($value === 'user_table') {
-                        return;
+                    // `address_id` が `users` の `id` である場合
+                    if (\App\Models\User::where('id', $value)->exists()) {
+                        return; // `user_id` が存在する場合はバリデーションをスキップ
                     }
 
-                    // 🚀 `addresses` テーブルに `address_id` が存在するかチェック
-                    if (!\App\Models\Address::where('id', $value)->exists()) {
+                    // 🚀 `addresses` にデータが存在しない場合はエラー
+                    if (!is_numeric($value) || !\App\Models\Address::where('id', $value)->exists()) {
                         $fail('選択した配送先が存在しません。');
                     }
                 }

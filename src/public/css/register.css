@@ -121,3 +121,53 @@
         font-size: 14px; /* リンクのフォントサイズを縮小 */
     }
 }
+
+/* ✅ タブレット用の調整 */
+@media (min-width: 768px) and (max-width: 850px) {
+    /* フォームコンテンツの幅を調整 */
+    .register__content {
+        width: 60%; /* 画面幅に合わせる */
+        max-width: 650px; /* 最大幅を 650px に制限 */
+        padding: 25px; /* 余白を少し減らす */
+    }
+
+    /* 見出し */
+    .register-form__heading {
+        font-size: 30px; /* 見出しを少し縮小 */
+        margin-bottom: 18px;
+    }
+
+    /* フォーム全体 */
+    .form {
+        width: 100%;
+        margin: 25px auto;
+    }
+
+    /* 入力項目のラベル */
+    .form__group-title {
+        font-size: 22px; /* フォントサイズを少し縮小 */
+        line-height: 26px;
+    }
+
+    /* エラーメッセージ */
+    .form__error {
+        font-size: 14px; /* 文字サイズを少し小さく */
+    }
+
+    /* 入力フィールド */
+    .form__input--text input {
+        height: 45px; /* 高さを調整 */
+        font-size: 18px; /* フォントサイズを少し大きく */
+    }
+
+    /* ボタンの調整 */
+    .form__button-submit {
+        height: 60px; /* 高さを少し調整 */
+        font-size: 24px; /* 文字サイズを少し小さく */
+    }
+
+    /* ログインリンクボタンのフォントサイズ */
+    .login__button-submit {
+        font-size: 18px;
+    }
+}

@@ -4,6 +4,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,20 +33,17 @@ Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('items.show
 // 商品のコメント投稿ルート
 Route::post('/item/{item}/comment', [ItemController::class, 'addComment'])->name('items.comment');
 
+Route::post('/webhook/stripe', [StripeWebhookController::class, 'handleWebhook']);
+
 Route::get('/purchase/success', [PurchaseController::class, 'success'])->name('purchase.success');
+
 Route::get('/purchase/cancel', [PurchaseController::class, 'cancel'])->name('purchase.cancel');
+
 
 
 // ===========================
 //  ログイン必須のルート
 // ===========================
-
-//Route::middleware(['auth'])->group(function () {
-
-// メール認証の画面
-//Route::get('/email/verify', function () {
-//    return view('auth.verify-email');
-//})->name('verification.notice');
 
 // メール認証通知画面（ユーザーに「認証メールを送信しました」などを表示）
 Route::get('/email/verify', function () {
@@ -63,19 +61,6 @@ Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('status', 'verification-link-sent');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
-
-// 認証メールの送信
-//Route::post('/email/verification-notification', function (Request $request) {
-//    $request->user()->sendEmailVerificationNotification();
-//    return back()->with('status', 'verification-link-sent');
-//})->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
-
-// メール認証の処理
-//Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-//    $request->fulfill(); // 認証を完了
-//    return redirect()->intended('/mypage/profile'); // 認証後にプロフィール設定画面へ
-//})->middleware(['auth', 'signed', 'throttle:6,1'])->name('verification.verify');
-// });
 
 // ===========================
 //  認証済みユーザー向けのルート

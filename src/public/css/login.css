@@ -93,35 +93,53 @@
     text-decoration: none;
 }
 
-/* スマホ用スタイル（レスポンシブ） */
-@media screen and (max-width: 768px) {
+/* ✅ タブレット用の調整 */
+@media (min-width: 768px) and (max-width: 850px) {
+    /* ログインコンテンツの幅を調整 */
     .login__content {
-        width: 90%; /* スマホで横幅を画面に合わせる */
-        padding: 20px; /* 内側の余白を調整 */
-        height: auto; /* 高さを自動調整 */
-        top: auto; /* 絶対位置を解除 */
-        left: auto;
+        width: 60%; /* タブレットでは少し縮小 */
+        max-width: 600px; /* 最大幅を600pxに */
+        padding: 25px; /* パディングを少し縮小 */
     }
 
+    /* ログインフォームのタイトル */
     .login-form__heading {
-        font-size: 24px; /* ヘッダーサイズを縮小 */
-        margin-bottom: 15px;
+        font-size: 30px; /* 少し小さめに */
+        line-height: 36px;
     }
 
+    /* フォーム全体の調整 */
+    .form {
+        width: 100%;
+        margin: 20px auto;
+    }
+
+    /* フォームタイトル（入力欄のラベル） */
     .form__group-title {
-        font-size: 16px; /* フォントサイズを縮小 */
+        font-size: 22px; /* 少し小さく */
+        line-height: 26px;
     }
 
+    /* エラーメッセージ */
     .form__error {
-        font-size: 12px; /* エラー表示のフォントサイズを縮小 */
+        font-size: 14px; /* 少し小さく */
+        height: 18px;
     }
 
+    /* 入力フィールド */
+    .form__input--text input {
+        height: 45px; /* 高さを少し増やす */
+        font-size: 18px; /* 入力文字を少し大きく */
+    }
+
+    /* ボタンのサイズ調整 */
     .form__button-submit {
-        font-size: 18px; /* ボタンの文字サイズを調整 */
-        height: 45px; /* ボタンの高さを調整 */
+        height: 48px;
+        font-size: 24px; /* 少し縮小 */
     }
 
+    /* 登録リンクボタンのフォントサイズ */
     .register__button-submit {
-        font-size: 14px; /* フォントサイズをさらに小さく */
+        font-size: 18px;
     }
 }

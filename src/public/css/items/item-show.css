@@ -145,13 +145,16 @@
 }
 
 .purchase-button {
-    display: inline-block;
+    display: flex; /* ✅ フレックスボックスを使用 */
+    justify-content: center; /* ✅ 水平方向の中央揃え */
+    align-items: center; /* ✅ 垂直方向の中央揃え */
     width: 570px;
+    height: 56px;
     padding: 13px 20px;
     font-size: 30px;
     font-weight: 700;
     color: #fff;
-    background-color: red;
+    background-color: #ff5555;
     text-align: center;
     margin: 22px 0;
     border-radius: 5px;
@@ -160,13 +163,15 @@
 }
 
 .purchase-button:hover {
-    background-color: #cc0000;
+    background-color: #f33535;
 }
 
 /* 商品説明と情報 */
 .item-description {
     height: 321px;
     padding-top: 10px;
+    font-size: 24px;
+    font-weight: 400;
 }
 
 /* 商品情報 */
@@ -182,21 +187,33 @@
     margin: 23px 0;
 }
 
-.item-info P {
+.category-group {
+    display: flex; /* 横並びにする */
+    gap: 10px; /* カテゴリー間の間隔を設定 */
+    align-items: center; /* 縦方向の中央揃え */
     font-size: 24px;
     font-weight: 700;
     color: #000000;
-    margin: 3px 0;
 }
 
 /* カテゴリーのタグ */
-.category {
+.category-label {
     display: inline-block;
     padding: 5px 10px;
-    font-size: 12px;
-    background-color: #f1f1f1;
-    border-radius: 5px;
+    min-width: 101.99px; /* 最小幅を指定 */
+    width: auto; /* 内容に応じて幅が広がる */
+    max-width: 100%; /* 親要素の幅を超えないようにする */
+    height: 30px;
+    border-radius: 15px;
+    background: #d9d9d9;
+    display: flex; /* テキストの中央揃え */
+    align-items: center; /* 縦方向の中央揃え */
+    justify-content: center; /* 横方向の中央揃え */
+    font-size: 20px; /* 文字サイズ */
+    font-weight: 400; /* 文字を太字に */
+    color: #000000; /* 文字色 */
     margin-right: 5px;
+    margin-left: 25px;
 }
 
 /* 商品の状態のスタイル */
@@ -205,6 +222,18 @@
     align-items: center;
     height: 100px; /* 高さを 100px に */
     line-height: 100px; /* テキストを中央に配置 */
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.item-condition .value {
+    width: auto;
+    height: 82.67px;
+    font-size: 20px;
+    font-weight: 400;
+    margin-left: 45px;
+    line-height: 82.67px;
 }
 
 /* コメントセクションを商品詳細の下に配置 */
@@ -219,7 +248,7 @@
 .comment-section h2 {
     font-size: 28px; /* フォントサイズを 28px に */
     font-weight: 700;
-    margin: 8px 0;
+    margin: 4px 0;
 }
 
 .comment-title {
@@ -286,11 +315,12 @@
 .comment-submit {
     display: inline-block;
     width: 570px;
+    height: 56px;
     padding: 9.2px 20px;
     font-size: 25px;
     font-weight: 700;
     color: #fff;
-    background-color: red;
+    background-color: #ff5555;
     border: none;
     border-radius: 4%;
     margin: 22px 0;
@@ -299,16 +329,149 @@
 }
 
 .comment-submit:hover {
-    background-color: #cc0000;
+    background-color: #f33535;
 }
 
-/* レスポンシブ対応：画面幅が狭いとき縦並び */
-@media (max-width: 768px) {
-    .item-info-container {
-        flex-direction: column;
+@media (max-width: 850px) {
+    /* コンテナを縦並びに変更 */
+    .item-detail-container {
+        display: flex;
+        flex-direction: row; /* 2カラムのまま維持 */
+        justify-content: center; /* 中央配置 */
+        align-items: flex-start;
+        max-width: 95%;
+        margin: 0 auto;
+        gap: 20px; /* 画像と商品情報の間隔を調整 */
     }
 
+    /* 商品情報コンテナを縦並びに */
+    .item-info-container {
+        display: flex;
+        flex-direction: row; /* 横並びを維持 */
+        align-items: flex-start;
+        width: 100%;
+        gap: 15px;
+    }
+
+    /* 商品画像 */
     .item-image {
-        max-width: 100%;
+        flex: 1;
+        max-width: 50%; /* 画面幅に応じて調整 */
+        text-align: center;
+        margin: 10px;
+    }
+
+    .item-image img {
+        width: 100%; /* 画面いっぱい */
+        height: auto; /* 縦横比を維持 */
+        max-width: 350px;
+    }
+
+    /* 商品情報の幅調整 */
+    .item-details {
+        flex: 1;
+        max-width: 50%;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .item-summary {
+        padding: 0;
+    }
+
+    /* 商品名のフォントサイズを調整 */
+    .item-name {
+        font-size: 36px; /* 少し小さく */
+    }
+
+    /* ブランド名・価格のフォントサイズ調整 */
+    .brand-name,
+    .item-price {
+        font-size: 24px;
+    }
+
+    /* いいね・コメントの配置 */
+    .item-stats {
+        justify-content: flex-start; /* 左揃え */
+        gap: 15px; /* アイコン間の間隔を調整 */
+        margin-left: 0;
+    }
+
+    /* 商品情報全体 */
+    .item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* 各項目間の間隔を調整 */
+        height: 280px;
+    }
+
+    /* カテゴリーのグループ */
+    .category-group {
+        display: flex; /* 横並び */
+        align-items: center; /* 縦方向中央揃え */
+        flex-wrap: wrap; /* タグが多い場合は折り返す */
+        gap: 10px; /* カテゴリータグの間隔 */
+        margin: 5px;
+    }
+
+    /* カテゴリーラベル */
+    .category-label {
+        font-size: 18px; /* 文字サイズを小さく */
+        min-width: auto; /* 最小幅を自動調整 */
+        padding: 5px 15px; /* 余白を調整 */
+        margin-left: 10px;
+        white-space: nowrap; /* テキストが折り返されないようにする */
+    }
+
+    /* 商品の状態 */
+    .item-condition {
+        display: flex;
+        align-items: center; /* テキストと状態の位置を揃える */
+        font-size: 24px;
+        height: auto;
+        line-height: normal;
+        margin: 5px;
+    }
+
+    .item-condition .value {
+        font-size: 18px;
+        margin-left: 35px;
+    }
+
+    /* 商品説明・商品情報のタイトル */
+    .item-description h2,
+    .item-info h2 {
+        font-size: 30px; /* 少し小さく */
+    }
+
+    /* コメントセクション */
+    .comment-section {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    /* コメント入力欄の幅を調整 */
+    .comment-form textarea {
+        width: 100%;
+        height: 200px; /* 縦を少し縮める */
+    }
+
+    /* 購入ボタン */
+    .purchase-button {
+        width: 100%;
+        font-size: 24px; /* フォントサイズ */
+        padding: 12px;
+        display: block; /* `margin: auto;` で中央揃えするために `block` に */
+        text-align: center;
+    }
+
+    /* コメント送信ボタン */
+    .comment-submit {
+        width: 100%;
+        font-size: 20px;
+        padding: 10px;
+        display: block; /* `margin: auto;` で中央揃えするために `block` に */
+        margin: 20px auto; /* 上下に20pxの余白 + 左右中央配置 */
+        text-align: center;
     }
 }

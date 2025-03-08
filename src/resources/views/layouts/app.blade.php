@@ -67,6 +67,8 @@
             {{ session('success') }}
         </div>
         @endif
+
+        @if (!request()->routeIs('register') && !request()->routeIs('login'))
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -75,6 +77,7 @@
                 @endforeach
             </ul>
         </div>
+        @endif
         @endif
         @yield('content')
     </main>

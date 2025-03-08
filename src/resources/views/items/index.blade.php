@@ -27,14 +27,17 @@
     {{-- ここはログイン不要（おすすめ） --}}
     @forelse ($items as $item)
     <div class="item-card">
-        @if ($item->sold_out)
+        @if ($item->is_sold)
         <span class="sold-label">sold</span>
         @endif
         <a href="{{ route('items.show', $item->id) }}">
-            @php
-            $isStorageImage = !Str::startsWith($item->item_image, ['http://', 'https://']);
-            @endphp
-            <img src="{{ $isStorageImage ? asset('storage/' . $item->item_image) : asset($item->item_image) }}" alt="{{ $item->name }}">
+            @if (Str::startsWith($item->item_image, ['http://', 'https://']))
+            <!-- 🔹 S3などの外部URLの場合は、そのまま表示 -->
+            <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
+            @else
+            <!-- 🔹 ローカルストレージの場合 -->
+            <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+            @endif
             <h3>{{ $item->name }}</h3>
         </a>
     </div>
@@ -53,7 +56,6 @@
             @php
             $isStorageImage = !Str::startsWith($item->item_image, ['http://', 'https://']);
             @endphp
-
             <img src="{{ $isStorageImage ? asset('storage/' . $item->item_image) : asset($item->item_image) }}" alt="{{ $item->name }}">
             <h3>{{ $item->name }}</h3>
         </a>

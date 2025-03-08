@@ -1,11 +1,17 @@
+select,
+::picker(select) {
+    appearance: base-select;
+}
+
 /* フォーム全体 */
 .container {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
     background-color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
 }
 
 /* 見出し */
@@ -17,9 +23,9 @@
 
 /* 見出し（商品の詳細）スタイル */
 .section-title {
-    font-size: 18px; /* 文字サイズ */
-    font-weight: bold; /* 太字 */
-    color: #333; /* テキストの色 */
+    font-size: 30px;
+    font-weight: 700;
+    color: #5f5f5f; /* テキストの色 */
     margin-bottom: 10px; /* 下部の余白 */
     border-bottom: 2px solid #ddd; /* 下線のスタイル */
     padding-bottom: 5px; /* 下線との間隔 */
@@ -28,9 +34,14 @@
 /* 画像アップロードボタンをカスタマイズ */
 .image-upload {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    border: 1px solid#ccc;
+    flex-direction: column;
+    height: 150px;
+    border-radius: 4px;
+    border: 1px dashed #5f5f5f;
+    width: 100%;
+    position: relative;
     gap: 5px;
 }
 
@@ -50,8 +61,8 @@
 
 /* ボタンのホバー時 */
 .custom-file-label:hover {
-    background-color: #e65c50;
-    background-color: #e65c50;
+    background: linear-gradient(90deg, #ff5555, #ff6f61);
+    color: #ffffff;
 }
 
 /* デフォルトのファイル選択を非表示 */
@@ -65,11 +76,15 @@
     color: #666;
 }
 
+.category-group {
+    margin-bottom: 15px;
+}
+
 /* カテゴリータイトル */
 .category-title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
     margin-bottom: 10px; /* ✅ タイトルの下に余白をつける */
 }
 
@@ -96,11 +111,12 @@
     display: inline-block;
     width: 100%;
     padding: 10px 20px;
-    background-color: #f8f8f8;
-    color: #333;
-    border: 1px solid #ddd;
+    background-color: #ffffff;
+    color: #ff5655;
+    border: 1px solid #ff5655;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -108,13 +124,13 @@
 
 /* チェックボックスが選択されたときのスタイル */
 .category-group input[type="checkbox"]:checked + .category-label {
-    background-color: red;
-    color: white;
-    border-color: red;
+    background-color: #ff5655;
+    color: #ffffff;
+    border-color: #ff5655;
 }
 
 .category-label:hover {
-    background-color: #f1f1f1;
+    background-color: #ffffff;
 }
 
 /* 入力フィールド共通 */
@@ -125,10 +141,93 @@
 .container input[type="file"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
+    margin-bottom: 37px;
+    border: 1px solid #5f5f5f;
     border-radius: 5px;
     font-size: 16px;
+    color: #5f5f5f;
+}
+
+/* ✅ ▼のカスタマイズ */
+.product-condition {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.product-condition .selected-option {
+    position: relative;
+    background-color: #ffffff;
+    color: #5f5f5f;
+    padding: 10px;
+    border: 1px solid #5f5f5f;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+.product-condition .selected-option::after {
+    content: "▼"; /* カスタム矢印 */
+    font-size: 14px;
+    color: #5f5f5f;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* ✅ ドロップダウンの選択肢のデザイン */
+.options-list {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    background: #636769; /* 選択リストの背景色 */
+    border: 1px solid #b1b1b1;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* ✅ 各選択肢 */
+.options-list li {
+    padding: 10px 10px 10px 30px; /* 左側に✓のスペース確保 */
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #eaeaea; /* 文字色 */
+    position: relative;
+}
+
+/* ✅ ホバー時 */
+.options-list li:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+/* ✅ 選択されたときのスタイル */
+.options-list li.selected {
+    background-color: #5599eb; /* 選択した項目の背景色 */
+    border-radius: 5px;
+    color: #eaeaea;
+    font-weight: 600;
+}
+
+/* ✅ 選択時に✓を表示 */
+.options-list li.selected::after {
+    content: "✓";
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    left: 10px; /* 左端に配置 */
 }
 
 .price-input-wrapper {
@@ -137,12 +236,8 @@
     flex-direction: column; /* ✅ 子要素を縦に並べる */
     align-items: flex-start; /* ✅ 左寄せにする */
     gap: 5px; /* ✅ ラベルと入力欄の間に余白を追加 */
-}
-
-.price-label {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .price-input-wrapper::before {
@@ -151,20 +246,20 @@
     left: 10px; /* 価格入力欄の左側に配置 */
     font-size: 18px;
     color: #333;
-    top: 63%;
+    top: 50%;
     transform: translateY(-50%);
 }
 
 /* 入力欄のスピナー非表示 */
 .container input[type="number"]::-webkit-outer-spin-button,
 .container input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none !important;
+    -webkit-appearance: none;
     margin: 0;
 }
 
 .container input[type="number"] {
-    -moz-appearance: textfield !important; /* Firefox 対応 */
-    appearance: none !important; /* 標準プロパティ スピナーを非表示 */
+    -moz-appearance: textfield; /* Firefox 対応 */
+    appearance: textfield; /* 標準プロパティ スピナーを非表示 */
     padding-left: 25px; /* ￥の表示分だけ内側に余白を確保 */
     width: 100%;
     height: 40px;
@@ -181,29 +276,91 @@
 
 /* 出品ボタン */
 .container button {
-    background-color: red;
-    color: white;
+    background-color: #ff5555;
+    color: #ffffff;
     padding: 10px 20px;
+    margin-top: 118px;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 26px;
+    font-weight: 700;
     cursor: pointer;
     width: 100%;
     transition: background-color 0.3s ease;
 }
 
 .container button:hover {
-    background-color: darkred;
+    background-color: #f33535;
 }
 
-/* ✅ レスポンシブ対応（スマホでは間隔を調整） */
-@media (max-width: 768px) {
+/* ✅ タブレット用の調整 */
+@media (min-width: 768px) and (max-width: 850px) {
+    /* フォームの幅を広げる */
+    .container {
+        width: 70%;
+        max-width: 700px; /* 少し広げる */
+        font-size: 22px; /* 文字サイズ調整 */
+    }
+
+    /* タイトルや見出しの調整 */
+    .container h1 {
+        font-size: 26px;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+
+    /* 入力フィールド共通 */
+    .container input[type="text"],
+    .container input[type="number"],
+    .container select,
+    .container textarea,
+    .container input[type="file"] {
+        font-size: 18px; /* 少し大きめに */
+        padding: 12px; /* タブレット用に余裕を持たせる */
+    }
+
+    /* ✅ 価格入力欄のサイズ調整 */
+    .price-input-wrapper {
+        font-size: 22px;
+    }
+
+    .price-input-wrapper::before {
+        font-size: 20px;
+        left: 12px;
+    }
+
+    .container input[type="number"] {
+        padding-left: 30px; /* ￥マークのスペースを調整 */
+        font-size: 18px;
+        height: 45px;
+    }
+
+    /* ✅ ドロップダウン（選択肢リスト）の調整 */
+    .options-list {
+        max-height: 250px; /* タブレットでは高さを少し増やす */
+        font-size: 16px;
+    }
+
+    .options-list li {
+        padding: 12px 12px 12px 35px; /* チェックマークの余白調整 */
+    }
+
+    /* ✅ カテゴリーのスタイル調整 */
     .category-options {
-        gap: 6px;
+        gap: 10px; /* タブレット用に少し余裕を持たせる */
     }
 
     .category-label {
-        font-size: 12px;
-        padding: 5px 10px;
+        font-size: 16px;
+        padding: 8px 15px; /* タブレット用に拡大 */
+    }
+
+    /* ✅ 出品ボタンのサイズ調整 */
+    .container button {
+        font-size: 24px;
+        padding: 12px 25px;
+        margin-top: 100px;
     }
 }

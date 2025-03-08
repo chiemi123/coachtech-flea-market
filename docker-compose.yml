@@ -45,3 +45,9 @@ services:
       - mysql
     ports:
       - 8080:80
+
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: stripe_cli
+    restart: always
+    entrypoint: [ "tail", "-f", "/dev/null" ]    

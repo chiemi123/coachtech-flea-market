@@ -73,12 +73,16 @@
             <!-- 商品情報 -->
             <div class="item-info">
                 <h2>商品の情報</h2>
-                <p>カテゴリー:
+                <p class="category-group">カテゴリー:
                     @foreach ($item->categories as $category)
-                    <span class="category">{{ $category->name }}</span>
+                    <span class="category-label">{{ $category->name }}</span>
                     @endforeach
                 </p>
-                <p class="item-condition">商品の状態: {{ $item->condition->name }}</p>
+                <p class="item-condition">
+                    <span class="label">商品の状態:</span>
+                    <span class="value">{{ $item->condition->name }}</span>
+                </p>
+
             </div>
 
             <!-- コメントセクション -->
