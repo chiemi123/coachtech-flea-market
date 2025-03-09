@@ -84,7 +84,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Address::class)->latestOfMany('created_at'); // addresses テーブルの最新の住所を取得
     }
 
-    // ✅ ユーザー登録時に `addresses` に自動で住所を保存
+    // ユーザー登録時に `addresses` に自動で住所を保存
     protected static function boot()
     {
         parent::boot();

@@ -52,6 +52,11 @@ class ItemController extends Controller
     // マイリストの取得
     public function myList(Request $request)
     {
+        // 🔹 未認証のユーザーは空のリストを返す
+        if (!Auth::check()) {
+            return view('items.index', ['items' => collect([])]);
+        }
+
         $user = Auth::user();
         $search = mb_convert_kana($request->input('search'), 's'); // 全角スペースを半角に
         $trimmedSearch = trim($search);

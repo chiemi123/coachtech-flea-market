@@ -1,5 +1,5 @@
 /* 全体のコンテナ */
-.profile-edit-container {
+.profile__edit {
     max-width: 680px;
     width: 90%;
     margin: 0 auto;
@@ -11,7 +11,7 @@
 }
 
 /* タイトル */
-.profile-edit-title {
+.profile__edit-title {
     width: 299px;
     height: 47px;
     font-size: 36px;
@@ -20,22 +20,14 @@
     margin-bottom: 47px;
 }
 
-/* エラーメッセージ */
-.error-messages {
-    margin-bottom: 20px;
-    color: red;
-    font-size: 14px;
-    text-align: left;
-}
-
 /* フォーム全体 */
-.profile-edit-form {
+.profile__edit-form {
     display: flex;
     flex-direction: column;
 }
 
 /* 各入力項目 */
-.form-group {
+.profile__edit-group {
     width: 680px;
     height: 92px;
     text-align: left;
@@ -43,7 +35,7 @@
 }
 
 /* ラベル */
-.form-label {
+.profile__edit-label {
     display: block;
     font-size: 24px;
     font-weight: 700;
@@ -52,7 +44,7 @@
 }
 
 /* 入力フィールド */
-.form-input {
+.profile__edit-input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -63,13 +55,13 @@
 }
 
 /* フォーカス時のスタイル */
-.form-input:focus {
+.profile__edit-input:focus {
     border-color: red;
     outline: none;
 }
 
-/* プロフィール画像グループのスタイル */
-.profile-image-group {
+/* 画像アップロード用のコンテナ */
+.profile__edit-image-container {
     display: flex;
     flex-direction: row;
     align-items: center; /* 中央揃え */
@@ -78,8 +70,8 @@
     min-height: 120px; /* 親要素の高さを確保 */
 }
 
-/* プロフィール画像プレビュー */
-.image-preview {
+/* プロフィール画像のラップ要素 */
+.profile__edit-image-wrapper {
     width: 150px; /* 幅を固定 */
     height: 150px; /* 高さを固定 */
     border-radius: 50%; /* 丸くする */
@@ -88,7 +80,7 @@
     background: #d9d9d9;
 }
 
-.image-preview img {
+.profile__edit-image {
     width: 150px; /* 幅を固定 */
     height: 150px; /* 高さを固定 */
     border-radius: 50%; /* 丸くする */
@@ -99,12 +91,12 @@
 }
 
 /* ファイル選択ボタンのスタイル */
-.profile-image-group input[type="file"] {
+.profile__edit-input--file {
     display: none; /* デフォルトのファイル選択ボタンを非表示 */
 }
 
 /* カスタムボタン */
-.profile-image-group label[for="profile_image"] {
+.profile__edit-file-button {
     width: 179px;
     height: 48.43px;
     display: inline-block;
@@ -120,13 +112,13 @@
     margin-left: 40px;
 }
 
-.profile-image-group label[for="profile_image"]:hover {
+.profile__edit-button--file:hover {
     background-color: red;
     color: white;
 }
 
 /* 更新ボタン */
-.btn-submit {
+.profile__edit-submit-button {
     width: 680px;
     height: 60px;
     background-color: #ff5555;
@@ -140,49 +132,49 @@
     transition: background-color 0.3s, transform 0.2s;
 }
 
-.btn-submit:hover {
+.profile__edit-button:hover {
     background-color: #f33535;
     transform: scale(1.05);
 }
 
 /* タブレット用のレスポンシブ調整 */
 @media (max-width: 850px) {
-    .profile-edit-container {
+    .profile__edit {
         width: 95%;
         max-width: 450px; /* 横幅を狭める */
     }
 
-    .profile-edit-title {
+    .profile__edit-title {
         font-size: 28px;
     }
 
-    .form-group {
+    .profile__edit-group {
         max-width: 450px;
         margin-bottom: 25px;
     }
 
     /* プロフィール画像とボタンの間隔を調整 */
-    .profile-image-group {
+    .profile__edit-image {
         gap: 20px;
     }
 
-    .image-preview {
+    .profile__edit-image-wrapper {
         width: 120px;
         height: 120px;
     }
 
-    .image-preview img {
+    .profile__edit-image-wrapper img {
         width: 120px;
         height: 120px;
     }
 
-    .profile-image-group label[for="profile_image"] {
+    .profile__edit-file-button {
         width: 160px;
         height: 45px;
         font-size: 16px;
     }
 
-    .btn-submit {
+    .profile__edit-submit-button {
         max-width: 450px;
         font-size: 20px;
         height: 50px;

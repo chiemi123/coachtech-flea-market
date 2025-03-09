@@ -1,4 +1,5 @@
-.verify-container {
+/* 🔹 メール認証画面のコンテナ */
+.verify {
     position: relative;
     display: flex;
     justify-content: center; /* 中央配置 */
@@ -6,12 +7,14 @@
     flex-direction: column; /* 縦方向に配置 */
 }
 
-.verify-wrapper {
+/* 🔹 ラッパー */
+.verify__wrapper {
     width: 100%; /* 親要素を100%に */
     text-align: center; /* 中央寄せ */
 }
 
-.verify-message {
+/* 🔹 認証メッセージ */
+.verify__message {
     width: 720px;
     height: 58px;
     font-size: 24px;
@@ -20,15 +23,16 @@
     text-align: center;
     line-height: 1.4; /* 行間調整 */
     position: absolute; /* 絶対配置 */
-    top: calc(319px - 82px); /* ヘッダーの高さ80pxを考慮して修正 */
+    top: calc(319px - 82px); /* ヘッダーの高さを考慮 */
     left: 50%; /* 画面中央に配置 */
     transform: translateX(-50%); /* 完全に中央揃え */
 }
 
-.verify-button {
+/* 🔹 認証ボタン */
+.verify__button {
     display: inline-block;
-    width: 257px; /* 幅を257pxに指定 */
-    height: 69px; /* 高さを69pxに指定 */
+    width: 257px;
+    height: 69px;
     background-color: #d9d9d9;
     color: #000000;
     text-decoration: none;
@@ -38,21 +42,22 @@
     font-size: 24px;
     font-weight: 700;
     text-align: center;
-    line-height: 49px; /* ボタン内テキストを中央に配置（69px - padding を考慮） */
-    position: absolute; /* 絶対位置指定 */
-    top: calc(439px - 82px); /* ヘッダーの高さ80pxを考慮して修正 */
-    left: 50%; /* 画面中央に配置 */
-    transform: translateX(-50%); /* 完全に中央寄せ */
+    line-height: 49px; /* ボタン内テキストを中央に配置 */
+    position: absolute;
+    top: calc(439px - 82px); /* ヘッダーの高さを考慮 */
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.verify-button:hover {
+.verify__button:hover {
     background-color: #bbb;
 }
 
-.resend-link {
-    display: inline-block; /* リンクをボタンのように扱う */
-    width: 257px; /* 幅 257px */
-    height: 53.29px; /* 高さ 53.29px */
+/* 🔹 認証メール再送ボタン */
+.verify__resend-button {
+    display: inline-block;
+    width: 257px;
+    height: 53.29px;
     background: none;
     border: none;
     color: #0073cc;
@@ -60,21 +65,21 @@
     font-size: 20px;
     font-weight: 700;
     cursor: pointer;
-    text-align: center; /* テキスト中央揃え */
-    line-height: 53.29px; /* 高さに合わせてテキストを中央配置 */
-    position: absolute; /* 絶対位置指定 */
-    top: calc(560px - 82px); /* ヘッダーの高さ80pxを考慮して修正 */
-    left: 50%; /* 画面中央に配置 */
-    transform: translateX(-50%); /* 完全に中央寄せ */
+    text-align: center;
+    line-height: 53.29px;
+    position: absolute;
+    top: calc(560px - 82px); /* ヘッダーの高さを考慮 */
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.resend-link:hover {
+.verify__resend-button:hover {
     color: #0056b3;
 }
 
-/* 📌 タブレット（768px〜850px）の調整 */
+/* タブレット（768px〜850px）の調整 */
 @media screen and (min-width: 768px) and (max-width: 850px) {
-    .verify-container {
+    .verify {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -82,7 +87,7 @@
         width: 100%;
     }
 
-    .verify-wrapper {
+    .verify__wrapper {
         max-width: 90%;
         width: 100%;
         display: flex;
@@ -90,28 +95,28 @@
         align-items: center;
     }
 
-    .verify-message {
-        width: 720px; /* PC版と同じ幅 */
-        max-width: 90%; /* 必要に応じて縮小 */
+    .verify__message {
+        width: 720px;
+        max-width: 90%;
         font-size: 22px;
         text-align: center;
         line-height: 1.4;
         position: absolute;
-        top: calc(319px - 82px); /* PC版と同じ配置 */
+        top: calc(319px - 82px);
         left: 50%;
         transform: translateX(-50%);
     }
 
-    .verify-button {
+    .verify__button {
         position: absolute;
-        top: calc(439px - 82px); /* PC版と同じ配置 */
+        top: calc(439px - 82px);
         left: 50%;
         transform: translateX(-50%);
     }
 
-    .resend-link {
+    .verify__resend-button {
         position: absolute;
-        top: calc(560px - 82px); /* PC版と同じ配置 */
+        top: calc(560px - 82px);
         left: 50%;
         transform: translateX(-50%);
     }

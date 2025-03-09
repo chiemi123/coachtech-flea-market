@@ -9,66 +9,52 @@
 @endsection
 
 @section('content')
-<div class="profile-edit-container">
-    <h1 class="profile-edit-title">プロフィール設定</h1>
+<div class="profile__edit">
+    <h1 class="profile__edit-title">プロフィール設定</h1>
 
-    @if ($errors->any())
-    <div class="error-messages">
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
-    <form class="profile-edit-form" action="/mypage/profile" method="POST" enctype="multipart/form-data">
+    <form class="profile__edit-form" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        @method('PUT')
 
-        <!-- プロフィール画像 -->
-        <div class="form-group profile-image-group">
-            <!-- プロフィール画像プレビュー -->
-            <div class="image-preview">
+        <!-- プロフィール画像のグループ -->
+        <div class="profile__edit-image-container">
+            <div class="profile__edit-image-wrapper">
                 @if ($user->profile_image)
-                <img src="{{ asset('storage/' . $user->profile_image) }}" alt="プロフィール画像">
+                <img src="{{ asset('storage/' . $user->profile_image) }}" alt="プロフィール画像" class="profile__edit-image">
                 @else
-                <img src="{{ asset('images/default-avatar.png') }}" alt="デフォルトプロフィール画像">
+                <img src="{{ asset('images/default-avatar.png') }}" alt="デフォルトプロフィール画像" class="profile__edit-image">
                 @endif
             </div>
-
-            <!-- ファイル選択ボタン -->
-            <input type="file" name="profile_image" id="profile_image">
-            <label for="profile_image">画像を選択する</label>
+            <label for="profile_image" class="profile__edit-button profile__edit-file-button">画像を選択する</label>
+            <input type="file" name="profile_image" id="profile_image" class="profile__edit-input profile__edit-input--file">
         </div>
 
         <!-- ユーザー名 -->
-        <div class="form-group">
-            <label for="username" class="form-label">ユーザー名</label>
-            <input type="text" name="username" id="username" value="{{ old('username', $user->name ?? '') }}" class="form-input" required>
+        <div class="profile__edit-group">
+            <label for="username" class="profile__edit-label">ユーザー名</label>
+            <input type="text" name="username" id="username" value="{{ old('username', $user->name ?? '') }}" class="profile__edit-input" required>
         </div>
 
         <!-- 郵便番号 -->
-        <div class="form-group">
-            <label for="postal_code" class="form-label">郵便番号</label>
-            <input type="text" name="postal_code" id="postal_code" value="{{ old('postal_code', $user->postal_code) }}" class="form-input" required>
+        <div class="profile__edit-group">
+            <label for="postal_code" class="profile__edit-label">郵便番号</label>
+            <input type="text" name="postal_code" id="postal_code" value="{{ old('postal_code', $user->postal_code) }}" class="profile__edit-input" required>
         </div>
 
         <!-- 住所 -->
-        <div class="form-group">
-            <label for="address" class="form-label">住所</label>
-            <input type="text" name="address" id="address" value="{{ old('address', $user->address) }}" class="form-input" required>
+        <div class="profile__edit-group">
+            <label for="address" class="profile__edit-label">住所</label>
+            <input type="text" name="address" id="address" value="{{ old('address', $user->address) }}" class="profile__edit-input" required>
         </div>
 
         <!-- 建物名 -->
-        <div class="form-group">
-            <label for="building_name" class="form-label">建物名</label>
-            <input type="text" name="building_name" id="building_name" value="{{ old('building_name', $user->building_name) }}" class="form-input" required>
+        <div class="profile__edit-group">
+            <label for="building_name" class="profile__edit-label">建物名</label>
+            <input type="text" name="building_name" id="building_name" value="{{ old('building_name', $user->building_name) }}" class="profile__edit-input">
         </div>
 
-        <!-- 保存ボタン -->
-        <button type="submit" class="btn-submit">更新する</button>
-
+        <!-- 更新ボタン -->
+        <button type="submit" class="profile__edit-submit-button">更新する</button>
     </form>
-
 </div>
 @endsection

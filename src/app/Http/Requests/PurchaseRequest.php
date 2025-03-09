@@ -35,7 +35,7 @@ class PurchaseRequest extends FormRequest
                         return; // `user_id` が存在する場合はバリデーションをスキップ
                     }
 
-                    // 🚀 `addresses` にデータが存在しない場合はエラー
+                    //  `addresses` にデータが存在しない場合はエラー
                     if (!is_numeric($value) || !\App\Models\Address::where('id', $value)->exists()) {
                         $fail('選択した配送先が存在しません。');
                     }

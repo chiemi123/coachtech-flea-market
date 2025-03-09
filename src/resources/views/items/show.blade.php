@@ -12,114 +12,109 @@
 
 @section('content')
 
-<div class="item-detail-container">
-    <!-- 左右のコンテナ -->
-    <div class="item-info-container">
+<div class="item">
+    <div class="item__container">
         <!-- 左側: 商品画像 -->
-        <div class="item-image">
+        <div class="item__image">
             @if (Str::startsWith($item->item_image, 'http'))
-            <!-- 画像がURLの場合（外部URLやアイテムテーブルに保存されている画像） -->
             <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
             @else
-            <!-- 画像がストレージ内に保存されている場合 -->
             <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
             @endif
         </div>
 
         <!-- 右側: 商品情報 -->
-        <div class="item-details">
-            <div class="item-summary">
-                <h1 class="item-name">{{ $item->name }}</h1>
-                <p class="brand-name">{{ $item->brand ?? 'ブランドなし' }}</p>
-                <p class="item-price">¥{{ number_format($item->price) }} (税込)</p>
+        <div class="item__details">
+            <div class="item__summary">
+                <h1 class="item__name">{{ $item->name }}</h1>
+                <p class="item__brand">{{ $item->brand ?? 'ブランドなし' }}</p>
+                <p class="item__price">¥{{ number_format($item->price) }} (税込)</p>
 
                 <!-- いいね数とコメント数 -->
-                <div class="item-stats">
-                    <div class="like-section">
+                <div class="item__stats">
+                    <div class="item__like">
                         @auth
                         <form action="{{ route('likes.toggle', $item->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="like-button {{ Auth::user()->likes->contains('item_id', $item->id) ? 'active' : '' }}">
-                                <img src="{{ asset('images/star-outline.png') }}" alt="いいね" class="star-icon">
-                                <span class="like-count">{{ $item->likes_count }}</span>
+                            <button type="submit" class="item__like-button {{ Auth::user()->likes->contains('item_id', $item->id) ? 'active' : '' }}">
+                                <img src="{{ asset('images/star-outline.png') }}" alt="いいね" class="item__like-icon">
+                                <span class="item__like-count">{{ $item->likes_count }}</span>
                             </button>
                         </form>
                         @else
                         <form action="{{ route('login') }}" method="GET">
-                            <button type="submit" class="like-button">
-                                <img src="{{ asset('images/star-outline.png') }}" alt="いいね" class="star-icon">
-                                <span class="like-count">{{ $item->likes_count }}</span>
+                            <button type="submit" class="item__like-button">
+                                <img src="{{ asset('images/star-outline.png') }}" alt="いいね" class="item__like-icon">
+                                <span class="item__like-count">{{ $item->likes_count }}</span>
                             </button>
                         </form>
                         @endauth
                     </div>
 
                     <!-- コメント数 -->
-                    <div class="stat">
-                        <img src="{{ asset('images/stat-icon.png') }}" alt="いいね" class="stat-icon">
-                        <span class="stat-count">{{ $item->comments_count }}</span>
+                    <div class="item__stat">
+                        <img src="{{ asset('images/stat-icon.png') }}" alt="コメント" class="item__stat-icon">
+                        <span class="item__stat-count">{{ $item->comments_count }}</span>
                     </div>
                 </div>
             </div>
 
             <!-- 購入ボタン -->
-            <a href="{{ route('purchase.show', $item->id) }}" class="purchase-button">購入手続きへ</a>
+            <a href="{{ route('purchase.show', $item->id) }}" class="item__purchase-button">購入手続きへ</a>
 
             <!-- 商品説明 -->
-            <div class="item-description">
+            <div class="item__description">
                 <h2>商品説明</h2>
                 <p>{{ $item->description }}</p>
             </div>
+
             <!-- 商品情報 -->
-            <div class="item-info">
+            <div class="item__info">
                 <h2>商品の情報</h2>
-                <p class="category-group">カテゴリー:
+                <p class="item__category">カテゴリー:
                     @foreach ($item->categories as $category)
-                    <span class="category-label">{{ $category->name }}</span>
+                    <span class="item__category-label">{{ $category->name }}</span>
                     @endforeach
                 </p>
-                <p class="item-condition">
-                    <span class="label">商品の状態:</span>
-                    <span class="value">{{ $item->condition->name }}</span>
+                <p class="item__condition">
+                    <span class="item__label">商品の状態:</span>
+                    <span class="item__value">{{ $item->condition->name }}</span>
                 </p>
-
             </div>
 
             <!-- コメントセクション -->
-            <div class="comment-section">
-                <h2 class="comment-title">コメント ({{ $item->comments_count }})</h2>
+            <div class="item__comments">
+                <h2 class="item__comments-title">コメント ({{ $item->comments_count }})</h2>
                 @foreach ($item->comments as $comment)
-                <div class="comment">
-                    <div class="comment-header">
-                        <!-- ユーザーアイコン -->
-                        <div class="comment-user-icon">
+                <div class="item__comment">
+                    <div class="item__comment-header">
+                        <div class="item__comment-user-icon">
                             <img src="{{ $comment->user->profile_image ? asset('storage/' . $comment->user->profile_image) : asset('images/default-avatar.png') }}" alt="ユーザー画像">
                         </div>
-                        <!-- ユーザー名 -->
-                        <div class="comment-user">
+                        <div class="item__comment-user">
                             <strong>{{ $comment->user->name }}</strong>
                         </div>
                     </div>
-                    <!-- コメント内容 -->
-                    <p class="comment-content">{{ $comment->content }}</p>
+                    <p class="item__comment-content">{{ $comment->content }}</p>
                 </div>
                 @endforeach
 
                 <!-- コメント投稿フォーム -->
                 <h2>商品のコメント</h2>
                 @auth
-                <form action="{{ route('items.comment', $item->id) }}" method="POST" class="comment-form">
+                <form action="{{ route('items.comment', $item->id) }}" method="POST" class="item__comment-form">
                     @csrf
                     <textarea name="content" placeholder="商品のコメントを入力してください"></textarea>
-                    <button type="submit" class="comment-submit">コメントを送信する</button>
+                    <button type="submit" class="item__comment-submit">コメントを送信する</button>
                 </form>
                 @else
                 <form action="{{ route('login') }}" method="GET">
-                    <button type="submit" class="comment-submit">コメントを投稿する</button>
+                    <button type="submit" class="item__comment-submit">コメントを投稿する</button>
                 </form>
                 @endauth
             </div>
         </div>
     </div>
 </div>
+
 @endsection

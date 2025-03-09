@@ -13,13 +13,13 @@
 @section('content')
 
 
-<div class="purchase-container">
+<div class="purchase">
     <form action="{{ route('purchase.confirm', $item->id) }}" method="POST">
         @csrf
         <!-- 左側の購入情報 -->
-        <div class="purchase-info">
+        <div class="purchase__info">
             <!-- 商品情報 -->
-            <div class="item-box">
+            <div class="purchase__item-box">
                 @if (Str::startsWith($item->item_image, 'http'))
                 <!-- 画像がURLの場合（外部URLやアイテムテーブルに保存されている画像） -->
                 <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
@@ -27,16 +27,16 @@
                 <!-- 画像がストレージ内に保存されている場合 -->
                 <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
                 @endif
-                <div class="item-info">
-                    <p class="item-name">{{ $item->name }}</p>
-                    <p class="item-price">¥{{ number_format($item->price) }}</p>
+                <div class="purchase__item-info">
+                    <p class="purchase__item-name">{{ $item->name }}</p>
+                    <p class="purchase__item-price">¥{{ number_format($item->price) }}</p>
                 </div>
             </div>
 
             <!-- 支払い方法 -->
-            <div class="payment-method">
-                <label class="payment-label">支払い方法</label>
-                <div class="payment-options">
+            <div class="purchase__payment">
+                <label class="purchase__payment-label">支払い方法</label>
+                <div class="purchase__payment-options">
 
                     <!-- トグル用チェックボックス（ドロップダウンの開閉に利用） -->
                     <input type="checkbox" id="toggle-dropdown" class="toggle-checkbox">
@@ -45,14 +45,14 @@
                     </label>
 
                     <!-- 支払い方法の選択肢 -->
-                    <div class="payment-options-dropdown">
-                        <div class="option">
+                    <div class="purchase__payment-options-dropdown">
+                        <div class="purchase__option">
                             <input type="radio" id="convenience" name="payment_method" value="コンビニ払い"
                                 {{ session('payment_method') === 'コンビニ払い' ? 'checked' : '' }}
                                 onchange="submitWithDelay(this.form, 300)">
                             <label for="convenience">コンビニ払い</label>
                         </div>
-                        <div class="option">
+                        <div class="purchase__option">
                             <input type="radio" id="credit_card" name="payment_method" value="クレジットカード"
                                 {{ session('payment_method') === 'クレジットカード' ? 'checked' : '' }}
                                 onchange="submitWithDelay(this.form, 300)">
@@ -75,10 +75,10 @@
             </div>
 
             <!-- 配送先 -->
-            <div class="shipping-info">
-                <label class="shipping-label">配送先</label>
+            <div class="purchase__shipping">
+                <label class="purchase__shipping-label">配送先</label>
 
-                <div class="shipping-address">
+                <div class="purchase__shipping-address">
                     @auth
                     <p>〒 {{ $address->postal_code ?? 'XXX-YYYY' }}</p>
                     <p>{{ $address->address ?? 'ここには住所が入ります' }}</p>
@@ -87,7 +87,7 @@
                     <p>ログインしてください</p>
                     @endauth
                 </div>
-                <a href="{{ route('address.edit', ['item_id' => $item->id]) }}" class="shipping-edit">変更する</a>
+                <a href="{{ route('address.edit', ['item_id' => $item->id]) }}" class="purchase__shipping-edit">変更する</a>
             </div>
         </div>
 
@@ -97,8 +97,8 @@
     <!-- 右側の購入概要（表のようなデザイン） -->
     <form action="{{ route('purchase.checkout', $item->id) }}" method="POST">
         @csrf
-        <div class="purchase-summary">
-            <table class="purchase-table">
+        <div class="purchase__summary">
+            <table class="purchase__table">
                 <tr>
                     <th>商品代金</th>
                     <td>¥{{ number_format($item->price) }}</td>
@@ -110,7 +110,7 @@
             </table>
             <input type="hidden" name="address_id" value="{{ session('address_id', 'user_table') }}">
             <input type="hidden" name="payment_method" value="{{ session('payment_method', '') }}">
-            <button type="submit" class="purchase-button">購入する</button>
+            <button type="submit" class="purchase__button">購入する</button>
         </div>
     </form>
 </div>

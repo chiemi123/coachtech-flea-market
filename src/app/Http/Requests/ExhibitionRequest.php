@@ -27,8 +27,8 @@ class ExhibitionRequest extends FormRequest
             'name' => ['required', 'string'],
             'description' => ['required', 'string', 'max:255'],
             'item_image' => ['required', 'image', 'mimes:jpg,png', 'max:2048'],
-            'category_ids' => ['required', 'array'], // ✅ 配列として受け取る
-            'category_ids.*' => ['exists:categories,id'], // ✅ 各要素が `categories` テーブルに存在するかチェック
+            'category_ids' => ['required', 'array'], //  配列として受け取る
+            'category_ids.*' => ['exists:categories,id'], //  各要素が `categories` テーブルに存在するかチェック
             'condition_id' => ['required', 'exists:conditions,id'],
             'price' => ['required', 'numeric', 'min:0'],
         ];

@@ -28,8 +28,13 @@ use Illuminate\Support\Facades\Route;
 
 // 商品一覧画面
 Route::get('/', [ItemController::class, 'index'])->name('items.index')->middleware('verified.if.loggedin');
+
+// マイリスト表示
+Route::get('/mylist', [ItemController::class, 'myList'])->name('items.mylist');
+
 // 商品詳細画面
 Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('items.show');
+
 // 商品のコメント投稿ルート
 Route::post('/item/{item}/comment', [ItemController::class, 'addComment'])->name('items.comment');
 
@@ -47,6 +52,9 @@ Route::get('/purchase/cancel', [PurchaseController::class, 'cancel'])->name('pur
 
 // メール認証通知画面（ユーザーに「認証メールを送信しました」などを表示）
 Route::get('/email/verify', function () {
+    if (!Auth::check()) { // ユーザーが未ログインなら
+        return redirect('/login'); // ログインページへリダイレクト
+    }
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
@@ -79,9 +87,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
 
-    //　マイリスト表示
-    Route::get('/mylist', [ItemController::class, 'myList'])->name('items.mylist');
-
     // プロフィール画面
     Route::get('/mypage', [UserController::class, 'index'])->name('profile.index');
 
@@ -94,7 +99,7 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     // 支払方法選択の反映
     Route::post('/purchase/{item_id}/confirm', [PurchaseController::class, 'confirm'])->name('purchase.confirm');
 
-    //　Stripeの購入決済
+    // Stripeの購入決済
     Route::post('/purchase/checkout/{id}', [PurchaseController::class, 'checkout'])->name('purchase.checkout');
 
     // 購入処理
@@ -104,7 +109,6 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::get('/purchase/address/{item_id}', [AddressController::class, 'edit'])->name('address.edit');
     Route::post('/purchase/address/{item_id}', [AddressController::class, 'update'])->name('address.update');
 
-
     // 商品出品画面
     Route::get('/sell', [ItemController::class, 'create'])->name('sell.create');
 
@@ -113,22 +117,14 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
 });
 
 // ===========================
-//  ログイン後にリダイレクトされる処理
-// ===========================
-
-Route::get('/home', function () {
-    $user = Auth::user();
-    if ($user instanceof \App\Models\User && !$user->hasVerifiedEmail()) {
-        return redirect('/email/verify'); // 🔹 メール未認証ならメール認証ページへ
-    }
-    return redirect('/mypage/profile'); // 🔹 認証済みならプロフィール画面へ
-})->middleware(['auth'])->name('home');
-
-// ===========================
 //  ログアウト処理
 // ===========================
 
 Route::post('/logout', function () {
     Auth::logout(); // ログアウト処理
+
+    request()->session()->invalidate(); // セッション無効化（セキュリティ強化）
+    request()->session()->regenerateToken(); // CSRFトークンを再生成
+
     return redirect('/login'); // ログイン画面にリダイレクト
 })->name('logout');

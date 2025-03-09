@@ -38,9 +38,6 @@ class AddressRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'profile_image.image' => 'アップロードできるのは画像ファイルのみです。',
-            'profile_image.mimes' => '許可されている画像形式はjpeg, png, jpg, gifのみです。',
-            'profile_image.max' => '画像ファイルのサイズは2MB以下にしてください。',
             'username.required' => 'ユーザー名を入力してください。',
             'postal_code.required' => '郵便番号を入力してください。',
             'postal_code.regex' => '郵便番号は「123-4567」の形式で入力してください。',

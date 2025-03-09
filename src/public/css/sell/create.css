@@ -4,7 +4,7 @@ select,
 }
 
 /* フォーム全体 */
-.container {
+.sell__container {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
@@ -15,14 +15,14 @@ select,
 }
 
 /* 見出し */
-.container h1 {
+.sell__title {
     text-align: center;
     font-size: 24px;
     margin-bottom: 20px;
 }
 
 /* 見出し（商品の詳細）スタイル */
-.section-title {
+.sell__section-title {
     font-size: 30px;
     font-weight: 700;
     color: #5f5f5f; /* テキストの色 */
@@ -32,7 +32,7 @@ select,
 }
 
 /* 画像アップロードボタンをカスタマイズ */
-.image-upload {
+.sell__image-upload {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,7 +45,7 @@ select,
     gap: 5px;
 }
 
-.custom-file-label {
+.sell__image-label {
     display: inline-block;
     padding: 10px 15px;
     background-color: #ffffff;
@@ -60,28 +60,28 @@ select,
 }
 
 /* ボタンのホバー時 */
-.custom-file-label:hover {
+.sell__image-label:hover {
     background: linear-gradient(90deg, #ff5555, #ff6f61);
     color: #ffffff;
 }
 
 /* デフォルトのファイル選択を非表示 */
-.custom-file-input {
+.sell__image-input {
     display: none;
 }
 
 /* 選択されたファイル名 */
-#file-name {
+.sell__image-file-name {
     font-size: 14px;
     color: #666;
 }
 
-.category-group {
+.sell__category-group {
     margin-bottom: 15px;
 }
 
 /* カテゴリータイトル */
-.category-title {
+.sell__category-title {
     font-size: 24px;
     font-weight: 700;
     color: #000000;
@@ -89,25 +89,25 @@ select,
 }
 
 /* カテゴリーの選択項目を横に並べる */
-.category-options {
+.sell__category-options {
     display: flex; /* ✅ 横並びにする */
     flex-wrap: wrap; /* ✅ 必要に応じて折り返す */
     gap: 8px; /* ✅ タグの間隔を調整 */
 }
 
 /* 各カテゴリのアイテム */
-.category-item {
+.sell__category-item {
     display: inline-flex; /* ✅ ラベルとチェックボックスを適切に配置 */
     align-items: center;
     gap: 5px; /* ✅ チェックボックスとラベルの間隔を調整 */
 }
 
-.category-group input[type="checkbox"] {
+.sell__category-group input[type="checkbox"] {
     display: none; /* チェックボックス自体を非表示 */
 }
 
 /* ボタン風のカテゴリーラベル */
-.category-label {
+.sell__category-label {
     display: inline-block;
     width: 100%;
     padding: 10px 20px;
@@ -123,22 +123,19 @@ select,
 }
 
 /* チェックボックスが選択されたときのスタイル */
-.category-group input[type="checkbox"]:checked + .category-label {
+.sell__category-item input[type="checkbox"]:checked + .sell__category-label {
     background-color: #ff5655;
     color: #ffffff;
     border-color: #ff5655;
 }
 
-.category-label:hover {
+.sell__category-label:hover {
     background-color: #ffffff;
 }
 
 /* 入力フィールド共通 */
-.container input[type="text"],
-.container input[type="number"],
-.container select,
-.container textarea,
-.container input[type="file"] {
+.sell__input,
+.sell__textarea {
     width: 100%;
     padding: 10px;
     margin-bottom: 37px;
@@ -149,13 +146,13 @@ select,
 }
 
 /* ✅ ▼のカスタマイズ */
-.product-condition {
+.sell__condition {
     position: relative;
     display: inline-block;
     width: 100%;
 }
 
-.product-condition .selected-option {
+.sell__condition-selected {
     position: relative;
     background-color: #ffffff;
     color: #5f5f5f;
@@ -167,7 +164,7 @@ select,
     font-size: 16px;
 }
 
-.product-condition .selected-option::after {
+.sell__condition-selected::after {
     content: "▼"; /* カスタム矢印 */
     font-size: 14px;
     color: #5f5f5f;
@@ -179,7 +176,7 @@ select,
 }
 
 /* ✅ ドロップダウンの選択肢のデザイン */
-.options-list {
+.sell__condition-options {
     display: none;
     list-style: none;
     padding: 0;
@@ -194,7 +191,7 @@ select,
 }
 
 /* ✅ 各選択肢 */
-.options-list li {
+.sell__condition-options li {
     padding: 10px 10px 10px 30px; /* 左側に✓のスペース確保 */
     cursor: pointer;
     display: flex;
@@ -207,13 +204,13 @@ select,
 }
 
 /* ✅ ホバー時 */
-.options-list li:hover {
+.sell__condition-options li:hover {
     background: #f0f0f0;
     color: #333;
 }
 
 /* ✅ 選択されたときのスタイル */
-.options-list li.selected {
+.sell__condition-options li.selected {
     background-color: #5599eb; /* 選択した項目の背景色 */
     border-radius: 5px;
     color: #eaeaea;
@@ -221,7 +218,7 @@ select,
 }
 
 /* ✅ 選択時に✓を表示 */
-.options-list li.selected::after {
+.sell__condition-options li.selected::after {
     content: "✓";
     color: #ffffff;
     font-size: 16px;
@@ -230,7 +227,7 @@ select,
     left: 10px; /* 左端に配置 */
 }
 
-.price-input-wrapper {
+.sell__price {
     position: relative;
     display: flex;
     flex-direction: column; /* ✅ 子要素を縦に並べる */
@@ -240,7 +237,7 @@ select,
     font-weight: 700;
 }
 
-.price-input-wrapper::before {
+.sell__price::before {
     content: "￥"; /* ￥を表示 */
     position: absolute;
     left: 10px; /* 価格入力欄の左側に配置 */
@@ -251,13 +248,13 @@ select,
 }
 
 /* 入力欄のスピナー非表示 */
-.container input[type="number"]::-webkit-outer-spin-button,
-.container input[type="number"]::-webkit-inner-spin-button {
+.sell__price-input::-webkit-outer-spin-button,
+.sell__price-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.container input[type="number"] {
+.sell__price-input {
     -moz-appearance: textfield; /* Firefox 対応 */
     appearance: textfield; /* 標準プロパティ スピナーを非表示 */
     padding-left: 25px; /* ￥の表示分だけ内側に余白を確保 */
@@ -267,7 +264,7 @@ select,
 }
 
 /* エラーメッセージ */
-.container p.error {
+.sell__error {
     color: red;
     font-size: 12px;
     margin-top: -5px;
@@ -275,7 +272,7 @@ select,
 }
 
 /* 出品ボタン */
-.container button {
+.sell__submit-button {
     background-color: #ff5555;
     color: #ffffff;
     padding: 10px 20px;
@@ -289,76 +286,74 @@ select,
     transition: background-color 0.3s ease;
 }
 
-.container button:hover {
+.sell__submit-button:hover {
     background-color: #f33535;
 }
 
 /* ✅ タブレット用の調整 */
 @media (min-width: 768px) and (max-width: 850px) {
     /* フォームの幅を広げる */
-    .container {
+    .sell__container {
         width: 70%;
         max-width: 700px; /* 少し広げる */
         font-size: 22px; /* 文字サイズ調整 */
     }
 
     /* タイトルや見出しの調整 */
-    .container h1 {
+    .sell__title {
         font-size: 26px;
     }
 
-    .section-title {
+    .sell__section-title {
         font-size: 28px;
     }
 
     /* 入力フィールド共通 */
-    .container input[type="text"],
-    .container input[type="number"],
-    .container select,
-    .container textarea,
-    .container input[type="file"] {
+    .sell__input,
+    .sell__textarea,
+    .sell__file-input {
         font-size: 18px; /* 少し大きめに */
         padding: 12px; /* タブレット用に余裕を持たせる */
     }
 
     /* ✅ 価格入力欄のサイズ調整 */
-    .price-input-wrapper {
+    .sell__price {
         font-size: 22px;
     }
 
-    .price-input-wrapper::before {
+    .sell__price::before {
         font-size: 20px;
         left: 12px;
     }
 
-    .container input[type="number"] {
+    .sell__price-input {
         padding-left: 30px; /* ￥マークのスペースを調整 */
         font-size: 18px;
         height: 45px;
     }
 
     /* ✅ ドロップダウン（選択肢リスト）の調整 */
-    .options-list {
+    .sell__options-list {
         max-height: 250px; /* タブレットでは高さを少し増やす */
         font-size: 16px;
     }
 
-    .options-list li {
+    .sell__option {
         padding: 12px 12px 12px 35px; /* チェックマークの余白調整 */
     }
 
     /* ✅ カテゴリーのスタイル調整 */
-    .category-options {
+    .sell__categories {
         gap: 10px; /* タブレット用に少し余裕を持たせる */
     }
 
-    .category-label {
+    .sell__category-label {
         font-size: 16px;
         padding: 8px 15px; /* タブレット用に拡大 */
     }
 
     /* ✅ 出品ボタンのサイズ調整 */
-    .container button {
+    .sell__button {
         font-size: 24px;
         padding: 12px 25px;
         margin-top: 100px;

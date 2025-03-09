@@ -57,7 +57,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::redirects('email-verification', '/mypage/profile');  // メール認証後のリダイレクト先
         Log::info('email-verification: 成功');
 
-    
+        // Fortifyの認証プロセス
         Fortify::authenticateThrough(function (Request $request) {
 
             return array_filter([
@@ -80,7 +80,6 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.login');
         });
 
-        
         Fortify::redirects('failed-login', '/login'); // ログイン失敗時のリダイレクト先をURLで明示的に指定
 
         // ログイン時のレートリミット

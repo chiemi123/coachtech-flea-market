@@ -1,25 +1,11 @@
 /* 全体のコンテナ */
-.profile-container {
+.profile {
     max-width: 1512px; /* ヘッダーの幅に合わせる */
     margin: 0 auto; /* 中央寄せ */
 }
 
-.alert {
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
 /* プロフィールヘッダー */
-.profile-header {
+.profile__header {
     position: relative; /* 絶対位置を解除 */
     width: 100%;
     display: flex;
@@ -32,14 +18,14 @@
     left: 299px; /* PCでは左寄せ */
 }
 
-.profile-image {
+.profile__image {
     display: flex;
     justify-content: center;
     margin-bottom: 10px;
 }
 
 /* プロフィール画像 */
-.profile-image img {
+.profile__image img {
     top: 8px;
     width: 150px;
     height: 150px;
@@ -49,7 +35,7 @@
 }
 
 /* ユーザー情報 */
-.profile-info h2 {
+.profile__info h2 {
     width: 250px;
     height: 65px;
     font-size: 36px;
@@ -59,13 +45,13 @@
     margin-left: 57px;
 }
 
-.profile-edit {
+.profile__edit {
     flex-grow: 1; /* 残りのスペースを埋める */
     display: flex;
 }
 
 /* プロフィール編集ボタン */
-.profile-edit .btn {
+.profile__edit .btn {
     text-align: center;
     width: 310px;
     height: 59px;
@@ -81,13 +67,13 @@
     margin-left: 250px;
 }
 
-.profile-edit .btn:hover {
+.profile__edit .btn:hover {
     background-color: red;
     color: white;
 }
 
 /* タブメニューのデザイン */
-.tab-container {
+.profile__tabs {
     position: absolute;
     top: 385px;
     height: 47px;
@@ -98,33 +84,33 @@
     border-bottom: 2px solid #5f5f5f;
 }
 
-.tab-container label {
+.profile__tabs label {
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.tab-container label[for="tab1"] {
+.profile__tabs label[for="tab1"] {
     margin-left: 129px;
 }
 
-.tab-container label[for="tab2"] {
+.profile__tabs label[for="tab2"] {
     margin-left: 52px;
 }
 
 /* チェックボックスを非表示 */
-.tab-input[type="radio"] {
+.profile__tab-input[type="radio"] {
     display: none;
 }
 
 /* タブが選択されたときのスタイル */
-.tab-input[type="radio"]:checked + label {
+.profile__tab-input[type="radio"]:checked + label {
     color: red;
     font-weight: bold;
 }
 
 /* タブコンテンツのデザイン */
-.tab-content-wrapper {
+.profile__tabs-content {
     position: absolute;
     top: 106px;
     margin: 0 29px;
@@ -132,18 +118,18 @@
     height: 716.61px;
 }
 
-.tab-content {
+.profile__tab-panel {
     display: none;
 }
 
 /* タブが選択されたときに表示 */
-#tab1:checked ~ .tab-content-wrapper #content1,
-#tab2:checked ~ .tab-content-wrapper #content2 {
+#tab-listed:checked ~ .profile__tabs-content #tab-listed-content,
+#tab-purchased:checked ~ .profile__tabs-content #tab-purchased-content {
     display: block;
 }
 
 /* 商品リスト */
-.item-list {
+.profile__items {
     position: relative;
     width: 100%;
     max-width: 1374.52px;
@@ -156,7 +142,7 @@
     padding-left: 40px;
 }
 
-.item-card {
+.profile__item {
     position: relative; /* SOLDラベルを配置するために必要 */
     width: 290px; /*カードの幅を固定 */
     height: 320px; /* 高さを320pxに固定 */
@@ -169,7 +155,7 @@
     overflow: hidden; /* はみ出し防止 */
 }
 
-.item-card img {
+.profile__item img {
     width: 100%; /* 親要素の幅いっぱいに */
     height: auto; /* 高さを自動調整 */
     max-height: 85.2%;
@@ -177,7 +163,7 @@
     border-radius: 4px;
 }
 
-.item-card h3 {
+.profile__item h3 {
     font-size: 25px;
     font-weight: 400;
     margin: 5px 0;
@@ -187,27 +173,27 @@
     align-items: center;
 }
 
-.item-card a {
+.profile__item a {
     display: inline-block;
     color: #007bff;
     text-decoration: none;
 }
 
-.sold-label {
+.profile__item-sold {
     position: absolute;
     top: 0; /* 画像の左上に配置 */
     left: 0; /* 左上に固定 */
     color: #fff;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     background-color: red;
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 5px 15px;
+    border-radius: 4px;
     z-index: 10;
 }
 
 /* ✅ 画像ラップ要素を相対位置にする */
-.item-image-wrapper {
+.profile__item-image {
     position: relative;
     display: block;
     width: 100%;
@@ -217,7 +203,7 @@
 /* タブレット対応 */
 @media (max-width: 850px) {
     /* プロフィール情報を中央揃え */
-    .profile-header {
+    .profile__header {
         left: 20px;
         width: 100%;
         max-width: 100%;
@@ -226,33 +212,34 @@
         text-align: center;
     }
 
-    .profile-image img {
+    .profile__image img {
         width: 100px;
         height: 100px;
     }
 
-    .profile-info {
+    .profile__info {
         width: 100%;
     }
 
-    .profile-info h2 {
+    .profile__info h2 {
         font-size: 24px;
         width: auto;
         margin-left: 0; /* 左の余白をなくす */
     }
 
-    .profile-edit {
+    .profile__edit {
         width: 100%;
     }
 
-    .profile-edit .btn {
+    .profile__edit .btn {
         margin-left: 0;
-        width: 100%;
+        width: 90%;
         max-width: 300px;
+        font-size: 24px;
     }
 
     /* タブメニューの調整 */
-    .tab-container {
+    .profile__tabs {
         position: relative; /* 絶対位置を解除 */
         top: auto; /* 必要に応じて調整 */
         width: 100%; /* 画面幅にフィット */
@@ -262,17 +249,17 @@
         padding-left: 20px; /* 左側の余白を調整 */
     }
 
-    .tab-container label[for="tab1"],
-    .tab-container label[for="tab2"] {
+    .profile__tabs label[for="tab1"],
+    .profile__tabs label[for="tab2"] {
         margin-left: initial;
     }
 
-    .tab-container label {
+    .profile__tabs label {
         margin-left: 0;
         padding: 10px 15px;
     }
 
-    .tab-content-wrapper {
+    .profile__tabs-content {
         width: 100%;
         max-width: 768px;
         display: flex;
@@ -281,7 +268,7 @@
     }
 
     /* 商品リストのレイアウト調整 */
-    .item-list {
+    .profile__items {
         width: 100%;
         max-width: 100%;
         display: grid;
@@ -293,19 +280,19 @@
         justify-items: center;
     }
 
-    .item-card {
+    .profile__item {
         width: 100%;
         max-width: 230px;
         height: auto;
     }
 
-    .item-card img {
+    .profile__item img {
         width: 100%;
         height: 180px;
         object-fit: cover;
     }
 
-    .item-card h3 {
+    .profile__item h3 {
         font-size: 18px; /* 文字サイズをさらに調整 */
         height: auto;
     }

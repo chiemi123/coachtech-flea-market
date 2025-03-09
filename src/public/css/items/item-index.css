@@ -6,77 +6,114 @@
     align-items: center;
     gap: 20px;
     font-size: 24px;
-    border-bottom: 2px solid#555;
+    font-weight: 700;
+    border-bottom: 2px solid #5f5f5f;
 }
 
 .tab a {
     text-decoration: none;
     padding: 10px 20px;
     border-bottom: 2px solid transparent;
-    color: #555;
+    color: #5f5f5f;
 }
 
 .tab.active a {
-    color: red;
+    color: #ff0000;
 }
 
-/* 商品一覧ページのスタイル */
-.item-list {
-    position: absolute;
-    top: calc(250.39px - 82px); /* ヘッダーの高さ82pxを考慮 */
-    left: 50%; /* 中央配置 */
-    transform: translateX(-50%); /* 完全に中央に寄せる */
-    width: 1374.52px;
-    /* 高さは複数行に対応するため自動に任せる */
+/* 📌 ログインメッセージのスタイル */
+.mylist__login-message {
+    width: 470px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5f5f5f;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+.mylist__login-message a {
+    color: #007bff;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.mylist__login-message a:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* 📌 商品一覧ページのスタイル */
+.items__list,
+.mylist__list {
+    position: relative;
+    top: 20px;
+    left: auto;
+    transform: none;
+    width: 95%;
+    max-width: 1374.52px;
+    padding: 10px 20px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(4, 290px);
     grid-auto-rows: 320px;
-    /* 4つ並べたときの横方向のギャップを計算
-       (コンテナ幅 - (4 * 290)) / 3 ≒ 71.5px */
     column-gap: 71.5px;
-    row-gap: 50px; /* 行間の隙間はお好みで */
+    row-gap: 50px;
+    justify-content: center;
 }
 
-/* 商品カード全体 */
-.item-card {
-    position: relative; /* SOLDラベルを配置するために必要 */
-    width: 290px; /*カードの幅を固定 */
-    height: 320px; /* 高さを320pxに固定 */
+/* 📌 商品カード全体 */
+.items__card,
+.mylist__card {
+    position: relative;
+    width: 290px;
+    height: 320px;
     background-color: #fff;
     text-align: center;
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
-    flex-direction: column; /* 縦並びにする */
-    justify-content: space-between; /* 画像とテキストを均等に配置 */
-    overflow: hidden; /* はみ出し防止 */
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
 }
 
-/* 商品画像 */
-.item-card img {
-    width: 100%; /* 親要素の幅いっぱいに */
-    height: 85.2%; /* 高さを調整（70%） */
-    object-fit: cover; /* 画像の比率を維持しつつ枠に収める */
+/* 📌 商品画像 */
+.items__card img,
+.mylist__card img {
+    width: 100%;
+    height: 85.2%;
+    object-fit: cover;
     border-radius: 4px;
 }
 
-/* 商品名 */
-.item-card h3 {
+/* 📌 商品名 */
+.items__card-name,
+.mylist__card-name {
     font-size: 25px;
     font-weight: 400;
     margin: 5px 0;
     color: #000000;
-    height: 30px; /* 高さを調整 */
+    height: 30px;
     display: flex;
     align-items: center;
-}
-
-.item-card a {
-    display: inline-block;
-    color: #007bff;
     text-decoration: none;
 }
 
-.sold-label {
+/* 📌 商品名のリンクの下線を消す */
+.items__card a,
+.mylist__card a {
+    text-decoration: none; /* 🔹 下線を消す */
+    color: inherit; /* 🔹 親要素の色を継承 */
+}
+
+/* 📌 SOLD ラベル */
+.items__card-sold,
+.mylist__card-sold {
     position: absolute;
     color: #fff;
     font-size: 25px;
@@ -88,48 +125,48 @@
     width: fit-content;
 }
 
+/* 📌 商品なしメッセージ */
+.items__no-items,
+.mylist__no-items {
+    text-align: center;
+    font-size: 20px;
+    color: #777;
+    margin-top: 20px;
+}
+
+/* 📌 タブレット用の調整 */
 @media screen and (min-width: 768px) and (max-width: 850px) {
-    /* 📌 タブのサイズを調整 */
     .tabs {
         font-size: 20px;
         gap: 10px;
     }
 
-    /* 📌 商品一覧リストのサイズを調整 */
-    .item-list {
-        position: relative; /* absolute を解除して通常のフローに */
-        top: 20px; /* ヘッダーの下に適切な余白を作る */
-        left: auto;
-        transform: none;
-        width: 95%; /* 画面幅にフィット */
-        max-width: 1000px; /* 最大幅を1000pxに変更 */
-        padding: 10px 20px; /* 左右の余白を調整 */
-        margin: 0 auto; /* 中央寄せ */
+    .items__list,
+    .mylist__list {
+        width: 95%;
+        max-width: 1000px;
+        padding: 10px 20px;
         display: grid;
-        grid-template-columns: repeat(
-            auto-fit,
-            minmax(250px, 1fr)
-        ); /* カラムを均等配置 */
-        grid-auto-rows: 320px; /* 高さを維持 */
-        column-gap: 35px; /* 横の間隔を適切に調整 */
-        row-gap: 40px; /* 縦の間隔を調整 */
-        justify-content: center; /* グリッド全体を中央に配置 */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-auto-rows: 320px;
+        column-gap: 35px;
+        row-gap: 40px;
     }
 
-    /* 📌 商品カードのサイズを調整 */
-    .item-card {
+    .items__card,
+    .mylist__card {
         width: auto;
-        max-width: 340px; /* 最大幅を設定 */
+        max-width: 340px;
         height: 380px;
     }
 
-    /* 📌 商品名のサイズを調整 */
-    .item-card h3 {
+    .items__card-name,
+    .mylist__card-name {
         font-size: 20px;
     }
 
-    /* 📌 SOLDラベルのサイズを調整 */
-    .sold-label {
+    .items__card-sold,
+    .mylist__card-sold {
         font-size: 18px;
         padding: 4px 12px;
     }

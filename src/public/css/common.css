@@ -134,6 +134,12 @@
     font-size: 14px;
 }
 
+.alert-danger {
+    color: #d9534f; /* 濃い赤 */
+    background-color: #ffe5e5; /* 淡い赤 */
+    border: 1px solid #d9534f;
+}
+
 .alert-success {
     color: #155724;
     background-color: #d4edda;
