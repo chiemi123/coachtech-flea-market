@@ -96,6 +96,7 @@ php artisan migrate
 
 http://localhost
 
+
 ## その他
 
 ➀MailHog のセットアップ（開発環境用メール送信）
@@ -172,14 +173,16 @@ docker-compose exec app composer require stripe/stripe-php
 docker-compose exec app php artisan about | grep "Stripe"
 ```
 
-クレジットカード支払いのテスト用のカード情報（Stripe の公式テストカード）
+## Stripe のテスト環境
 
 Stripe のテスト環境では、以下のカード番号を使用して決済テストができます。
 
-カード番号	　　　　　　カード種別	　成功 or 失敗
-4242 4242 4242 4242	　Visa	　　　　成功
-4000 0000 0000 0002	　Visa	　　　　失敗（決済拒否）
-5555 5555 5555 4444	　Mastercard　　成功
+| カード番号              | カード種別    | 成功 or 失敗      |
+|----------------------|------------|----------------|
+| 4242 4242 4242 4242 | Visa       | ✅ 成功        |
+| 4000 0000 0000 0002 | Visa       | ❌ 失敗（決済拒否） |
+| 5555 5555 5555 4444 | Mastercard | ✅ 成功        |
+
 
 
 コンビニ払いの決済テスト
