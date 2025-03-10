@@ -39,7 +39,7 @@ git clone https://github.com/chiemi123/coachtech-flea-market.git
 ```
 
 ```
-cd your-repository
+cd coachtech-flea-market
 ```
 
 ➁Docker 環境のセットアップ
@@ -111,6 +111,8 @@ http://localhost:8025
 .env のメール設定
 .envファイルを以下のように変更します。
 
+```env
+
 MAIL_MAILER=smtp
 MAIL_HOST=mailhog
 MAIL_PORT=1025
@@ -119,6 +121,8 @@ MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null
 MAIL_FROM_ADDRESS="example@example.com"
 MAIL_FROM_NAME="Example"
+
+```
 
 その後、Dockerコンテナを以下のコマンドで再起動します。
 
