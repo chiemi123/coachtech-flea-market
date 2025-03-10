@@ -1,47 +1,103 @@
-@extends('layouts.app') <!-- 共通レイアウトを継承 -->
+@extends('layouts.app')
 
-@section('header-extra')
-<li class="header-nav__item">
-    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
-</li>
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/profile/index.css') }}">
 @endsection
 
-@section('content')
-<div class="container">
-    <h1 class="text-center">プロフィール画面</h1>
+@section('title', 'マイページ')
 
-    <div class="profile-header d-flex align-items-center justify-content-between">
+@section('content')
+
+<div class="profile">
+    <!-- プロフィール情報 -->
+    <div class="profile__header">
         <!-- プロフィール画像 -->
-        <div class="profile-image">
+        <div class="profile__image">
             @if ($user->profile_image)
-            <img src="{{ asset('storage/' . $user->profile_image) }}" alt="プロフィール画像" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+            <img src="{{ Storage::url($user->profile_image) }}" alt="プロフィール画像">
             @else
-            <img src="{{ asset('images/default-avatar.png') }}" alt="デフォルトプロフィール画像" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+            <img src="{{ asset('images/default-avatar.png') }}" alt="デフォルトプロフィール画像">
             @endif
         </div>
 
-        <!-- ユーザー名 -->
-        <div class="profile-info">
+        <!-- ユーザー情報 -->
+        <div class="profile__info">
             <h2>{{ $user->username }}</h2>
         </div>
 
         <!-- プロフィール編集ボタン -->
-        <div>
+        <div class="profile__edit">
             <a href="{{ route('profile.edit') }}" class="btn btn-outline-danger">プロフィールを編集</a>
         </div>
     </div>
 
-    <!-- タブメニュー-->
-    <ul class="nav nav-tabs mt-4">
-        <li class="nav-item">
-            <a class="nav-link active text-danger" href="#listed-items" data-bs-toggle="tab">出品した商品</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#purchased-items" data-bs-toggle="tab">購入した商品</a>
-        </li>
-    </ul>
+    <!-- タブメニュー -->
+    <div class="profile__tabs">
+        <input type="radio" id="tab-listed" name="tab" class="profile__tab-input" checked>
+        <label for="tab-listed" class="profile__tab-label">出品した商品</label>
 
+        <input type="radio" id="tab-purchased" name="tab" class="profile__tab-input">
+        <label for="tab-purchased" class="profile__tab-label">購入した商品</label>
 
+        <!-- タブコンテンツ -->
+        <div class="profile__tabs-content">
+            <!-- 出品した商品 -->
+            <div class="profile__tab-panel" id="tab-listed-content">
+                @if ($listedItems->isEmpty())
+                <p class="profile__message">出品した商品はありません。</p>
+                @else
+                <ul class="profile__items">
+                    @foreach ($listedItems as $item)
+                    <li class="profile__item">
+                        <a href="{{ route('items.show', $item->id) }}">
+                            <div class="profile__item-image">
+                                @if (Str::startsWith($item->item_image, ['http://', 'https://']))
+                                <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
+                                @else
+                                <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+                                @endif
+
+                                @if ($item->is_sold)
+                                <span class="profile__item-sold">sold</span>
+                                @endif
+                            </div>
+                            <h3>{{ $item->name }}</h3>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                @endif
+            </div>
+
+            <!-- 購入した商品 -->
+            <div class="profile__tab-panel" id="tab-purchased-content">
+                @if ($purchasedItems->isEmpty())
+                <p class="profile__message">購入した商品はありません。</p>
+                @else
+                <ul class="profile__items">
+                    @foreach ($purchasedItems as $item)
+                    <li class="profile__item">
+                        <a href="{{ route('items.show', $item->id) }}">
+                            <div class="profile__item-image">
+                                @if (Str::startsWith($item->item_image, ['http://', 'https://']))
+                                <img src="{{ $item->item_image }}" alt="{{ $item->name }}">
+                                @else
+                                <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+                                @endif
+
+                                @if ($item->is_sold)
+                                <span class="profile__item-sold">sold</span>
+                                @endif
+                            </div>
+                            <h3>{{ $item->name }}</h3>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection

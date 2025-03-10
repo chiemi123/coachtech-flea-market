@@ -2,77 +2,173 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
+use App\Models\Comment;
+use App\Models\Category;
+use App\Models\Condition;
+use App\Models\Like;
+use App\Http\Requests\CommentRequest;
+use App\Http\Requests\ExhibitionRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-
     // 商品一覧画面
-    public function index()
+    public function index(Request $request)
     {
-        // 仮のデータ
-        $items = [
-            ['id' => 1, 'name' => '商品1', 'price' => 47000, 'image' => '/images/item1.png'],
-            ['id' => 2, 'name' => '商品2', 'price' => 32000, 'image' => '/images/item2.png']
-        ];
+
+        $search = $request->input('search');
+
+        $query = Item::query();
+
+        // ログインしている場合は自分の商品を除外
+        if (auth()->check()) {
+            $query->where('user_id', '<>', auth()->id());
+        }
+
+        // スペースのみの検索を防ぐ
+        if (!empty($search)) {
+            $convertedSearch = mb_convert_kana($search, 's'); // 全角スペースを半角に変換
+            $trimmedSearch = trim($convertedSearch); // 前後のスペースを削除
+
+            if ($trimmedSearch !== '') {
+                // 検索履歴をセッションに保存
+                session(['last_search' => $trimmedSearch]);
+
+                // スペース区切りで分割し、各キーワードをAND検索
+                $keywords = preg_split('/\s+/u', $trimmedSearch);
+                foreach ($keywords as $keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                }
+            }
+        }
+
+        $items = $query->get();
 
         return view('items.index', compact('items'));
     }
 
+    // マイリストの取得
+    public function myList(Request $request)
+    {
+        // 🔹 未認証のユーザーは空のリストを返す
+        if (!Auth::check()) {
+            return view('items.index', ['items' => collect([])]);
+        }
+
+        $user = Auth::user();
+        $search = mb_convert_kana($request->input('search'), 's'); // 全角スペースを半角に
+        $trimmedSearch = trim($search);
+
+        // いいねした商品から「自分が出品した商品」は除外
+        $items = Item::whereHas('likes', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->where('user_id', '!=', $user->id)
+            ->when($trimmedSearch, function ($query, $trimmedSearch) {
+                if ($trimmedSearch !== '') {
+                    $keywords = preg_split('/\s+/u', $trimmedSearch); // スペースで分割
+                    foreach ($keywords as $keyword) {
+                        $query->where('name', 'LIKE', "%{$keyword}%");
+                    }
+                }
+                return $query;
+            })->get();
+
+        return view('items.index', compact('items'));
+    }
+
+
     // 商品詳細画面
     public function show($item_id)
     {
-        // 仮のデータ
-        $item = [
-            'id' => $item_id,
-            'name' => '商品名がここに入る',
-            'brand' => 'ブランド名',
-            'price' => 47000,
-            'description' => '商品の状態は良好です。傷ありません。',
-            'condition' => '良好',
-            'categories' => ['洋服', 'メンズ'],
-            'image' => '/images/item1.png',
-            'comments' => [
-                ['user' => 'admin', 'comment' => 'こちらにコメントが入ります。']
-            ]
-        ];
+        // 商品情報をデータベースから取得
+        $item = Item::with(['likes', 'categories', 'comments.user'])->findOrFail($item_id);
 
         return view('items.show', compact('item'));
     }
 
+    // いいね追加・解除
+    public function toggleLike(Request $request, $id)
+    {
+        $user = Auth::user();
+        $item = Item::findOrFail($id);
+
+        // いいねが既に存在するかチェック
+        $like = Like::where('user_id', $user->id)->where('item_id', $item->id)->first();
+
+        if ($like) {
+            // いいねを解除
+            $like->delete();
+            $item->likes_count--;
+        } else {
+            // いいねを追加
+            Like::create(['user_id' => $user->id, 'item_id' => $item->id]);
+            $item->likes_count++;
+        }
+        $item->save();
+
+        // リダイレクトして画面を更新
+        return redirect()->route('items.show', $id);
+    }
+
+
     // 商品出品画面の表示
     public function create()
     {
-        // カテゴリー一覧の仮データ（本来はデータベースから取得）
-        $categories = ['ファッション', '家電', 'キッチン用品', 'レディース', 'メンズ', 'スポーツ', 'コスメ', 'ゲーム', 'アウトドア', 'アクセサリー', 'その他'];
+        // カテゴリー一覧を取得
+        $categories = Category::all();
+        //　コンディション一覧を取得
+        $conditions = Condition::all();
 
-        return view('sell.create', compact('categories'));
+        return view('sell.create', compact('categories', 'conditions'));
     }
 
     // 商品出品処理
-    public function store(Request $request)
+    public function store(ExhibitionRequest $request)
     {
-        // バリデーション
-        $validated = $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'category' => 'required|string',
-            'condition' => 'required|string',
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:1',
+        // バリデーション済みデータを取得
+        // brand のバリデーションをここで追加
+        $request->validate([
+            'brand' => 'nullable|string|max:255', // フォームリクエストに含めず、ここでチェック
         ]);
 
-        // 画像を保存する処理
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('public/images');
-            $validated['image'] = str_replace('public/', 'storage/', $imagePath);
+        // バリデーション済みデータを取得
+        $validated = $request->validated();
+
+        // brand が NULL または空文字の場合、デフォルトで "ノーブランド" を設定
+        $validated['brand'] = $request->input('brand') ?: 'ノーブランド';
+
+        // 画像を保存
+        if ($request->hasFile('item_image')) {
+            $imagePath = $request->file('item_image')->store('public/images'); // "public/images" に保存
+            $validated['item_image'] = str_replace('public/', '', $imagePath); // "images/ファイル名.jpg" で保存
         }
 
-        // 商品情報を保存する処理（仮）
-        // 本来はデータベースに保存します。
-        // 商品情報を仮にセッションに保存しておく例：
-        session()->flash('success', '商品が出品されました！');
+        // 商品をデータベースに保存
+        $validated['user_id'] = Auth::id();
+        $item = Item::create($validated);
 
-        return redirect()->route('items.index');
+        // **カテゴリーを紐付ける**
+        $item->categories()->attach($validated['category_ids']); // ✅ カテゴリーを登録
+
+        return redirect()->route('profile.index')->with('success', '商品が出品されました！');
+    }
+
+    // 商品へのコメント投稿
+    public function addComment(CommentRequest $request, $item_id)
+    {
+        $item = Item::findOrFail($item_id);
+
+        Comment::create([
+            'user_id' => Auth::id(),
+            'item_id' => $item->id,
+            'content' => $request->content,
+        ]);
+
+        // コメント数を増加
+        $item->increment('comments_count');
+
+        return back()->with('success', 'コメントを投稿しました！');
     }
 }

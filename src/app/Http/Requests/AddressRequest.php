@@ -24,9 +24,8 @@ class AddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'username' => 'required|string|max:255',
-            'postal_code' => 'required|string|regex:/^\d{4}-\d{4}$/|max:10',
+            'username' => 'sometimes|required|string|max:255', // 入力された場合のみ必須
+            'postal_code' => 'required|string|regex:/^\d{3}-\d{4}$/|max:10',
             'address' => 'required|string|max:255',
             'building_name' => 'required|string|max:255',
         ];
@@ -39,9 +38,6 @@ class AddressRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'profile_image.image' => 'アップロードできるのは画像ファイルのみです。',
-            'profile_image.mimes' => '許可されている画像形式はjpeg, png, jpg, gifのみです。',
-            'profile_image.max' => '画像ファイルのサイズは2MB以下にしてください。',
             'username.required' => 'ユーザー名を入力してください。',
             'postal_code.required' => '郵便番号を入力してください。',
             'postal_code.regex' => '郵便番号は「123-4567」の形式で入力してください。',

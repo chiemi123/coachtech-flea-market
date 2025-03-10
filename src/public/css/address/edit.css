@@ -1,0 +1,111 @@
+/* 住所変更画面のスタイル */
+.address__container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    font-weight: 700;
+    background-color: #fff;
+}
+
+.address__title {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 28px;
+    margin-bottom: 20px;
+}
+
+.address__form-group {
+    font-size: 24px;
+    padding: 20px 0;
+    margin-bottom: 15px;
+    max-width: 500px; /* 入力欄とボタンの幅を統一 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.address__label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.address__input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.address__error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.address__submit-button {
+    background-color: #ff5555;
+    color: #ffffff;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 500px;
+    cursor: pointer;
+    font-size: 26px;
+    font-weight: 700;
+    transition: background-color 0.3s;
+    display: block; /* ボタンを中央配置 */
+    margin: 65px auto; /* 上下の余白を調整 */
+}
+
+.address__submit-button:hover {
+    background-color: #f33535;
+}
+
+@media (max-width: 850px) {
+    /* 住所変更画面のコンテナ */
+    .address__container {
+        max-width: 60%; /* 画面幅に対して適切な比率 */
+        margin: 30px auto; /* 上下の余白を調整 */
+        padding: 15px;
+    }
+
+    /* タイトル */
+    .address__title {
+        font-size: 28px; /* タイトルを少し小さめに */
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    /* フォームの各フィールド */
+    .address__form-group {
+        font-size: 20px; /* 文字サイズを少し小さく */
+        padding: 15px 0; /* 間隔を調整 */
+        margin-bottom: 15px;
+    }
+
+    /* 入力フィールド */
+    .address__input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* エラーメッセージ */
+    .address__error-message {
+        font-size: 12px;
+    }
+
+    /* 更新ボタン */
+    .address__submit-button {
+        width: 100%;
+        max-width: 500px; /* 最大幅を指定 */
+        font-size: 22px; /* フォントサイズを少し小さく */
+        padding: 12px;
+        display: block;
+    }
+}

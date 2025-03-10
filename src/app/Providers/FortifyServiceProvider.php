@@ -12,12 +12,8 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Laravel\Fortify\Actions\AttemptToAuthenticate;
 use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
 use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
@@ -40,22 +36,30 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
+        //Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        //Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+        //Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         // 会員登録画面
         Fortify::registerView(function () {
             return view('auth.register');
-
-
-            Fortify::redirects('register', '/mypage/profile'); // プロフィール設定画面にリダイレクト
         });
 
+        // メール認証画面のビューを指定
+        Fortify::verifyEmailView(function () {
+            return view('auth.verify-email');
+        });
 
+        Log::info('verifyEmailView: 成功');
+
+        // メール認証画面のリダイレクト
+        Fortify::redirects('email-verification', '/mypage/profile');  // メール認証後のリダイレクト先
+        Log::info('email-verification: 成功');
+
+        // Fortifyの認証プロセス
         Fortify::authenticateThrough(function (Request $request) {
-            
+
             return array_filter([
                 // ログイン時のレート制限チェック
                 config('fortify.limiters.login') ? null : EnsureLoginIsNotThrottled::class,
@@ -71,14 +75,10 @@ class FortifyServiceProvider extends ServiceProvider
             ]);
         });
 
-
-
         // ログイン画面
         Fortify::loginView(function () {
             return view('auth.login');
         });
-
-        Fortify::redirects('login', '/'); // ログイン後は商品一覧画面へリダイレクト
 
         Fortify::redirects('failed-login', '/login'); // ログイン失敗時のリダイレクト先をURLで明示的に指定
 

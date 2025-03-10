@@ -1,64 +1,201 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# アプリケーション名
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+フリマアプリ
+ログイン後、商品の出品と購入が出来ます。
 
-## About Laravel
+## 作成した目的
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+模擬案件を通して実践に近い開発経験を積み、定義された要件を実装する能力を身につけること。
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 機能一覧
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+ログイン機能、メール認証機能（mailhog）、商品一覧と詳細ページで商品名の検索機能、商品の出品と購入（stripe決済）機能
 
-## Learning Laravel
+## 使用技術（実行環境）
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+・PHP7.4
+・Laravel8.83.27
+・MySQL8.0.26
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## テーブル設計
 
-## Laravel Sponsors
+本プロジェクトの詳細なテーブル設計は、以下の Google スプレッドシートにまとめています。
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+**[テーブル設計シート (Google スプレッドシート)](https://docs.google.com/spreadsheets/d/1AUlHz8zNAvwpKfZsBWg9MHVZcBCvu6NGlVGuadmne2k/edit?gid=1188247583#gid=1188247583)**
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## ER 図
 
-## Contributing
+![alt text](.drawio.png)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 環境構築
 
-## Code of Conduct
+➀リポジトリのクローン
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+GitHub からプロジェクトをローカル環境にクローンします。
 
-## Security Vulnerabilities
+```
+git clone https://github.com/chiemi123/coachtech-flea-market.git
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+cd your-repository
+```
 
-## License
+➁Docker 環境のセットアップ
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Docker コンテナの起動
+以下のコマンドで Docker コンテナを起動します。
+
+```
+docker-compose up -d --build
+```
+
+```
+code .
+```
+
+➂Laravel のセットアップ
+
+以下のコマンドでphpコンテナにログインします。
+
+```
+docker-compose exec php bash
+````
+Laravel パッケージのインストール
+以下のコマンドでLaravel パッケージのインストールをします。
+
+```
+composer install
+```
+
+.env ファイルを作成
+プロジェクトルートに .env ファイルを作成し、.env.example をコピーします。
+
+```
+cp .env.example .env
+```
+
+➃アプリケーションキーの作成
+
+以下のコマンドでアプリケーションキーを生成します。
+
+```
+php artisan key:generate
+```
+
+➄マイグレーションの実行
+
+以下のコマンドでデータベースのマイグレーションを実行します。
+
+```
+php artisan migrate
+```
+
+マイグレーションの実行後、ブラウザで以下にアクセスできるか確認します。
+
+http://localhost
+
+## その他
+
+➀MailHog のセットアップ（開発環境用メール送信）
+
+MailHog を使用すると、開発環境で送信されるメールをローカルで確認できます。
+
+MailHog の起動
+MailHog は docker-compose up -d の時点で起動しています。
+ブラウザで以下にアクセスすると、送信されたメールを確認できます。
+
+http://localhost:8025
+
+.env のメール設定
+.envファイルを以下のように変更します。
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="example@example.com"
+MAIL_FROM_NAME="Example"
+
+その後、Dockerコンテナを以下のコマンドで再起動します。
+
+```
+docker-compose restart
+```
+
+➁アプリケーションの起動
+nginx / Apache を使用する場合
+
+```
+docker-compose up -d
+```
+
+ブラウザで http://localhost にアクセスしてください。
+
+php artisan serve を使用する場合
+
+```
+docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
+```
+
+ブラウザで http://localhost:8000 にアクセスしてください。
+
+➂Stripe 決済のセットアップ
+.env に Stripe の API キーを設定
+Stripe ダッシュボード で 公開可能キー と シークレットキー を取得し、.env に設定します。
+
+STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx
+
+その後、Dockerコンテナを再起動
+
+```
+docker-compose restart
+```
+
+以下のコマンドで、laravelにStripe の公式 PHP ライブラリ (stripe/stripe-php) をインストールします。
+
+```
+docker-compose exec app composer require stripe/stripe-php
+```
+
+インストールが完了したら、以下のコマンドでパッケージが正しくインストールされたか確認できます。
+
+```
+docker-compose exec app php artisan about | grep "Stripe"
+```
+
+クレジットカード支払いのテスト用のカード情報（Stripe の公式テストカード）
+
+Stripe のテスト環境では、以下のカード番号を使用して決済テストができます。
+
+カード番号	　　　　　　カード種別	　成功 or 失敗
+4242 4242 4242 4242	　Visa	　　　　成功
+4000 0000 0000 0002	　Visa	　　　　失敗（決済拒否）
+5555 5555 5555 4444	　Mastercard　　成功
+
+
+コンビニ払いの決済テスト
+このプロジェクトでは、Webhook をセットアップせずにコンビニ払いの決済テストが可能 です。
+Stripe CLI を使うと、開発環境で Webhook をテストできます。
+
+以下のコマンドで、Docker 環境で Stripe CLI を起動します。
+
+```
+docker run --rm -it stripe/stripe-cli:latest
+```
+
+以下のコマンドで、Webhook のリスニングを開始します。
+
+```
+docker exec -it stripe-cli stripe listen --forward-to app:8000/stripe/webhook
+```
+
+以下のコマンドで、Webhook のテストを実行します。
+
+```
+docker exec -it stripe-cli stripe trigger payment_intent.succeeded
+```

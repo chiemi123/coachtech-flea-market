@@ -1,87 +1,155 @@
 @extends('layouts.app')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/sell/create.css') }}">
+@endsection
+
 @section('header-extra')
-<li class="header-nav__item">
-    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
-</li>
+
 @endsection
 
 @section('title', '商品出品')
 
 @section('content')
-<div style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
-    <h1 style="text-align: center;">商品の出品</h1>
+<div class="sell__container">
+    <h1 class="sell__title">商品の出品</h1>
     <form action="{{ route('sell.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <!-- 商品画像 -->
-        <div style="margin-bottom: 20px;">
-            <label for="image" style="display: block; font-weight: bold; margin-bottom: 5px;">商品画像</label>
-            <input type="file" name="image" id="image" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            @error('image')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+        <!-- 商品画像のアップロード -->
+        <div class="sell__image-upload">
+            <label for="item_image" class="sell__image-label">画像を選択する</label>
+            <input type="file" name="item_image" id="item_image" class="sell__image-input" accept="image/*">
+            <span id="file-name" class="sell__image-file-name">選択された画像はありません</span>
+
+            @error('item_image')
+            <p class="sell__error">{{ $message }}</p>
             @enderror
         </div>
 
-        <!-- カテゴリー -->
-        <div style="margin-bottom: 20px;">
-            <label for="category" style="display: block; font-weight: bold; margin-bottom: 5px;">カテゴリー</label>
-            <div>
+        <h2 class="sell__section-title">商品の詳細</h2>
+
+        <!-- カテゴリー選択 -->
+        <div class="sell__category-group">
+            <p class="sell__category-title">カテゴリー</p>
+            <div class="sell__category-options">
                 @foreach ($categories as $category)
-                <label style="margin-right: 10px;">
-                    <input type="radio" name="category" value="{{ $category }}"> {{ $category }}
-                </label>
+                <div class="sell__category-item">
+                    <input type="checkbox" name="category_ids[]" id="category-{{ $category->id }}" value="{{ $category->id }}"
+                        {{ is_array(old('category_ids')) && in_array($category->id, old('category_ids')) ? 'checked' : '' }}>
+                    <label for="category-{{ $category->id }}" class="sell__category-label">{{ $category->name }}</label>
+                </div>
                 @endforeach
             </div>
-            @error('category')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+
+            @error('category_id')
+            <p class="sell__error">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- 商品の状態 -->
-        <div style="margin-bottom: 20px;">
-            <label for="condition" style="display: block; font-weight: bold; margin-bottom: 5px;">商品の状態</label>
-            <select name="condition" id="condition" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="" disabled selected>選択してください</option>
-                <option value="新品">新品</option>
-                <option value="中古">中古</option>
-                <option value="ジャンク">ジャンク</option>
-            </select>
-            @error('condition')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+        <div class="sell__condition">
+            <label for="condition" class="sell__condition-label">商品の状態</label>
+            <div class="sell__condition-select">
+                <div class="sell__condition-selected">選択してください</div>
+                <ul class="sell__condition-options">
+                    @foreach ($conditions as $condition)
+                    <li data-value="{{ $condition->id }}"
+                        class="{{ old('condition_id') == $condition->id ? 'selected' : '' }}">
+                        {{ $condition->name }}
+                    </li>
+                    @endforeach
+                </ul>
+                <input type="hidden" name="condition_id" id="selected-condition" value="{{ old('condition_id') }}">
+            </div>
+
+            @error('condition_id')
+            <p class="sell__error">{{ $message }}</p>
             @enderror
         </div>
 
-        <!-- 商品名と説明 -->
-        <div style="margin-bottom: 20px;">
-            <label for="name" style="display: block; font-weight: bold; margin-bottom: 5px;">商品名</label>
-            <input type="text" name="name" id="name" value="{{ old('name') }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <h2 class="sell__section-title">商品名と説明</h2>
+
+        <!-- 商品名 -->
+        <div class="sell__product-name">
+            <label for="name" class="sell__label">商品名</label>
+            <input type="text" name="name" id="name" class="sell__input" value="{{ old('name') }}">
             @error('name')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="sell__error">{{ $message }}</p>
             @enderror
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label for="description" style="display: block; font-weight: bold; margin-bottom: 5px;">商品の説明</label>
-            <textarea name="description" id="description" rows="5" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">{{ old('description') }}</textarea>
+        <!-- ブランド名 -->
+        <div class="sell__brand-name">
+            <label for="brand" class="sell__label">ブランド名</label>
+            <input type="text" name="brand" id="brand" class="sell__input" value="{{ old('brand') }}">
+            @error('brand')
+            <p class="sell__error">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- 商品の説明 -->
+        <div class="sell__description">
+            <label for="description" class="sell__label">商品の説明</label>
+            <textarea name="description" id="description" class="sell__textarea" rows="5">{{ old('description') }}</textarea>
             @error('description')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="sell__error">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- 販売価格 -->
-        <div style="margin-bottom: 20px;">
-            <label for="price" style="display: block; font-weight: bold; margin-bottom: 5px;">販売価格</label>
-            <input type="number" name="price" id="price" value="{{ old('price') }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <div class="sell__price">
+            <label for="price" class="sell__label">販売価格</label>
+            <input type="number" name="price" id="price" class="sell__input" value="{{ old('price') }}">
             @error('price')
-            <p style="color: red; font-size: 12px;">{{ $message }}</p>
+            <p class="sell__error">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- 出品ボタン -->
-        <button type="submit" style="background-color: red; color: white; padding: 10px 20px; border: none; border-radius: 5px; width: 100%; cursor: pointer;">
-            出品する
-        </button>
+        <div class="sell__submit">
+            <button type="submit" class="sell__submit-button">出品する</button>
+        </div>
     </form>
+
+    <script>
+        document.getElementById('item_image').addEventListener('change', function() {
+            document.getElementById('file-name').textContent = this.files.length ? this.files[0].name : "選択された画像はありません";
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectBox = document.querySelector(".sell__condition-selected");
+            const optionsList = document.querySelector(".sell__condition-options");
+            const options = document.querySelectorAll(".sell__condition-options li");
+            const hiddenInput = document.getElementById("selected-condition");
+
+            options.forEach(option => {
+                if (option.classList.contains("selected")) {
+                    selectBox.textContent = option.textContent.trim();
+                }
+            });
+
+            selectBox.addEventListener("click", function() {
+                optionsList.style.display = optionsList.style.display === "block" ? "none" : "block";
+            });
+
+            options.forEach(option => {
+                option.addEventListener("click", function() {
+                    options.forEach(opt => opt.classList.remove("selected"));
+                    this.classList.add("selected");
+                    selectBox.textContent = this.textContent.trim();
+                    hiddenInput.value = this.dataset.value;
+                    optionsList.style.display = "none";
+                });
+            });
+
+            document.addEventListener("click", function(event) {
+                if (!selectBox.contains(event.target) && !optionsList.contains(event.target)) {
+                    optionsList.style.display = "none";
+                }
+            });
+        });
+    </script>
+
 </div>
 @endsection

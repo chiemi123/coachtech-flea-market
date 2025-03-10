@@ -56,6 +56,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         // 他のミドルウェア
+        'verified.if.loggedin' => \App\Http\Middleware\EnsureEmailIsVerifiedIfLoggedIn::class,
         'profile.complete' => \App\Http\Middleware\CheckProfileCompletion::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

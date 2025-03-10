@@ -1,51 +1,117 @@
 @extends('layouts.app')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/purchase/show.css') }}">
+@endsection
+
 @section('header-extra')
-<li class="header-nav__item">
-    <a class="header-nav__link" href="{{ route('sell.create') }}">出品</a>
-</li>
+
 @endsection
 
 @section('title', '商品購入')
 
 @section('content')
-<div style="display: flex; justify-content: space-between; margin-top: 30px;">
-    <!-- 左側: 商品情報 -->
-    <div style="flex: 2; margin-right: 20px;">
-        <!-- 商品情報 -->
-        <div style="display: flex; align-items: center; margin-bottom: 20px;">
-            <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" style="width: 150px; height: 150px; background-color: #eee; margin-right: 20px;">
-            <div>
-                <h2>{{ $item['name'] }}</h2>
-                <p style="font-size: 24px; color: red;">¥{{ number_format($item['price']) }}</p>
+
+
+<div class="purchase">
+    <form action="{{ route('purchase.confirm', $item->id) }}" method="POST">
+        @csrf
+        <!-- 左側の購入情報 -->
+        <div class="purchase__info">
+            <!-- 商品情報 -->
+            <div class="purchase__item-box">
+                @if (Str::startsWith($item->item_image, 'http'))
+                <!-- 画像がURLの場合（外部URLやアイテムテーブルに保存されている画像） -->
+                <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
+                @else
+                <!-- 画像がストレージ内に保存されている場合 -->
+                <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
+                @endif
+                <div class="purchase__item-info">
+                    <p class="purchase__item-name">{{ $item->name }}</p>
+                    <p class="purchase__item-price">¥{{ number_format($item->price) }}</p>
+                </div>
+            </div>
+
+            <!-- 支払い方法 -->
+            <div class="purchase__payment">
+                <label class="purchase__payment-label">支払い方法</label>
+                <div class="purchase__payment-options">
+
+                    <!-- トグル用チェックボックス（ドロップダウンの開閉に利用） -->
+                    <input type="checkbox" id="toggle-dropdown" class="toggle-checkbox">
+                    <label class="dropdown-label" for="toggle-dropdown">
+                        選択してください
+                    </label>
+
+                    <!-- 支払い方法の選択肢 -->
+                    <div class="purchase__payment-options-dropdown">
+                        <div class="purchase__option">
+                            <input type="radio" id="convenience" name="payment_method" value="コンビニ払い"
+                                {{ session('payment_method') === 'コンビニ払い' ? 'checked' : '' }}
+                                onchange="submitWithDelay(this.form, 300)">
+                            <label for="convenience">コンビニ払い</label>
+                        </div>
+                        <div class="purchase__option">
+                            <input type="radio" id="credit_card" name="payment_method" value="クレジットカード"
+                                {{ session('payment_method') === 'クレジットカード' ? 'checked' : '' }}
+                                onchange="submitWithDelay(this.form, 300)">
+                            <label for="credit_card">クレジットカード</label>
+                        </div>
+
+                        <script>
+                            function submitWithDelay(form, delay) {
+                                setTimeout(function() {
+                                    form.submit();
+                                }, delay);
+                            }
+                        </script>
+
+                    </div>
+                </div>
+
+                <!-- 隠しフィールドで住所IDを渡す -->
+                <input type="hidden" name="address_id" value="{{ session('address_id', 'user_table') }}">
+            </div>
+
+            <!-- 配送先 -->
+            <div class="purchase__shipping">
+                <label class="purchase__shipping-label">配送先</label>
+
+                <div class="purchase__shipping-address">
+                    @auth
+                    <p>〒 {{ $address->postal_code ?? 'XXX-YYYY' }}</p>
+                    <p>{{ $address->address ?? 'ここには住所が入ります' }}</p>
+                    <p>{{ $address->building_name ?? '' }}</p>
+                    @else
+                    <p>ログインしてください</p>
+                    @endauth
+                </div>
+                <a href="{{ route('address.edit', ['item_id' => $item->id]) }}" class="purchase__shipping-edit">変更する</a>
             </div>
         </div>
 
-        <!-- 支払い方法 -->
-        <h3>支払い方法</h3>
-        <select name="payment_method" style="width: 100%; padding: 10px; margin-bottom: 20px;">
-            <option value="" disabled selected>選択してください</option>
-            <option value="credit_card">クレジットカード</option>
-            <option value="convenience_store">コンビニ払い</option>
-        </select>
+    </form>
 
-        <!-- 配送先 -->
-        <h3>配送先</h3>
-        <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 20px;">
-            <p>〒{{ $userAddress['postal_code'] }}</p>
-            <p>{{ $userAddress['address'] }}</p>
-            <a href="{{ route('address.edit', ['item_id' => $item['id']]) }}" style="color: blue;">変更する</a>
+
+    <!-- 右側の購入概要（表のようなデザイン） -->
+    <form action="{{ route('purchase.checkout', $item->id) }}" method="POST">
+        @csrf
+        <div class="purchase__summary">
+            <table class="purchase__table">
+                <tr>
+                    <th>商品代金</th>
+                    <td>¥{{ number_format($item->price) }}</td>
+                </tr>
+                <tr>
+                    <th>支払い方法</th>
+                    <td>{{ session('payment_method', '') }}</td> <!-- 選択した支払い方法を表示 -->
+                </tr>
+            </table>
+            <input type="hidden" name="address_id" value="{{ session('address_id', 'user_table') }}">
+            <input type="hidden" name="payment_method" value="{{ session('payment_method', '') }}">
+            <button type="submit" class="purchase__button">購入する</button>
         </div>
-    </div>
-
-    <!-- 右側: 購入情報 -->
-    <div style="flex: 1; padding: 20px; border: 1px solid #ddd;">
-        <h3>購入情報</h3>
-        <p>商品代金: <span style="float: right;">¥{{ number_format($item['price']) }}</span></p>
-        <p>支払い方法: <span style="float: right;">コンビニ払い</span></p>
-        <button style="background-color: red; color: white; padding: 10px 20px; border: none; width: 100%; cursor: pointer; margin-top: 20px;">
-            購入する
-        </button>
-    </div>
+    </form>
 </div>
 @endsection

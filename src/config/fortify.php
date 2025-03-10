@@ -133,11 +133,7 @@ return [
 
     'views' => true,
 
-    // 以下を追加
-    'register' => [
-        'controller' => \App\Http\Controllers\Auth\CustomRegisteredUserController::class,
-    ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Features
@@ -152,7 +148,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
-        // Features::emailVerification(),
+        Features::emailVerification(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
         Features::twoFactorAuthentication([

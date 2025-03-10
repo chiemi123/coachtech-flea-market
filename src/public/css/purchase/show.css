@@ -1,0 +1,506 @@
+/* 購入ページの全体レイアウト */
+.purchase {
+    position: relative;
+    max-width: 1347px; /* 全体の最大幅 */
+    margin: 0 auto; /* 中央配置 */
+    display: flex;
+    justify-content: space-between; /* 左右に分割 */
+    gap: 30px;
+}
+
+/* 左側の購入情報（商品画像・支払い方法・配送先） */
+.purchase__info {
+    width: 805px;
+    padding: 20px 0;
+}
+
+/* 商品情報のボックス */
+.purchase__item-box {
+    display: flex;
+    align-items: center; /* 商品画像と情報を揃える */
+    gap: 15px; /* 画像とテキストの間隔 */
+    margin-top: 73px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #000000;
+}
+
+/* 商品画像 */
+.purchase__item-box img {
+    width: 177.53px;
+    height: 177.53px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* 商品名と価格 */
+.purchase__item-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 68.47px;
+    gap: 5px;
+}
+
+.purchase__item-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.purchase__item-price {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000000;
+}
+
+/* 支払い方法 */
+.purchase__payment {
+    width: 805px; /* 支払い方法のボックスの幅 */
+    height: 190px;
+    border-bottom: 1px solid #000000; /* 下線を追加 */
+}
+
+.purchase__payment-label {
+    position: absolute;
+    top: 321px; /* 403px - 82px */
+    left: 115px;
+    width: 326px;
+    height: 85px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 85px; /* 高さと同じ値を設定して中央寄せ */
+}
+
+/* トグル用チェックボックスは非表示 */
+.toggle-checkbox {
+    display: none;
+}
+
+/* ドロップダウンスタイル */
+.purchase__payment-options {
+    position: absolute;
+    top: 417px; /* 499px - 82px */
+    left: 176px; /* 左からの距離を指定 */
+    width: 265px;
+    height: 31px;
+}
+
+/* 「選択してください」のラベル */
+.dropdown-label {
+    display: block;
+    width: 265px;
+    height: 31px;
+    padding-left: 10px;
+    padding-right: 30px; /* 矢印用の余白 */
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #5f5f5f;
+    line-height: 31px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+}
+
+/* カスタム矢印 */
+.dropdown-label::after {
+    content: "▼"; /* 矢印 */
+    font-size: 14px;
+    color: #5f5f5f;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* 支払い方法選択肢のコンテナは、チェックボックスがオンになったときに表示 */
+.toggle-checkbox:checked ~ .purchase__payment-options-dropdown {
+    display: block;
+}
+
+/* 初期状態で非表示 */
+.purchase__payment-options-dropdown {
+    display: none;
+    position: absolute;
+    width: 100%;
+    min-width: 265px;
+    border: 1.5px solid #b1b1b1;
+    border-radius: 4px;
+    background-color: #636769;
+    padding: 5px 0; /* 選択肢間の余白を調整 */
+}
+
+/* 各選択肢のラッパー */
+.purchase__option {
+    position: relative;
+    margin-bottom: 5px;
+}
+
+/* 非表示のラジオボタン */
+.purchase__option input[type="radio"] {
+    display: none;
+    appearance: none;
+}
+
+/* デフォルトのラベル */
+.purchase__option label {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    padding: 5px 10px;
+    background-color: #636769;
+    font-size: 14px;
+    font-weight: 600;
+    color: #eaeaea;
+    cursor: pointer;
+    position: relative;
+}
+
+/* チェックマークを表示するための疑似要素 */
+.purchase__option label::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* チェックされた場合のスタイル */
+.purchase__option input[type="radio"]:checked + label {
+    background-color: #5599eb;
+    border-radius: 5px;
+    color: white;
+}
+
+.purchase__option input[type="radio"]:checked + label::before {
+    content: "\2713"; /* Unicodeのチェックマーク */
+    width: 15.34px;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 12px;
+    color: white;
+    background-color: #5599eb;
+    border-color: #5599eb;
+}
+
+/* ホバー効果：選択肢のラベルにホバーしたとき */
+.purchase__payment-options-dropdown label:hover {
+    background-color: #5599eb;
+    border-radius: 5px;
+    color: white;
+}
+
+/* 配送先情報 */
+.purchase__shipping {
+    position: relative; /* 子要素の absolute 配置を適用するため */
+    width: 805px; /* 画像に合わせた幅 */
+    height: 215px; /* 高さを可変にする */
+    display: flex;
+    align-items: center; /* 垂直方向の中央揃え */
+    justify-content: space-between; /* ラベルと変更ボタンを左右に配置 */
+    padding: 10px 0;
+    margin: 20px 0;
+    border-bottom: 1px solid #000000;
+}
+
+.purchase__shipping-label {
+    position: absolute;
+    top: 5px;
+    left: 115px;
+    width: 326px;
+    height: 85px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 85px; /* 高さと同じ値を設定して中央寄せ */
+}
+
+.purchase__shipping-address {
+    position: absolute; /* 絶対配置 */
+    top: 98px;
+    left: 176px;
+    width: 280px;
+    height: 58px;
+    display: flex;
+    flex-direction: column; /* 縦並びに */
+    justify-content: flex-start; /* 上から配置 */
+    line-height: 1.2; /* 行間を詰める */
+}
+
+.purchase__shipping-address p {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0; /* 余白を小さく */
+    overflow: hidden; /* はみ出しを隠す */
+    text-overflow: ellipsis; /* はみ出した部分を「…」に */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 2行に制限 */
+    -webkit-box-orient: vertical;
+    line-clamp: 2; /* 標準プロパティ（対応ブラウザがあれば適用されます） */
+}
+
+.purchase__shipping-edit {
+    position: absolute;
+    top: 5px;
+    left: 655px;
+    width: 115px;
+    height: 85px;
+    font-size: 20px;
+    font-weight: 400;
+    color: blue;
+    text-decoration: none;
+    cursor: pointer;
+    line-height: 85px;
+}
+
+/* 右側の購入情報を表のようなデザインに */
+.purchase__summary {
+    flex: 1; /* 右側はコンパクトに */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    margin-left: 102px;
+    border-width: 1px;
+}
+
+/* 表のスタイル */
+.purchase__table {
+    width: 440px;
+    height: 230px;
+    margin-top: 73px;
+    border-collapse: collapse; /* 枠線を統一 */
+    border: 1px solid #ddd;
+}
+
+.purchase__table tr {
+    font-weight: bold;
+    border: 1px solid #ddd;
+    height: 50%;
+}
+
+.purchase__table th {
+    font-size: 20px;
+    font-weight: 400;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.purchase__table td {
+    font-size: 24px;
+    font-weight: 400;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 購入ボタン */
+.purchase__button {
+    display: inline-block;
+    width: 100%;
+    height: 60px;
+    margin-top: 56px;
+    padding: 10px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #ff5555;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.purchase__button:hover {
+    background-color: #f33535;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .purchase {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 850px) {
+    /* 購入ページの全体レイアウト */
+    .purchase {
+        display: flex;
+        flex-direction: row; /* タブレットでもPCと同じ2カラム配置 */
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 90%;
+        max-width: 1100px;
+        margin: 0 auto;
+        gap: 20px;
+    }
+
+    /* 左側の商品情報エリア */
+    .purchase__info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    /* 商品画像 */
+    .purchase__item-box {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        width: 90%;
+        margin-top: 30px;
+    }
+
+    .purchase__item-box img {
+        width: 50%;
+        height: auto;
+    }
+
+    /* 商品名と価格 */
+    .purchase__item-info {
+        text-align: left;
+        width: 100%;
+        margin-left: 10px;
+    }
+
+    .purchase__item-name {
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .purchase__item-price {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    /* 支払い方法エリア */
+    .purchase__payment {
+        width: 90%;
+        max-width: 400px;
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .purchase__payment-label {
+        position: static;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 85px; /* 高さと同じ値を設定して中央寄せ */
+        margin-left: 30px;
+    }
+
+    /* 支払い方法のドロップダウン */
+    .purchase__payment-options {
+        position: static;
+        width: 80%;
+        max-width: 300px;
+        margin: 10px auto;
+    }
+
+    .purchase__payment-options-dropdown {
+        display: none;
+        position: relative;
+        top: 0;
+        width: 100%;
+        min-width: 265px;
+        border: 1.5px solid #b1b1b1;
+        border-radius: 4px;
+        background-color: #636769;
+        padding: 5px 0; /* 選択肢間の余白を調整 */
+    }
+
+    /* 配送先エリア */
+    .purchase__shipping {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        max-width: 400px;
+        margin-top: 20px;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .purchase__shipping-label {
+        position: absolute;
+        top: 10px;
+        left: 30px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .purchase__shipping-address {
+        position: absolute;
+        left: 80px;
+    }
+
+    /* 配送先の「変更する」リンクを右端に */
+    .purchase__shipping-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .purchase__shipping-edit {
+        position: absolute;
+        top: 10px;
+        left: 230px;
+        text-align: right;
+        color: blue;
+        cursor: pointer;
+    }
+
+    /* 右側の購入情報エリア */
+    .purchase__summary {
+        width: 100%;
+        max-width: 700px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin: 0;
+    }
+
+    /* 購入情報（価格・支払い方法）のボックス */
+    .purchase__table {
+        width: 100%;
+        max-width: 700px;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        display: table; /* 表のレイアウトを適用 */
+        table-layout: auto;
+    }
+
+    .purchase__table th,
+    .purchase__table td {
+        padding: 10px 15px;
+        width: 50%;
+        font-size: 17px;
+        white-space: nowrap;
+    }
+
+    /* 購入ボタン */
+    .purchase__button {
+        width: 100%;
+        height: 50px;
+        margin-top: 20px;
+        font-size: 22px;
+        display: block;
+        margin: 20px auto;
+        cursor: pointer;
+    }
+}
