@@ -96,6 +96,14 @@ php artisan migrate
 
 http://localhost
 
+➅シーダーの実行
+
+以下のコマンドでシーダーを実行します。
+
+```
+php artisan migrate --seed
+```
+
 
 ## その他
 
