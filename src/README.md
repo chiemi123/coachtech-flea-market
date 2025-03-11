@@ -9,7 +9,9 @@
 
 ## 機能一覧
 
-ログイン機能、メール認証機能（mailhog）、商品一覧と詳細ページで商品名の検索機能、商品の出品と購入（stripe決済）機能
+ログイン機能、メール認証機能（認証機能Fortify）（メール受信テストはmailhog）  
+商品一覧と詳細ページで商品名の検索機能、商品の出品と購入機能（stripe 決済）  
+
 
 ## 使用技術（実行環境）
 
@@ -24,13 +26,133 @@
 **[テーブル設計シート (Google スプレッドシート)](https://docs.google.com/spreadsheets/d/1AUlHz8zNAvwpKfZsBWg9MHVZcBCvu6NGlVGuadmne2k/edit?gid=1188247583#gid=1188247583)**
 
 
+### **1. users テーブル（ユーザー情報）**
+| カラム名         | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|----------------|-------------|----------|------|------|------|
+| id            | BIGINT      | ○        | ○    |      | ユーザーID |
+| name          | VARCHAR(255)| ○        |      |      | ユーザー名 |
+| email         | VARCHAR(255)| ○        |      |      | メールアドレス（ユニーク制約） |
+| profile_image | VARCHAR(255)|          |      |      | プロフィール画像 |
+| username      | VARCHAR(255)| ○        |      |      | ユーザー名（ニックネームなど） |
+| postal_code   | VARCHAR(255)|          |      |      | 郵便番号 |
+| address       | VARCHAR(255)|          |      |      | 住所 |
+| building_name | VARCHAR(255)|          |      |      | 建物名 |
+| password      | VARCHAR(255)| ○        |      |      | ハッシュ化されたパスワード |
+| profile_completed | TINYINT(1) | ○      |      |      | プロフィール完了フラグ |
+| created_at    | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at    | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **2. conditions テーブル（商品の状態）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | 商品状態のID |
+| name       | VARCHAR(255)| ○        |      |      | 状態名（良好・傷ありなど） |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **3. addresses テーブル（配送先住所）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | 住所ID |
+| user_id    | BIGINT      | ○        |      | users(id) | ユーザーID（外部キー） |
+| postal_code | VARCHAR(8)  | ○        |      |      | 郵便番号 |
+| address    | VARCHAR(255)| ○        |      |      | 住所 |
+| building_name | VARCHAR(255)|      |      |      | 建物名 |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **4. items テーブル（商品情報）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | 商品ID |
+| user_id    | BIGINT      | ○        |      | users(id) | 出品者ID（外部キー） |
+| condition_id | BIGINT    | ○        |      | conditions(id) | 商品の状態ID（外部キー） |
+| name       | VARCHAR(255)| ○        |      |      | 商品名 |
+| brand      | VARCHAR(255)| ○        |      |      | ブランド名 |
+| description | VARCHAR(255)| ○       |      |      | 商品説明 |
+| price      | INTEGER     | ○        |      |      | 価格 |
+| item_image | VARCHAR(255)|          |      |      | 商品画像 |
+| sold_out   | TINYINT(1)  | ○        |      |      | 売り切れフラグ |
+| likes_count | INTEGER    | ○        |      |      | いいね数 |
+| comments_count | INTEGER | ○        |      |      | コメント数 |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **5. categories テーブル（カテゴリ情報）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | カテゴリID |
+| name       | VARCHAR(255)| ○        |      |      | カテゴリ名 |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **6. category_items テーブル（カテゴリと商品を紐づける中間テーブル）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | カテゴリアイテムID |
+| category_id | BIGINT    | ○        |      | categories(id) | カテゴリID（外部キー） |
+| item_id    | BIGINT      | ○        |      | items(id) | 商品ID（外部キー） |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **7. purchases テーブル（購入情報）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | 購入ID |
+| user_id    | BIGINT      | ○        |      | users(id) | 購入者ID（外部キー） |
+| item_id    | BIGINT      | ○        |      | items(id) | 購入した商品ID（外部キー） |
+| address_id | BIGINT      | ○        |      | addresses(id) | 配送先住所ID（外部キー） |
+| payment_method | VARCHAR(255)| ○    |      |      | 支払い方法 |
+| status     | VARCHAR(255)| ○        |      |      | 購入ステータス |
+| transaction_id | VARCHAR(255)|      |      |      | 取引ID（決済プロバイダのトランザクションID） |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **8. likes テーブル（お気に入り情報）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | いいねID |
+| user_id    | BIGINT      | ○        |      | users(id) | ユーザーID（外部キー） |
+| item_id    | BIGINT      | ○        |      | items(id) | 商品ID（外部キー） |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+### **9. comments テーブル（コメント情報）**
+| カラム名      | データ型       | NOT NULL | 主キー | 外部キー | 説明 |
+|-------------|-------------|----------|------|------|------|
+| id         | BIGINT      | ○        | ○    |      | コメントID |
+| user_id    | BIGINT      | ○        |      | users(id) | コメント投稿者のユーザーID（外部キー） |
+| item_id    | BIGINT      | ○        |      | items(id) | コメント対象の商品ID（外部キー） |
+| content    | VARCHAR(255)| ○        |      |      | コメント内容 |
+| created_at | TIMESTAMP   |          |      |      | 作成日時 |
+| updated_at | TIMESTAMP   |          |      |      | 更新日時 |
+
+---
+
+
 ## ER 図
 
 ![alt text](.drawio.png)
 
 ## 環境構築
 
-➀リポジトリのクローン
+➀ リポジトリのクローン
 
 GitHub からプロジェクトをローカル環境にクローンします。
 
@@ -57,13 +179,14 @@ code .
 
 ➂Laravel のセットアップ
 
-以下のコマンドでphpコンテナにログインします。
+以下のコマンドで php コンテナにログインします。
 
 ```
 docker-compose exec php bash
-````
+```
+
 Laravel パッケージのインストール
-以下のコマンドでLaravel パッケージのインストールをします。
+以下のコマンドで Laravel パッケージのインストールをします。
 
 ```
 composer install
@@ -76,7 +199,7 @@ composer install
 cp .env.example .env
 ```
 
-➃アプリケーションキーの作成
+➃ アプリケーションキーの作成
 
 以下のコマンドでアプリケーションキーを生成します。
 
@@ -84,7 +207,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-➄マイグレーションの実行
+➄ マイグレーションの実行
 
 以下のコマンドでデータベースのマイグレーションを実行します。
 
@@ -96,7 +219,7 @@ php artisan migrate
 
 http://localhost
 
-➅シーダーの実行
+➅ シーダーの実行
 
 以下のコマンドでシーダーを実行します。
 
@@ -104,10 +227,59 @@ http://localhost
 php artisan migrate --seed
 ```
 
+## 🔑 認証機能について
+
+本アプリケーションでは、ユーザー認証の仕組みに [Laravel Fortify](https://laravel.com/docs/fortify) を使用しています。
+
+### 使用バージョン
+- Laravel Fortify v1.x.x
+
+### 主な機能
+- ログイン・新規登録
+- パスワードのリセット
+- メールアドレス認証（オプション）
+
+### 導入手順
+
+プロジェクトの初期設定時に以下のコマンドを実行してください。
+
+```bash
+composer install
+php artisan migrate
+php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
+```
+
 
 ## その他
 
-➀MailHog のセットアップ（開発環境用メール送信）
+### テスト用アカウント
+
+メールアドレス：test@yahoo.co.jp
+
+パスワード　　：yamadayamada
+
+
+### ** 商品画像の保存仕様**
+
+本アプリでは、出品された商品の画像は **Laravel のストレージ（storage フォルダ）** に保存されます。  
+デフォルトでは `storage/app/public/item_images` に画像が格納され、`public/storage` にシンボリックリンクを作成することで、Web からアクセス可能になります。
+
+#### **1. 画像の保存先**
+
+| ディレクトリ | 説明 |
+|------------|------|
+| `storage/app/public/item_images/` | アップロードされた画像の保存場所 |
+| `public/storage/item_images/` | Web アクセス用のシンボリックリンク |
+
+シンボリックリンクの作成
+
+画像を public ディレクトリからアクセス可能にするために、以下のコマンドを実行してください。
+
+```
+php artisan storage:link
+```
+
+### MailHog のセットアップ（開発環境用メール送信）
 
 MailHog を使用すると、開発環境で送信されるメールをローカルで確認できます。
 
@@ -118,7 +290,7 @@ MailHog は docker-compose up -d の時点で起動しています。
 http://localhost:8025
 
 .env のメール設定
-.envファイルを以下のように変更します。
+.env ファイルを以下のように変更します。
 
 ```env
 
@@ -133,13 +305,14 @@ MAIL_FROM_NAME="Example"
 
 ```
 
-その後、Dockerコンテナを以下のコマンドで再起動します。
+その後、Docker コンテナを以下のコマンドで再起動します。
 
 ```
 docker-compose restart
 ```
 
-➁アプリケーションの起動
+### アプリケーションの起動
+
 nginx / Apache を使用する場合
 
 ```
@@ -156,23 +329,39 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
 ブラウザで http://localhost:8000 にアクセスしてください。
 
-➂Stripe 決済のセットアップ
-.env に Stripe の API キーを設定
+### Stripe 決済のセットアップ
+
+#### **1. Stripe アカウントを作成**
+
+Stripe の API キーを取得するには、まず **Stripe の公式サイトでアカウントを作成** する必要があります。
+
+🔹 **Stripe 公式サイト:** [https://dashboard.stripe.com/register](https://dashboard.stripe.com/register)
+
+1. 上記のリンクから **Stripe アカウントを作成**
+2. [Stripe ダッシュボード](https://dashboard.stripe.com/) にログイン
+3. **「開発者」 → 「API キー」** から **「公開可能キー」 (`STRIPE_KEY`)** と **「シークレットキー」 (`STRIPE_SECRET`)** を取得  
+
+#### **2. `.env` に Stripe の API キーを設定**
+
 Stripe ダッシュボード で 公開可能キー と シークレットキー を取得し、.env に設定します。
+
+```ini
 
 STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxx
 STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx
 
-その後、Dockerコンテナを再起動
+```
+
+その後、Docker コンテナを再起動
 
 ```
 docker-compose restart
 ```
 
-以下のコマンドで、laravelにStripe の公式 PHP ライブラリ (stripe/stripe-php) をインストールします。
+以下のコマンドで、laravel に Stripe の公式 PHP ライブラリ (stripe/stripe-php) をインストールします。
 
 ```
-docker-compose exec app composer require stripe/stripe-php
+docker-compose exec app composer require stripe/stripe-php:^12.0
 ```
 
 インストールが完了したら、以下のコマンドでパッケージが正しくインストールされたか確認できます。
@@ -181,17 +370,19 @@ docker-compose exec app composer require stripe/stripe-php
 docker-compose exec app php artisan about | grep "Stripe"
 ```
 
-## Stripe のテスト環境
+```
+docker-compose exec app composer show stripe/stripe-php
+```
+**
+#### **3.stripe のテスト環境**
 
 Stripe のテスト環境では、以下のカード番号を使用して決済テストができます。
 
-| カード番号              | カード種別    | 成功 or 失敗      |
-|----------------------|------------|----------------|
-| 4242 4242 4242 4242 | Visa       | ✅ 成功        |
+| カード番号          | カード種別 | 成功 or 失敗        |
+| ------------------- | ---------- | ------------------- |
+| 4242 4242 4242 4242 | Visa       | ✅ 成功             |
 | 4000 0000 0000 0002 | Visa       | ❌ 失敗（決済拒否） |
-| 5555 5555 5555 4444 | Mastercard | ✅ 成功        |
-
-
+| 5555 5555 5555 4444 | Mastercard | ✅ 成功             |
 
 コンビニ払いの決済テスト
 このプロジェクトでは、Webhook をセットアップせずにコンビニ払いの決済テストが可能 です。
@@ -205,9 +396,20 @@ docker run --rm -it stripe/stripe-cli:latest
 
 以下のコマンドで、Webhook のリスニングを開始します。
 
+nginx を使用していない場合（Laravel が `app:8000` で動作）
+
 ```
 docker exec -it stripe-cli stripe listen --forward-to app:8000/stripe/webhook
 ```
+
+nginx を使用している場合（リバースプロキシあり）
+
+```
+docker exec -it stripe-cli stripe listen --forward-to http://localhost/stripe/webhook
+```
+
+どちらを使うかは docker-compose.yml を確認してください。
+
 
 以下のコマンドで、Webhook のテストを実行します。
 
