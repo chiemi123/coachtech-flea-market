@@ -1,22 +1,36 @@
-# アプリケーション名
+# coachtech-flea-market
 
-フリマアプリ
-ログイン後、商品の出品と購入が出来ます。
+`coachtech-flea-market` は、ユーザー同士が商品を売買できるフリーマーケットアプリです。  
+ログイン後、商品の **出品・購入** が可能になります。
+
+
+## **主な機能**
+- ユーザー登録・ログイン
+- 商品の出品
+- 商品の購入
+- お気に入り登録（いいね機能）
+- コメント機能
+
+簡単に商品を売買できるマーケットプレイスを提供します！
+
 
 ## 作成した目的
 
 模擬案件を通して実践に近い開発経験を積み、定義された要件を実装する能力を身につけること。
+
 
 ## 機能一覧
 
 ログイン機能、メール認証機能（認証機能 Fortify）（メール受信テストは mailhog）  
 商品一覧と詳細ページで商品名の検索機能、商品の出品と購入機能（stripe 決済）
 
+
 ## 使用技術（実行環境）
 
 ・PHP7.4
 ・Laravel8.83.27
 ・MySQL8.0.26
+
 
 ## テーブル設計
 
@@ -152,11 +166,14 @@
 
 ---
 
+
 ## ER 図
 
 ![alt text](.drawio.png)
 
+
 ## 環境構築
+
 
 ### **1.リポジトリのクローン**
 
@@ -170,6 +187,7 @@ git clone https://github.com/chiemi123/coachtech-flea-market.git
 cd coachtech-flea-market
 ```
 
+
 ### **2.Docker 環境のセットアップ**
 
 Docker コンテナの起動
@@ -182,6 +200,7 @@ docker-compose up -d --build
 ```
 code .
 ```
+
 
 ### **3.Laravel のセットアップ**
 
@@ -205,6 +224,7 @@ composer install
 cp .env.example .env
 ```
 
+
 ### **4.アプリケーションキーの作成**
 
 以下のコマンドでアプリケーションキーを生成します。
@@ -212,6 +232,7 @@ cp .env.example .env
 ```
 php artisan key:generate
 ```
+
 
 ### **5.マイグレーションの実行**
 
@@ -225,6 +246,7 @@ php artisan migrate
 
 http://localhost
 
+
 ### **6.シーダーの実行**
 
 以下のコマンドでシーダーを実行します。
@@ -233,19 +255,23 @@ http://localhost
 php artisan migrate --seed
 ```
 
+
 ## 🔑 認証機能について
 
 本アプリケーションでは、ユーザー認証の仕組みに [Laravel Fortify](https://laravel.com/docs/fortify) を使用しています。
 
+
 ### 使用バージョン
 
 -   Laravel Fortify v1.19.1
+
 
 ### 主な機能
 
 -   ログイン・新規登録
 -   パスワードのリセット
 -   メールアドレス認証（オプション）
+
 
 ### 導入手順
 
@@ -257,16 +283,19 @@ php artisan migrate
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 ```
 
+
 ## テスト用アカウント
 
 メールアドレス：test@yahoo.co.jp
 
 パスワード　　：yamadayamada
 
+
 ## **商品画像の保存仕様**
 
 本アプリでは、出品された商品の画像は **Laravel のストレージ（storage フォルダ）** に保存されます。  
 デフォルトでは `storage/app/public/item_images` に画像が格納され、`public/storage` にシンボリックリンクを作成することで、Web からアクセス可能になります。
+
 
 #### **1. 画像の保存先**
 
@@ -282,6 +311,7 @@ php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 ```
 php artisan storage:link
 ```
+
 
 ## MailHog のセットアップ（開発環境用メール送信）
 
@@ -333,7 +363,9 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
 ブラウザで http://localhost:8000 にアクセスしてください。
 
+
 ## Stripe 決済のセットアップ
+
 
 ### **1. Stripe アカウントを作成**
 
@@ -344,6 +376,7 @@ Stripe の API キーを取得するには、まず **Stripe の公式サイト�
 1. 上記のリンクから **Stripe アカウントを作成**
 2. [Stripe ダッシュボード](https://dashboard.stripe.com/) にログイン
 3. **「開発者」 → 「API キー」** から **「公開可能キー」 (`STRIPE_KEY`)** と **「シークレットキー」 (`STRIPE_SECRET`)** を取得
+
 
 ### **2. `.env` に Stripe の API キーを設定**
 
@@ -377,6 +410,7 @@ docker-compose exec app php artisan about | grep "Stripe"
 ```
 docker-compose exec app composer show stripe/stripe-php
 ```
+
 
 ### **3.stripe のテスト環境**
 
