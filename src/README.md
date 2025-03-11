@@ -158,7 +158,7 @@
 
 ## 環境構築
 
-➀ リポジトリのクローン
+### **1.リポジトリのクローン**
 
 GitHub からプロジェクトをローカル環境にクローンします。
 
@@ -170,7 +170,7 @@ git clone https://github.com/chiemi123/coachtech-flea-market.git
 cd coachtech-flea-market
 ```
 
-➁Docker 環境のセットアップ
+### **2.Docker 環境のセットアップ**
 
 Docker コンテナの起動
 以下のコマンドで Docker コンテナを起動します。
@@ -183,7 +183,7 @@ docker-compose up -d --build
 code .
 ```
 
-➂Laravel のセットアップ
+### **3.Laravel のセットアップ**
 
 以下のコマンドで php コンテナにログインします。
 
@@ -205,7 +205,7 @@ composer install
 cp .env.example .env
 ```
 
-➃ アプリケーションキーの作成
+### **4.アプリケーションキーの作成**
 
 以下のコマンドでアプリケーションキーを生成します。
 
@@ -213,7 +213,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-➄ マイグレーションの実行
+### **5.マイグレーションの実行**
 
 以下のコマンドでデータベースのマイグレーションを実行します。
 
@@ -225,7 +225,7 @@ php artisan migrate
 
 http://localhost
 
-➅ シーダーの実行
+### **6.シーダーの実行**
 
 以下のコマンドでシーダーを実行します。
 
@@ -263,7 +263,7 @@ php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 パスワード　　：yamadayamada
 
-## ** 商品画像の保存仕様**
+## **商品画像の保存仕様**
 
 本アプリでは、出品された商品の画像は **Laravel のストレージ（storage フォルダ）** に保存されます。  
 デフォルトでは `storage/app/public/item_images` に画像が格納され、`public/storage` にシンボリックリンクを作成することで、Web からアクセス可能になります。
