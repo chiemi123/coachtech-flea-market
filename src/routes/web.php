@@ -78,6 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // プロフィール設定画面
     Route::get('/mypage/profile', [UserController::class, 'edit'])->name('profile.edit');
     Route::post('/mypage/profile', [UserController::class, 'update'])->name('profile.update');
+    Route::put('/mypage/profile', [UserController::class, 'update'])->name('profile.update.put');
 });
 
 // ===========================

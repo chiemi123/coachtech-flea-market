@@ -193,10 +193,6 @@ Docker コンテナの起動
 docker-compose up -d --build
 ```
 
-```
-code .
-```
-
 ### **3.Laravel のセットアップ**
 
 以下のコマンドで php コンテナにログインします。
@@ -238,6 +234,12 @@ php artisan migrate
 マイグレーションの実行後、ブラウザで以下にアクセスできるか確認します。
 
 http://localhost
+
+権限エラーが発生する場合は、以下のコマンドを実行します。
+
+```
+sudo chmod -R 777 *
+```
 
 ### **6.シーダーの実行**
 
@@ -319,7 +321,7 @@ MAIL_USERNAME=null
 MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null
 MAIL_FROM_ADDRESS="example@example.com"
-MAIL_FROM_NAME="Example"
+MAIL_FROM_NAME="${APP_NAME}"
 
 ```
 
@@ -376,23 +378,27 @@ STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx
 docker-compose restart
 ```
 
-以下のコマンドで、laravel に Stripe の公式 PHP ライブラリ (stripe/stripe-php) をインストールします。
-
 ```
-docker-compose exec app composer require stripe/stripe-php:^12.0
+docker-compose up -d
 ```
 
-インストールが完了したら、以下のコマンドでパッケージが正しくインストールされたか確認できます。
+
+### **3. Stripe のライブラリがインストールされているか確認する**
+
+以下のコマンドを実行し、`stripe/stripe-php` がインストール済みであることを確認してください。
 
 ```
-docker-compose exec app php artisan about | grep "Stripe"
+docker-compose exec php composer show stripe/stripe-php
 ```
 
+もし stripe/stripe-php が表示されない場合は、以下のコマンドでインストールしてください。
+
 ```
-docker-compose exec app composer show stripe/stripe-php
+docker-compose exec php composer require stripe/stripe-php:^12.0
 ```
 
-### **3.stripe のテスト環境**
+
+### **4.stripe のテスト環境**
 
 Stripe のテスト環境では、以下のカード番号を使用して決済テストができます。
 
@@ -412,6 +418,12 @@ Stripe CLI を使うと、開発環境で Webhook をテストできます。
 docker run --rm -it stripe/stripe-cli:latest
 ```
 
+Docker コンテナ内で stripe login を実行します。
+
+```
+docker-compose exec stripe-cli stripe login
+```
+
 以下のコマンドで、Webhook のリスニングを開始します。
 
 nginx を使用していない場合（Laravel が `app:8000` で動作）
@@ -425,6 +437,13 @@ nginx を使用している場合（リバースプロキシあり）
 ```
 docker exec -it stripe-cli stripe listen --forward-to http://localhost/stripe/webhook
 ```
+
+Webhook の転送先を nginx に変更
+
+```
+docker exec -it stripe_cli stripe listen --forward-to http://nginx/webhook/stripe
+```
+
 
 どちらを使うかは docker-compose.yml を確認してください。
 
