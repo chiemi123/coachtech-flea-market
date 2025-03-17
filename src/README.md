@@ -265,13 +265,9 @@ php artisan db:seed
 
 ### 導入手順
 
-プロジェクトの初期設定時に以下のコマンドを実行してください。
+Fortify は `composer install` 実行時に自動でインストールされます。  
+また、環境構築時にデータベースが適切にセットアップされていれば、追加の設定は不要です。
 
-```bash
-composer install
-php artisan migrate
-php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
-```
 
 ## テスト用アカウント
 
