@@ -246,7 +246,7 @@ sudo chmod -R 777 *
 以下のコマンドでシーダーを実行します。
 
 ```
-php artisan migrate --seed
+php artisan db:seed
 ```
 
 ## 🔑 認証機能について
@@ -372,8 +372,8 @@ STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxx
 
 ```
-STRIPE_WEBHOOK_SECRET の取得方法
-以下のコマンドを実行し、Webhook のリスニングを開始
+STRIPE_WEBHOOK_SECRET の取得方法  
+以下のコマンドを実行し、Webhook のリスニングを開始します。
 
 ```
 docker exec -it stripe_cli stripe listen --forward-to http://nginx/webhook/stripe
@@ -438,7 +438,7 @@ docker exec -it stripe_cli stripe listen --forward-to http://nginx/webhook/strip
 docker exec -it stripe_cli stripe trigger checkout.session.completed
 ```
 
-1. クレジットカード決済のテスト
+#### **1.クレジットカード決済のテスト**
 Stripe のテスト環境では、以下のカード番号を使用して決済テストができます。
 
 | カード番号          | カード種別 | 成功 or 失敗        |
@@ -448,11 +448,12 @@ Stripe のテスト環境では、以下のカード番号を使用して決済�
 | 5555 5555 5555 4444 | Mastercard | ✅ 成功             |
 
 
-2. コンビニ払いの決済テスト
+#### **2.コンビニ払いの決済テスト**
 以下の手順で決済テストができます。
 
-① コンビニ決済を選択し、注文を確定  
-コンビニ払い を選択して、決済を実行  
+① コンビニ払いを選択し、購入ボタンを押します。  
+stripe決済画面でメールアドレスと名前を入力後、支払うボタンを押します。
+
 ② Webhook のシミュレーション  
 以下のコマンドを実行すると、実際に「コンビニで支払いが完了した」状態をシミュレーションできます。  
 
