@@ -369,14 +369,32 @@ Stripe ダッシュボード で 公開可能キー と シークレットキー
 
 STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxx
 STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxx
 
 ```
+STRIPE_WEBHOOK_SECRET の取得方法
+以下のコマンドを実行し、Webhook のリスニングを開始
 
-その後、Docker コンテナを再起動
+```
+docker exec -it stripe_cli stripe listen --forward-to http://nginx/webhook/stripe
+```
+
+実行すると、以下のようなメッセージが表示されます。
+
+```
+> Ready! You are using Stripe API Version [2025-01-27.acacia].
+Your webhook signing secret is whsec_d14f4c8e1f6ffe5f24e3aeddce46088719e00a66aab0c26c6018742d4dbf8813
+(^C to quit)
+```
+
+この whsec_ から始まる値（whsec_xxxxxxxxxxxxxxxxxxxxxxxx）を .env にコピーします。
+
+その後、Docker コンテナを以下のコマンドで再起動します。
 
 ```
 docker-compose restart
 ```
+または、以下のコマンドを実行してください。
 
 ```
 docker-compose up -d
@@ -400,6 +418,27 @@ docker-compose exec php composer require stripe/stripe-php:^12.0
 
 ### **4.stripe のテスト環境**
 
+Docker コンテナ内で stripe login を実行します。  
+初回のみ Stripe にログインしてください。ブラウザが開くので、認証を行います。
+
+```
+docker exec -it stripe_cli stripe login
+```
+
+以下のコマンドで、Webhook のリスニングを開始します。
+
+```
+docker exec -it stripe_cli stripe listen --forward-to http://nginx/webhook/stripe
+
+```
+
+以下のコマンドで、Webhook のテストを実行します。
+
+```
+docker exec -it stripe_cli stripe trigger checkout.session.completed
+```
+
+1. クレジットカード決済のテスト
 Stripe のテスト環境では、以下のカード番号を使用して決済テストができます。
 
 | カード番号          | カード種別 | 成功 or 失敗        |
@@ -408,47 +447,37 @@ Stripe のテスト環境では、以下のカード番号を使用して決済�
 | 4000 0000 0000 0002 | Visa       | ❌ 失敗（決済拒否） |
 | 5555 5555 5555 4444 | Mastercard | ✅ 成功             |
 
-コンビニ払いの決済テスト
-このプロジェクトでは、Webhook をセットアップせずにコンビニ払いの決済テストが可能 です。
-Stripe CLI を使うと、開発環境で Webhook をテストできます。
 
-以下のコマンドで、Docker 環境で Stripe CLI を起動します。
+2. コンビニ払いの決済テスト
+以下の手順で決済テストができます。
 
-```
-docker run --rm -it stripe/stripe-cli:latest
-```
-
-Docker コンテナ内で stripe login を実行します。
-
-```
-docker-compose exec stripe-cli stripe login
-```
-
-以下のコマンドで、Webhook のリスニングを開始します。
-
-nginx を使用していない場合（Laravel が `app:8000` で動作）
-
-```
-docker exec -it stripe-cli stripe listen --forward-to app:8000/stripe/webhook
-```
-
-nginx を使用している場合（リバースプロキシあり）
-
-```
-docker exec -it stripe-cli stripe listen --forward-to http://localhost/stripe/webhook
-```
-
-Webhook の転送先を nginx に変更
-
-```
-docker exec -it stripe_cli stripe listen --forward-to http://nginx/webhook/stripe
-```
-
-
-どちらを使うかは docker-compose.yml を確認してください。
-
-以下のコマンドで、Webhook のテストを実行します。
+① コンビニ決済を選択し、注文を確定  
+コンビニ払い を選択して、決済を実行  
+② Webhook のシミュレーション  
+以下のコマンドを実行すると、実際に「コンビニで支払いが完了した」状態をシミュレーションできます。  
 
 ```
 docker exec -it stripe-cli stripe trigger payment_intent.succeeded
 ```
+
+コンビニ決済では、クレジットカード決済のように「決済完了ページ」には自動で遷移しません。  
+そのため、以下の方法で購入完了を手動で確認してください。
+
+🔹 方法①：マイページ (http://localhost/mypage) を開いてください。  
+購入した商品が表示されていることを確認してください。
+
+🔹 方法②：データベースで注文のステータスを確認するため  
+以下のコマンドを実行してstatusがcompletedになっていることを確認してください。
+
+```
+docker-compose exec php php artisan tinker
+```
+
+```
+use App\Models\Purchase;
+```
+
+```
+Purchase::where('status', 'completed')->get();
+```
+

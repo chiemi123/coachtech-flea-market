@@ -22,7 +22,7 @@
             <div class="purchase__item-box">
                 @if (Str::startsWith($item->item_image, 'http'))
                 <!-- 画像がURLの場合（外部URLやアイテムテーブルに保存されている画像） -->
-                <img src="{{ asset($item->item_image) }}" alt="{{ $item->name }}">
+                <img src="{{ ($item->item_image) }}" alt="{{ $item->name }}">
                 @else
                 <!-- 画像がストレージ内に保存されている場合 -->
                 <img src="{{ Storage::url($item->item_image) }}" alt="{{ $item->name }}">
