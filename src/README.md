@@ -282,7 +282,8 @@ php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 ## **商品画像の保存仕様**
 
 本アプリでは、出品された商品の画像は **Laravel のストレージ（storage フォルダ）** に保存されます。  
-デフォルトでは `storage/app/public/item_images` に画像が格納され、`public/storage` にシンボリックリンクを作成することで、Web からアクセス可能になります。
+デフォルトでは `storage/app/public/item_images` に画像が格納され  
+`public/storage` にシンボリックリンクを作成することで、Web からアクセス可能になります。
 
 #### **1. 画像の保存先**
 
@@ -303,8 +304,8 @@ php artisan storage:link
 
 MailHog を使用すると、開発環境で送信されるメールをローカルで確認できます。
 
-MailHog の起動
-MailHog は docker-compose up -d の時点で起動しています。
+MailHog の起動  
+MailHog は docker-compose up -d の時点で起動しています。  
 ブラウザで以下にアクセスすると、送信されたメールを確認できます。
 
 http://localhost:8025
@@ -467,8 +468,8 @@ docker exec -it stripe-cli stripe trigger payment_intent.succeeded
 🔹 方法①：マイページ (http://localhost/mypage) を開いてください。  
 購入した商品が表示されていることを確認してください。
 
-🔹 方法②：データベースで注文のステータスを確認するため  
-以下のコマンドを実行してstatusがcompletedになっていることを確認してください。
+🔹 方法②：データベースで購入テーブルの status が completed になっていることを確認するため  
+以下のコマンドを実行してください。
 
 ```
 docker-compose exec php php artisan tinker
