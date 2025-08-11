@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\User;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Http\Requests\AddressRequest;
 use App\Http\Requests\ProfileRequest;
@@ -26,9 +27,17 @@ class UserController extends Controller
         // 購入した商品を取得
         $purchasedItems = $user->purchasedItems; // ユーザーが購入した商品（リレーション経由で取得）
 
+        $inProgressUnreadTotal = Purchase::participating($user->id)
+            ->withCount([
+                'messages as unread_count' => function ($q) use ($user) {
+                    $q->whereDoesntHave('reads', fn($r) => $r->where('user_id', $user->id));
+                }
+            ])->get()->sum('unread_count');
 
+        return view('profile.index', compact(
+            'user', 'listedItems', 'purchasedItems', 'inProgressUnreadTotal'
+        ));
 
-        return view('profile.index', compact('user', 'listedItems', 'purchasedItems'));
     }
 
     /**

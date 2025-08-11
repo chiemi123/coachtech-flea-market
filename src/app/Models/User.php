@@ -19,6 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
+        'code',
         'name',
         'email',
         'password',
@@ -100,5 +101,25 @@ class User extends Authenticatable implements MustVerifyEmail
                 ]);
             }
         });
+    }
+
+    // 自分が購入者の取引（Purchase を直接）
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class, 'user_id');
+    }
+
+    // 自分が出品者として関わる取引（自分の Item 経由）
+    public function soldPurchases()
+    {
+        // hasManyThrough: User(id) -> Item(user_id) -> Purchase(item_id)
+        return $this->hasManyThrough(
+            Purchase::class,   // 最終
+            Item::class,       // 中間
+            'user_id',                     // Item 側で User を指すFK
+            'item_id',                     // Purchase 側で Item を指すFK
+            'id',                          // User 主キー
+            'id'                           // Item 主キー
+        );
     }
 }

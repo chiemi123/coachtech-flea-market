@@ -5,6 +5,8 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -115,6 +117,12 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
 
     // 商品出品処理
     Route::post('/sell', [ItemController::class, 'store'])->name('sell.store');
+
+    // 追加機能を実装用
+    Route::get('/mypage/purchases', [PurchaseController::class, 'index']);
+    Route::get('/purchases/{purchase}/chat', [ChatController::class, 'show']);
+    Route::get('/purchases/{purchase}/messages', [MessageController::class, 'index']);
+    Route::post('/purchases/{purchase}/messages', [MessageController::class, 'store']); // Day3で本実装
 });
 
 // ===========================
