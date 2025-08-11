@@ -67,4 +67,9 @@ class Item extends Model
     {
         return $this->sold_out == true;
     }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }

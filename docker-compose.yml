@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   mailhog:
     image: mailhog/mailhog
@@ -50,4 +48,4 @@ services:
     image: stripe/stripe-cli:latest
     container_name: stripe_cli
     restart: always
-    entrypoint: [ "tail", "-f", "/dev/null" ]    
+    entrypoint: ["tail", "-f", "/dev/null"]

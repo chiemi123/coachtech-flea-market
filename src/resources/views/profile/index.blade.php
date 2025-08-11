@@ -39,6 +39,16 @@
         <input type="radio" id="tab-purchased" name="tab" class="profile__tab-input">
         <label for="tab-purchased" class="profile__tab-label">購入した商品</label>
 
+        <!-- 追加：取引中（別ページへ遷移。未読合計があれば表示） -->
+        <a href="{{ route('mypage.purchases') }}" class="profile__tab-label profile__tab-link" aria-label="取引中の商品へ">
+            取引中の商品
+            @isset($inProgressUnreadTotal)
+            @if($inProgressUnreadTotal > 0)
+            <span class="badge" aria-label="取引中の未読合計">{{ $inProgressUnreadTotal }}</span>
+            @endif
+            @endisset
+        </a>
+
         <!-- タブコンテンツ -->
         <div class="profile__tabs-content">
             <!-- 出品した商品 -->
