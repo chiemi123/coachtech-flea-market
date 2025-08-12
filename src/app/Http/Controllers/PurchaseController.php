@@ -22,18 +22,21 @@ class PurchaseController extends Controller
         $this->middleware('auth')->except(['success', 'cancel']);
     }
 
-    /**
-     * Day1用 マイページ取引一覧
-     */
     public function index()
     {
         // ログインユーザーが関わっている取引を取得
-        $purchases = Purchase::with(['item', 'user'])
-            ->participating(auth()->id()) // モデルスコープ
-            ->orderBy('id', 'desc') // 並び替え強化はDay2で実装
-            ->paginate(20);
+        $me = auth()->user();
 
-        return view('mypage.purchases.index', compact('purchases'));
+        $purchases = Purchase::participating($me->id)
+            ->with(['item:id,name,price,item_image,user_id']) // N+1対策＆出品者判定用
+            ->withCount(['messages as unread_count' => function ($q) use ($me) {
+                $q->whereDoesntHave('reads', fn($r) => $r->where('user_id', $me->id))
+                    ->where('user_id', '!=', $me->id); // 自分の投稿は未読に含めない
+            }])
+            ->orderByDesc('last_message_at')
+            ->get();
+
+        return view('mypage.purchases', compact('purchases'));
     }
 
     //  商品購入画面
