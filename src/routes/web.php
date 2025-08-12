@@ -119,8 +119,7 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::post('/sell', [ItemController::class, 'store'])->name('sell.store');
 
     // 追加機能を実装用
-    Route::get('/mypage/purchases', [PurchaseController::class, 'index']);
-    Route::get('/purchases/{purchase}/chat', [ChatController::class, 'show']);
+    Route::get('/purchases/{purchase}/chat', [ChatController::class, 'show'])->name('purchases.chat');
     Route::get('/purchases/{purchase}/messages', [MessageController::class, 'index']);
     Route::post('/purchases/{purchase}/messages', [MessageController::class, 'store']); // Day3で本実装
 });

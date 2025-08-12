@@ -215,7 +215,43 @@
     justify-content: space-between;
     gap: 8px;
 }
+/* 入力フォーム全体 */
+.chat-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #eee;
+}
 
+.chat-input {
+    flex: 1;
+    min-height: 40px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    resize: none;
+}
+
+/* 送信ボタン（アイコン） */
+.send-btn {
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.send-btn:hover {
+    background: #f5f5f5;
+}
+.send-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
 /* ボタン */
 .btn {
     padding: 8px 12px;

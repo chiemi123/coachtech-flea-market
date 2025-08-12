@@ -18,27 +18,53 @@ class UserController extends Controller
      */
     public function index()
     {
-        // 現在ログイン中のユーザーを取得
+        /** @var User $user */
         $user = Auth::user();
 
-        // 出品した商品を取得
-        $listedItems = Item::where('user_id', $user->id)->get();
+        // 出品した商品
+        $listedItems = Item::where('user_id', $user->id)->latest()->get();
 
-        // 購入した商品を取得
-        $purchasedItems = $user->purchasedItems; // ユーザーが購入した商品（リレーション経由で取得）
+        // 購入した商品
+        $purchasedItems = $user->purchases()
+            ->with(['item' => fn($q) => $q->withTrashed()])
+            ->latest('purchases.created_at')
+            ->get()
+            ->pluck('item');
 
-        $inProgressUnreadTotal = Purchase::participating($user->id)
+
+        // 進行中ステータス（必要に応じて追加・変更）
+        $inProgressStatuses = ['pending', 'paid', 'shipping'];
+
+        // 取引中 + 未読数 + last_message_atで並べ替え
+        $purchases = Purchase::participating($user->id)
+            ->whereIn('status', $inProgressStatuses)
+            ->with([
+                'item:id,name,item_image,price,user_id',
+            ])
             ->withCount([
                 'messages as unread_count' => function ($q) use ($user) {
-                    $q->whereDoesntHave('reads', fn($r) => $r->where('user_id', $user->id));
-                }
-            ])->get()->sum('unread_count');
+                    $q->where('user_id', '<>', $user->id)
+                        ->whereDoesntHave(
+                            'reads',
+                            fn($r) =>
+                            $r->where('user_id', $user->id)
+                        );
+                },
+            ])
+            ->orderByDesc('last_message_at') // カラムがあるのでこれでOK
+            ->get();
+
+        $inProgressUnreadTotal = $purchases->sum('unread_count');
 
         return view('profile.index', compact(
-            'user', 'listedItems', 'purchasedItems', 'inProgressUnreadTotal'
+            'user',
+            'listedItems',
+            'purchasedItems',
+            'purchases',
+            'inProgressUnreadTotal'
         ));
-
     }
+
 
     /**
      * プロフィール設定画面

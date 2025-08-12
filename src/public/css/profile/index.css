@@ -1,21 +1,36 @@
-/* 全体のコンテナ */
+/* =========================
+  共通トークン
+========================= */
+:root {
+    --card-radius: 12px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --muted: #6b7280;
+    --danger: #ef4444;
+    --border: #e5e7eb;
+    --border-hover: #d1d5db;
+    --bg-soft: #f3f4f6;
+}
+
+/* =========================
+  Profile 共通
+========================= */
 .profile {
-    max-width: 1512px; /* ヘッダーの幅に合わせる */
-    margin: 0 auto; /* 中央寄せ */
+    max-width: 1512px;
+    margin: 0 auto;
 }
 
 /* プロフィールヘッダー */
 .profile__header {
-    position: relative; /* 絶対位置を解除 */
+    position: relative;
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     text-align: center;
-    justify-content: flex-start; /* PCでは左寄せ */
-    gap: 20px; /* 要素間の間隔 */
+    justify-content: flex-start;
+    gap: 20px;
     padding: 20px;
-    left: 299px; /* PCでは左寄せ */
+    left: 299px; /* 既存レイアウトを維持（不要なら外す） */
 }
 
 .profile__image {
@@ -24,7 +39,6 @@
     margin-bottom: 10px;
 }
 
-/* プロフィール画像 */
 .profile__image img {
     top: 8px;
     width: 150px;
@@ -41,16 +55,15 @@
     font-size: 36px;
     font-weight: 700;
     line-height: 65px;
-    color: #000000;
+    color: #000;
     margin-left: 57px;
 }
 
+/* 編集ボタン */
 .profile__edit {
-    flex-grow: 1; /* 残りのスペースを埋める */
+    flex-grow: 1;
     display: flex;
 }
-
-/* プロフィール編集ボタン */
 .profile__edit .btn {
     text-align: center;
     width: 310px;
@@ -62,17 +75,18 @@
     text-decoration: none;
     border: 2px solid #ff5555;
     color: #ff5555;
-    background-color: white;
+    background-color: #fff;
     transition: background-color 0.3s, color 0.3s;
     margin-left: 250px;
 }
-
 .profile__edit .btn:hover {
     background-color: red;
-    color: white;
+    color: #fff;
 }
 
-/* タブメニューのデザイン */
+/* =========================
+  Tabs（ラジオ切替）
+========================= */
 .profile__tabs {
     position: absolute;
     top: 385px;
@@ -82,53 +96,31 @@
     font-weight: 700;
     color: #5f5f5f;
     border-bottom: 2px solid #5f5f5f;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
 }
 
-.profile__tabs label {
+.profile__tab-label {
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.profile__tabs label[for="tab1"] {
-    margin-left: 129px;
-}
-
-.profile__tabs label[for="tab2"] {
-    margin-left: 52px;
-}
-
-/* チェックボックスを非表示 */
+/* ラジオ本体を非表示 */
 .profile__tab-input[type="radio"] {
     display: none;
 }
 
-/* タブが選択されたときのスタイル */
+/* 選択タブの装飾 */
 .profile__tab-input[type="radio"]:checked + label {
     color: red;
     font-weight: bold;
 }
 
-/* タブコンテンツのデザイン */
-.profile__tabs-content {
-    position: absolute;
-    top: 106px;
-    margin: 0 29px;
-    width: 1374.52px;
-    height: 716.61px;
-}
-
-.profile__tab-panel {
-    display: none;
-}
-
-/* タブが選択されたときに表示 */
-#tab-listed:checked ~ .profile__tabs-content #tab-listed-content,
-#tab-purchased:checked ~ .profile__tabs-content #tab-purchased-content {
-    display: block;
-}
-
-/* --- 取引中タブリンクを既存タブに寄せる --- */
+/* 「取引中へ」リンク調整 */
 .profile__tab-label.profile__tab-link {
     display: inline-flex;
     align-items: center;
@@ -137,11 +129,9 @@
     border-radius: 6px;
     text-decoration: none;
     cursor: pointer;
-    /* 既存タブの文字色に合わせて調整してください */
 }
-
 .profile__tab-label.profile__tab-link:hover {
-    background: rgba(0, 0, 0, 0.05); /* 明るいテーマ想定。調整可 */
+    background: rgba(0, 0, 0, 0.05);
 }
 
 /* 未読合計バッジ */
@@ -153,20 +143,39 @@
     line-height: 1.6;
     text-align: center;
     border-radius: 999px;
-    background: #d32f2f; /* 赤系 */
+    background: #ff0000;
     color: #fff;
     vertical-align: middle;
 }
 
-/* ラジオタブとリンクの余白バランス（必要なら） */
-.profile__tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 12px;
-    align-items: center;
+/* タブの中身（パネル） */
+.profile__tabs-content {
+    position: absolute;
+    top: 106px;
+    margin: 0 29px;
+    width: 1374.52px;
+    height: 716.61px;
 }
 
-/* 商品リスト */
+/* まず全パネル非表示 */
+.profile__tab-panel {
+    display: none;
+}
+
+/* チェックされたパネルのみ表示（3つとも必須） */
+#tab-listed:checked ~ .profile__tabs-content #tab-listed-content {
+    display: block;
+}
+#tab-purchased:checked ~ .profile__tabs-content #tab-purchased-content {
+    display: block;
+}
+#tab-inprogress:checked ~ .profile__tabs-content #tab-inprogress-content {
+    display: block;
+}
+
+/* =========================
+  出品/購入のカードグリッド
+========================= */
 .profile__items {
     position: relative;
     width: 100%;
@@ -179,164 +188,297 @@
     margin: 0 auto;
     padding-left: 40px;
 }
-
 .profile__item {
-    position: relative; /* SOLDラベルを配置するために必要 */
-    width: 290px; /*カードの幅を固定 */
-    height: 320px; /* 高さを320pxに固定 */
-    background-color: #fff;
+    position: relative;
+    width: 290px;
+    height: 320px;
+    background: #fff;
     text-align: center;
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
-    flex-direction: column; /* 縦並びにする */
-    justify-content: space-between; /* 画像とテキストを均等に配置 */
-    overflow: hidden; /* はみ出し防止 */
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
 }
-
-.profile__item img {
-    width: 100%; /* 親要素の幅いっぱいに */
-    height: auto; /* 高さを自動調整 */
-    max-height: 85.2%;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-.profile__item h3 {
-    font-size: 25px;
-    font-weight: 400;
-    margin: 5px 0;
-    color: #000000;
-    height: 30px; /* 高さを調整 */
-    display: flex;
-    align-items: center;
-}
-
-.profile__item a {
-    display: inline-block;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.profile__item-sold {
-    position: absolute;
-    top: 0; /* 画像の左上に配置 */
-    left: 0; /* 左上に固定 */
-    color: #fff;
-    font-size: 25px;
-    font-weight: bold;
-    background-color: red;
-    padding: 5px 15px;
-    border-radius: 4px;
-    z-index: 10;
-}
-
-/* ✅ 画像ラップ要素を相対位置にする */
 .profile__item-image {
     position: relative;
     display: block;
     width: 100%;
     height: auto;
 }
+.profile__item img {
+    width: 100%;
+    height: auto;
+    max-height: 85.2%;
+    object-fit: contain;
+    border-radius: 4px;
+}
+.profile__item h3 {
+    font-size: 25px;
+    font-weight: 400;
+    margin: 5px 0;
+    color: #000;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+.profile__item a {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+}
+.profile__item-sold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #fff;
+    font-size: 25px;
+    font-weight: bold;
+    background: red;
+    padding: 5px 15px;
+    border-radius: 4px;
+    z-index: 10;
+}
 
-/* タブレット対応 */
-@media (max-width: 850px) {
-    /* プロフィール情報を中央揃え */
+/* =========================
+  Responsive
+========================= */
+/* =========== ① Laptop～（1512px未満）: はみ出し防止・余白を縮める =========== */
+/* ① 1360px未満：はみ出し防止（PC見た目は維持） */
+@media (max-width: 1360px) {
+    .profile {
+        max-width: 100%;
+        padding: 0 16px;
+    }
     .profile__header {
-        left: 20px;
-        width: 100%;
-        max-width: 100%;
-        justify-content: center; /* 中央揃え */
-        gap: 5px; /* 要素間の間隔を縮小 */
-        text-align: center;
-    }
-
-    .profile__image img {
-        width: 100px;
-        height: 100px;
-    }
-
-    .profile__info {
-        width: 100%;
-    }
-
-    .profile__info h2 {
-        font-size: 24px;
-        width: auto;
-        margin-left: 0; /* 左の余白をなくす */
-    }
-
-    .profile__edit {
-        width: 100%;
-    }
-
-    .profile__edit .btn {
-        margin-left: 0;
-        width: 90%;
-        max-width: 300px;
-        font-size: 24px;
-    }
-
-    /* タブメニューの調整 */
+        left: 0;
+    } /* PC専用のleftを無効化 */
     .profile__tabs {
-        position: relative; /* 絶対位置を解除 */
-        top: auto; /* 必要に応じて調整 */
-        width: 100%; /* 画面幅にフィット */
-        max-width: 850px;
-        display: flex;
-        justify-content: flex-start; /* 左寄せ */
-        padding-left: 20px; /* 左側の余白を調整 */
-    }
-
-    .profile__tabs label[for="tab1"],
-    .profile__tabs label[for="tab2"] {
-        margin-left: initial;
-    }
-
-    .profile__tabs label {
-        margin-left: 0;
-        padding: 10px 15px;
-    }
-
+        width: 100%;
+    } /* 1512px固定をやめる */
     .profile__tabs-content {
+        width: auto;
+        margin: 0 16px;
+    }
+}
+
+/* ② 1024px以下：タブの absolute を解除（ヘッダーが切れる原因を解消） */
+@media (max-width: 1024px) {
+    .profile__tabs {
+        position: relative;
+        top: auto;
         width: 100%;
-        max-width: 768px;
-        display: flex;
-        justify-content: center;
-        margin: 0 auto;
+        border-bottom: 2px solid #5f5f5f;
+    }
+    .profile__tabs-content {
+        position: static; /* ← absolute をやめる */
+        width: 100%;
+        height: auto; /* ← 固定値解除 */
+        margin: 12px 0 0;
     }
 
-    /* 商品リストのレイアウト調整 */
+    /* 商品グリッドは2列に、左パディングを外して中央寄せ */
     .profile__items {
-        width: 100%;
-        max-width: 100%;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         grid-auto-rows: 250px;
         column-gap: 20px;
         row-gap: 20px;
-        padding: 0 10px;
+        padding-left: 0;
         justify-items: center;
+    }
+}
+
+/* ③ 768px以下：1列＆ヘッダー/タブをモバイル寄せ（あなたの追記に＋α） */
+@media (max-width: 768px) {
+    .profile {
+        padding: 0 12px;
+    }
+
+    .profile__header {
+        left: 0;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        gap: 10px;
+        padding: 12px 0;
+    }
+    .profile__image img {
+        width: 88px;
+        height: 88px;
+    }
+    .profile__info h2 {
+        font-size: 20px;
+        margin-left: 0;
+    }
+
+    .profile__edit {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .profile__edit .btn {
+        width: 100%;
+        max-width: 320px;
+        font-size: 18px;
+        margin-left: 0;
+    }
+
+    /* ★タブも absolute→通常フローに（768でも効かせる） */
+    .profile__tabs {
+        position: relative;
+        top: auto;
+        width: 100%;
+    }
+    .profile__tabs-content {
+        position: static;
+        width: 100%;
+        height: auto;
+        margin-top: 12px;
+    }
+
+    /* 2列 */
+    .profile__items {
+        grid-auto-rows: auto;
+        row-gap: 16px;
+        padding: 0;
+    }
+    .profile__item {
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+    .profile__item img {
+        width: 100%;
+        height: clamp(180px, 45vw, 280px);
+        object-fit: contain;
+    }
+
+    /* 画像とタイトルを “縦に積む” */
+    .profile__item a {
+        display: block; /* ← inline-block を block に */
+    }
+
+    .profile__item-image {
+        display: block;
+        margin-bottom: 8px; /* 画像とタイトルの間隔 */
+    }
+
+    /* タイトルは普通のブロックにして中央寄せ */
+    .profile__item h3 {
+        display: block; /* ← flex をやめる */
+        margin: 8px 0 0;
+    }
+}
+
+@media (max-width: 400px) {
+    .profile {
+        padding: 0 8px;
+    }
+
+    /* ヘッダー：画像 / 情報 を2列、編集ボタンは次の行で全幅 */
+    .profile__header {
+        position: static; /* leftの影響を断つ */
+        left: 0;
+        display: grid;
+        grid-template-columns: 56px 1fr; /* アイコン / 情報 */
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+        width: 100%;
+    }
+    .profile__image img {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .profile__info {
+        display: grid;
+        gap: 6px;
+    }
+    .profile__info h2 {
+        margin: 0;
+        font-size: 18px;
+        text-align: left;
+    }
+
+    /* 星の大きさを固定して崩れ防止 */
+    .stars img {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+    }
+
+    /* 編集ボタンは全幅で次の行 */
+    .profile__edit {
+        grid-column: 1 / -1; /* 次の行に展開 */
+        display: flex;
+        justify-content: flex-end; /* 右寄せ */
+    }
+    .profile__edit .btn {
+        width: auto; /* 100% は外すこと */
+        margin-left: 0;
+        max-width: 200px;
+        height: 44px;
+        font-size: 16px;
+        padding: 5px 12px;
+        white-space: nowrap;
+    }
+
+    /* タブははみ出し防止＋タップしやすく */
+    .profile__tabs {
+        position: relative;
+        top: auto;
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 4px;
+    }
+
+    .profile__tabs-content {
+        position: static;
+        width: 100%;
+        height: auto;
+        margin-top: 12px;
+    }
+
+    .profile__tab-label {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    /* 商品カード：1列＆画像→タイトル縦並び */
+    .profile__items {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 12px;
+    }
+    .profile__item a {
+        display: block;
+    }
+    /* 画像下の微隙間対策 */
+    .profile__item-image {
+        display: block;
+        margin-bottom: 6px;
     }
 
     .profile__item {
         width: 100%;
-        max-width: 230px;
-        height: auto;
+        max-width: 350px;
+        margin: 0;
     }
 
     .profile__item img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
+        width: 80%;
+        height: auto; /* ← 80%の高さは外す。縦横比が崩れます */
+        display: block;
+        margin-inline: auto; /* ← 水平中央寄せの決め手 */
+        object-fit: contain; /* coverにしたいなら contain→cover */
+        object-position: center;
     }
-
     .profile__item h3 {
-        font-size: 18px; /* 文字サイズをさらに調整 */
-        height: auto;
-    }
-
-    .sold-label {
-        font-size: 16px; /* 文字サイズを小さめに */
-        padding: 4px 8px; /* 余白を調整 */
+        display: block;
+        margin: 6px 0 0;
+        font-size: 16px;
+        line-height: 1.4;
     }
 }

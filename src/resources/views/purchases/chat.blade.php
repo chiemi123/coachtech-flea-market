@@ -15,7 +15,7 @@
             <div class="item-hero">
                 <div class="item-thumb">
                     @php $img = $item->item_image; @endphp
-                    @if (Str::startsWith($img, ['http://','https://']))
+                    @if ($img && \Illuminate\Support\Str::startsWith($img, ['http://','https://']))
                     <img src="{{ $img }}" alt="{{ $item->name }}">
                     @else
                     <img src="{{ Storage::url($img) }}" alt="{{ $item->name }}">
@@ -30,15 +30,23 @@
         </header>
 
         {{-- メッセージタイムライン --}}
-        <section id="chat-timeline" class="chat-timeline" data-after="{{ optional($messages->last())->created_at?->timestamp }}">
+        @php
+        $last = $messages->last();
+        $afterTs = ($last && $last->created_at) ? $last->created_at->timestamp : 0;
+        @endphp
+        <section id="chat-timeline" class="chat-timeline" data-after="{{ $afterTs }}">
             @forelse ($messages as $m)
-            <div class="msg {{ $m->user_id === $me->id ? 'is-me' : 'is-other' }}" data-ts="{{ $m->created_at->timestamp }}">
+            @php
+            $ts = $m->created_at ? $m->created_at->timestamp : 0;
+            $time = $m->created_at ? $m->created_at->format('Y/m/d H:i') : '';
+            @endphp
+            <div class="msg {{ $m->user_id === $me->id ? 'is-me' : 'is-other' }}" data-ts="{{ $ts }}">
                 <div class="msg-meta">
                     <span class="user">{{ $m->user->username }}</span>
-                    <span class="time">{{ $m->created_at->format('Y/m/d H:i') }}</span>
+                    <span class="time">{{ $time }}</span>
                 </div>
                 <div class="msg-body">{{ $m->body }}</div>
-                @if($m->image_path)
+                @if (!empty($m->image_path))
                 <div class="msg-image">
                     <img src="{{ Storage::url($m->image_path) }}" alt="添付画像">
                 </div>
@@ -53,11 +61,15 @@
         <section class="chat-input">
             <form id="chat-form" action="{{ url('/purchases/' . $purchase->id . '/messages') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <textarea name="body" rows="2" placeholder="取引メッセージを記入してください" maxlength="400"></textarea>
+                <textarea class="chat-input" name="body" placeholder="取引メッセージを記入してください" maxlength="400" aria-label="メッセージ入力"></textarea>
+
                 <div class="input-row">
                     <label for="chat-image">画像を追加</label>
-                    <input type="file" id="chat-image" name="image" accept=".png,.jpeg">
-                    <button type="submit">送信</button>
+                    <input type="file" id="chat-image" name="image" accept=".png,.jpg">
+                    {{-- 送信ボタン（JPGアイコン） --}}
+                    <button class="send-btn" type="submit" aria-label="送信">
+                        <img src="{{ asset('images/icons/send.jpg') }}" alt="送信">
+                    </button>
                 </div>
             </form>
         </section>
