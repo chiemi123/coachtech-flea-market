@@ -11,29 +11,54 @@ class ChatController extends Controller
     {
         $me = Auth::user();
 
-        // 必要な関連を読み込む（出品者は item.user から）
+        // 取引の基本情報
         $purchase->load(['item.user', 'user']);
 
-        // 参加者チェック（任意）: 自分が買い手 or 出品者でなければ403
+        // アクセス権：買い手 or 出品者のみ
         abort_unless(
             $purchase->user_id === $me->id || optional($purchase->item)->user_id === $me->id,
             403
         );
 
-        // 相手ユーザーを求める
+        // 相手ユーザー
         $seller  = optional($purchase->item)->user; // 出品者
         $buyer   = $purchase->user;                 // 買い手
         $partner = ($buyer && $buyer->id === $me->id) ? $seller : $buyer;
 
-        // メッセージは user を eager load
+        // 自分が出品者かどうか（ヘッダー右の「取引を完了する」表示制御などに使用）
+        $isSeller = optional($purchase->item)->user_id === $me->id;
+
+        // メッセージ（発言者をEager Load）
         $messages = $purchase->messages()->with('user')->oldest()->get();
 
+        // --- サイドバー用：その他の取引（購入者・出品者どちらにも表示）---
+        // 進行中ステータス（必要に応じて調整）
+        $inProgressStatuses = ['pending', 'paid', 'shipping'];
+
+        $otherPurchases = Purchase::participating($me->id)
+            ->whereIn('status', $inProgressStatuses)
+            ->with([
+                'item:id,name,item_image', // サイドバー表示に必要な最低限
+            ])
+            ->select(['id', 'item_id', 'user_id', 'status', 'last_message_at']) // 軽量化
+            ->withCount([
+                // 自分が未読のメッセージ（相手発言のみ）をカウント
+                'messages as unread_count' => function ($q) use ($me) {
+                    $q->where('user_id', '<>', $me->id)
+                        ->whereDoesntHave('reads', fn($r) => $r->where('user_id', $me->id));
+                },
+            ])
+            ->orderByDesc('last_message_at')
+            ->get();
+
         return view('purchases.chat', [
-            'purchase'  => $purchase,
-            'item'      => $purchase->item,
-            'partner'   => $partner,
-            'messages'  => $messages,
-            'me'        => $me,
+            'purchase'       => $purchase,
+            'item'           => $purchase->item,
+            'partner'        => $partner,
+            'messages'       => $messages,
+            'me'             => $me,
+            'isSeller'       => $isSeller,      // ← 追加
+            'otherPurchases' => $otherPurchases // ← 追加
         ]);
     }
 }
