@@ -118,7 +118,7 @@
                 <textarea class="chat-textarea" name="body" placeholder="取引メッセージを記入してください" maxlength="400" aria-label="メッセージ入力"></textarea>
                 <div class="input-row">
                     <label for="chat-image">画像を追加</label>
-                    <input type="file" id="chat-image" name="image" accept=".png,.jpg,.jpeg">
+                    <input type="file" id="chat-image" name="image" accept=".png,.jpg">
                     <button class="send-btn" type="submit" aria-label="送信">
                         <img src="{{ asset('images/icons/send.jpg') }}" alt="">
                     </button>
