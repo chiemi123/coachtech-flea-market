@@ -22,20 +22,6 @@ class PurchaseController extends Controller
         $this->middleware('auth')->except(['success', 'cancel']);
     }
 
-    /**
-     * Day1用 マイページ取引一覧
-     */
-    public function index()
-    {
-        // ログインユーザーが関わっている取引を取得
-        $purchases = Purchase::with(['item', 'user'])
-            ->participating(auth()->id()) // モデルスコープ
-            ->orderBy('id', 'desc') // 並び替え強化はDay2で実装
-            ->paginate(20);
-
-        return view('mypage.purchases.index', compact('purchases'));
-    }
-
     //  商品購入画面
     public function show($item_id)
     {

@@ -31,7 +31,7 @@ class Purchase extends Model
     // 購入した商品
     public function item()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class)->withTrashed();
     }
 
     // 配送先住所
@@ -57,9 +57,11 @@ class Purchase extends Model
      */
     public function scopeParticipating($query, $userId)
     {
-        return $query->where('user_id', $userId)
-            ->orWhereHas('item', function ($q) use ($userId) {
-                $q->where('user_id', $userId);
-            });
+        return $query->where(function ($q) use ($userId) {
+            $q->where('user_id', $userId) // 買い手
+                ->orWhereHas('item', function ($iq) use ($userId) { // 出品者
+                    $iq->where('user_id', $userId);
+                });
+        });
     }
 }

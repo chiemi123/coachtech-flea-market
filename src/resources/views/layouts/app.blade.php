@@ -41,12 +41,14 @@
                 @if (!request()->routeIs('verification.notice'))
                 <nav class="header-nav">
                     @auth
+                    @if (!request()->routeIs('purchases.chat'))
                     <form class="form" action="{{ route('logout') }}" method="post">
                         @csrf
                         <button class="header-nav__button">ログアウト</button>
                     </form>
                     <a href="{{ route('profile.index') }}">マイページ</a>
                     <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
+                    @endif
                     @else
                     @if (!request()->routeIs('login') && !request()->routeIs('register'))
                     <a href="{{ route('login') }}">ログイン</a>

@@ -145,6 +145,19 @@
     border-color: #c3e6cb;
 }
 
+/* 星の表示用 */
+.stars {
+    display: inline-flex;
+    gap: 4px;
+    vertical-align: middle;
+}
+.stars img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: block;
+}
+
 @media screen and (min-width: 768px) and (max-width: 850px) {
     /* 📌 ヘッダー全体の幅を画面サイズにフィット */
     .header {
@@ -208,5 +221,67 @@
         height: 45px;
         font-size: 15px;
         line-height: 45px;
+    }
+}
+
+/* スマホ（～480px）向け：2段構成にして詰める */
+@media (max-width: 480px) {
+    .header {
+        width: 100%;
+        max-width: 100%;
+        padding: 8px 10px;
+    }
+    .header-utilities {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* ロゴは小さく固定 */
+    .logo {
+        flex: 0 0 auto;
+        margin-left: 0;
+        max-width: 140px;
+    }
+
+    /* 検索フォームは2段目で全幅 */
+    .search-form {
+        order: 2;
+        flex: 1 1 100%;
+        height: 40px;
+        margin: 6px 0 0;
+    }
+    .search-form input[type="text"] {
+        width: 100%;
+        height: 100%;
+        font-size: 16px;
+        padding: 8px 10px;
+        position: static; /* 位置指定のリセット */
+    }
+
+    /* ナビは右側、最小幅固定を解除して詰める */
+    .header-nav {
+        order: 1;
+        flex: 1 1 auto;
+        min-width: 0; /* ← これが効く */
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+    .header-nav a:not(.sell-button),
+    .header-nav__button {
+        width: auto;
+        height: 36px;
+        line-height: 36px;
+        font-size: 14px;
+        padding: 0 8px;
+    }
+    .sell-button {
+        width: auto;
+        height: 36px;
+        line-height: 36px;
+        font-size: 14px;
+        padding: 0 10px;
     }
 }
