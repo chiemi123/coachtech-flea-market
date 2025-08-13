@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Purchase;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreMessageRequest;
+use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
@@ -13,38 +15,26 @@ class MessageController extends Controller
         return $purchase->messages()->with('user:id,name')->orderBy('created_at')->get();
     }
 
-    public function store(Request $request, Purchase $purchase)
+    public function store(StoreMessageRequest $request, Purchase $purchase)
     {
-        $me = auth()->id();
+        $me = $request->user();
 
-        // 認可チェック
-        abort_unless(
-            $purchase->user_id === $me || optional($purchase->item)->user_id === $me,
-            403
-        );
-
-        // バリデーション
-        $validated = $request->validate([
-            'body'  => 'nullable|string|max:400',
-            'image' => 'nullable|image|max:2048', // 最大2MB
-        ]);
-
-        // 画像アップロード
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('messages', 'public');
+            $imagePath = $request->file('image')->store('message_images', 'public');
         }
 
-        // メッセージ保存
         $purchase->messages()->create([
-            'user_id'    => $me,
-            'body'       => $validated['body'],
+            'user_id'    => $me->id,
+            'body'       => $request->input('body'),
             'image_path' => $imagePath,
+            'read'       => false,
         ]);
 
-        // 並び順のための更新
-        $purchase->forceFill(['last_message_at' => now()])->save();
+        $purchase->forceFill([
+            'last_message_at' => now(),
+        ])->save();
 
-        return back();
+        return back()->with('status', 'メッセージを送信しました。');
     }
 }

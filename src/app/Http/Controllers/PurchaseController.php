@@ -183,4 +183,22 @@ class PurchaseController extends Controller
             'error' => '決済がキャンセルされました。購入を完了できませんでした。もう一度お試しください。'
         ]);
     }
+
+    public function complete(Purchase $purchase)
+    {
+        $user = auth()->user();
+
+        // 購入者のみ許可（任意でPolicy化可能）
+        abort_unless($purchase->user_id === $user->id, 403);
+
+        // 冪等処理：未完了のときのみ更新
+        if ($purchase->status !== 'completed') {
+            $purchase->update([
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+        }
+
+        return back()->with('status', '取引を完了しました。評価をお願いします。');
+    }
 }

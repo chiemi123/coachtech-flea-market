@@ -47,6 +47,12 @@ class Purchase extends Model
     }
 
     // 取引評価
+
+    public function ratingBy($user)
+    {
+        return $this->ratings()->where('rater_id', $user->id)->exists();
+    }
+
     public function ratings()
     {
         return $this->hasMany(Rating::class);

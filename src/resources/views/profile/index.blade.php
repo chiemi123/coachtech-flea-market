@@ -32,9 +32,12 @@
             <h2>{{ $user->username }}</h2>
 
             @php
-            // ユーザー評価（例: カラム名 rating に整数値が入っている想定）
-            $score = $user->rating ?? 0;
+            $score = $user->average_rating ?? 0;
             @endphp
+
+            @if($score)
+            <div class="muted">平均評価：{{ $score }} / 5</div>
+            @endif
 
             <div class="stars" role="img" aria-label="評価 {{ $score }} / 5">
                 @for ($i = 1; $i <= 5; $i++)
