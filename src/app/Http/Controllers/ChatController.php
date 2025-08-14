@@ -29,6 +29,9 @@ class ChatController extends Controller
         // 自分が出品者かどうか（ヘッダー右の「取引を完了する」表示制御などに使用）
         $isSeller = optional($purchase->item)->user_id === $me->id;
 
+        $isBuyer = $purchase->user_id === $me->id;
+
+
         // メッセージ（発言者をEager Load）
         $messages = $purchase->messages()->with('user')->oldest()->get();
 
@@ -74,7 +77,9 @@ class ChatController extends Controller
             'messages'       => $messages,
             'me'             => $me,
             'isSeller'       => $isSeller,      // ← 追加
-            'otherPurchases' => $otherPurchases // ← 追加
+            'isBuyer'       => $isBuyer,      // ← 追加
+            'otherPurchases' => $otherPurchases, // ← 追加
+            'isChatView' => true
         ]);
     }
 }

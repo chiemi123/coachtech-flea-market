@@ -24,11 +24,6 @@ body {
     grid-template-columns: 240px 1fr;
 }
 
-.chat-wrap.no-sidebar {
-    display: grid;
-    grid-template-columns: 1fr;
-}
-
 /* ---------- サイドバー ---------- */
 .sidebar {
     background: #6b7280; /* ダークグレー */
@@ -83,7 +78,7 @@ body {
     border: 1px solid #e5e7eb;
     overflow: hidden;
     display: grid;
-    padding: 10px 30px;
+    padding: 10px 0;
     grid-template-rows: auto 1fr auto; /* header / timeline / footer */
     min-height: 60vh;
 }
@@ -94,7 +89,7 @@ body {
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    border-bottom: 2px solid #d1d5db;
+    border-bottom: 2px solid #5f5f5f;
 }
 
 .profile-thumb {
@@ -124,7 +119,7 @@ body {
     align-items: center;
     gap: 16px;
     padding: 12px 16px;
-    border-bottom: 2px solid #d1d5db;
+    border-bottom: 2px solid #5f5f5f;
 }
 
 .item-thumb {
@@ -219,12 +214,13 @@ body {
 
 /* 吹き出し本体（左右で色＆角を変える） */
 .msg-bubble {
-    /* 幅の設計：PCで最大461px、モバイルで自然に縮む */
+    width: 100%;
     max-width: min(461px, 90vw);
     border: 1px solid #eee;
     border-radius: 12px;
     padding: 10px 12px;
     background: #fafafa;
+    position: relative;
 }
 .msg-row.is-me .msg-bubble {
     background: #e8f5e9;
@@ -255,10 +251,130 @@ body {
     overflow: hidden;
     background: #f3f4f6;
 }
+
 .msg-image img {
     width: 100%;
     height: auto;
     display: block;
+}
+
+/* ラッパー：吹き出しとアクションを横並びに */
+.msg-content-wrapper {
+    width: 460px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+/* 編集フォーム全体 */
+.edit-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* テキストエリア */
+.edit-textarea {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.edit-image-input {
+    margin-top: 6px;
+}
+
+.edit-image-input input[type="file"] {
+    display: inline-block;
+    background-color: transparent;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%; /* 必要に応じて調整 */
+    max-width: 300px;
+}
+
+/* ファイル名の表示部分 */
+.edit-image-input input[type="file"]::file-selector-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-image-input input[type="file"]::file-selector-button:hover {
+    background-color: #43a047;
+}
+
+/* フォームアクション（ボタン部分） */
+.edit-form-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* 更新ボタン */
+.edit-submit {
+    background: none;
+    border: none;
+    color: #5f5f5f;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 400;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.edit-submit:hover {
+    color: #2563eb;
+}
+
+/* キャンセルリンク */
+.edit-cancel {
+    color: #5f5f5f;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.edit-cancel:hover {
+    color: #2563eb;
+}
+
+/* アクションボタンエリア */
+.msg-actions {
+    display: flex;
+    min-width: 48px;
+    padding-top: 4px;
+}
+
+/* リンクとボタンの見た目統一 */
+.msg-actions a,
+.msg-actions button {
+    font-size: 15px;
+    font-weight: 400;
+    color: #5f5f5f;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+/* ホバー効果 */
+.msg-actions a:hover,
+.msg-actions button:hover {
+    color: #2563eb;
 }
 
 /* フッター（送信エリア） */
@@ -281,6 +397,8 @@ body {
     padding: 0 12px;
     border: 1px solid #5f5f5f;
     border-radius: 4px;
+    font-size: 20px;
+    font-weight: 700;
     resize: none;
     overflow: hidden;
 }
@@ -455,42 +573,51 @@ body {
 }
 
 /* ---------- レスポンシブ ---------- */
-@media (max-width: 960px) {
-    .chat-wrap {
+@media (max-width: 768px) {
+    .chat-wrap.with-sidebar {
         grid-template-columns: 1fr;
-    } /* サイドバー→上段、本文→下段 */
-}
-@media (max-width: 640px) {
-    .item-thumb {
-        width: 56px;
-        height: 56px;
-        flex-basis: 56px;
+        grid-template-rows: auto auto;
     }
 
-    .msg {
-        max-width: 88%;
+    .sidebar {
+        order: 1;
     }
-    .avatar {
-        width: 32px;
-        height: 32px;
+
+    .chat-main {
+        order: 2;
     }
-    .name {
-        font-size: 14px;
+
+    .item-thumb {
+        width: 100px;
+        height: 100px;
+        flex-basis: 100px;
     }
+
+    /* 吹き出し幅を画面に応じて調整 */
     .msg-bubble {
-        max-width: min(88vw, 461px);
-        padding: 8px 10px;
-    }
-    .chat-footer {
-        grid-template-columns: 1fr;
-    } /* テキスト → (添付+送信) 縦並び */
-    .input-row {
-        justify-content: space-between;
+        max-width: 100%;
+        width: auto;
+        word-wrap: break-word;
     }
 }
 
 /* スマホ表示用 */
 @media (max-width: 480px) {
+    .chat-wrap.with-sidebar,
+    .chat-main,
+    .chat-header,
+    .msg-body,
+    .msg-content-wrapper {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .item-thumb {
+        width: 60px;
+        height: 60px;
+        flex-basis: 60px;
+    }
+
     /* 取引完了ボタン（購入者のみ表示想定） */
     .finish-btn {
         margin-right: 0;
@@ -501,8 +628,8 @@ body {
         padding: 8px 12px;
     }
     .profile-thumb {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
     }
 
     .chat-item-info {
@@ -511,9 +638,10 @@ body {
         gap: 10px;
     }
     .item-thumb img {
-        width: 56px;
-        height: 56px;
-    } /* 商品画像 */
+        width: 60px;
+        height: 60px;
+    }
+    /* 商品画像 */
     .item-detail {
         gap: 2px;
     }
@@ -526,14 +654,6 @@ body {
     .item-name,
     .item-price {
         font-size: 20px;
-    }
-    .avatar {
-        width: 32px;
-        height: 32px;
-    }
-    .msg-bubble {
-        max-width: min(88vw, 420px);
-        padding: 8px 10px;
     }
 
     /* サイドバー：スマホでは下段に落ちる想定。高さ制御してスクロール可に */

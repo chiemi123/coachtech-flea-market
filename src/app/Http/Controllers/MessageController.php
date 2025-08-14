@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMessageRequest;
+use App\Http\Requests\UpdateMessageRequest;
 use App\Models\Purchase;
+use App\Models\Message;
 use App\Notifications\MessageReceived;
 
 class MessageController extends Controller
@@ -45,5 +47,60 @@ class MessageController extends Controller
         }
 
         return back()->with('status', 'メッセージを送信しました。');
+    }
+
+    public function edit(Message $message)
+    {
+        $purchase = $message->purchase;
+        $item = $purchase->item;
+        $me = auth()->user();
+        $messages = Message::where('purchase_id', $purchase->id)->with('user')->get();
+        $editing = $message;
+        $isSeller = optional($purchase->item)->user_id === $me->id;
+
+        // 相手ユーザー
+        $partner = $purchase->user_id === $me->id
+            ? optional($item)->user
+            : $purchase->user;
+
+        // 他の取引
+        $otherPurchases = Purchase::where('user_id', $me->id)
+            ->where('id', '!=', $purchase->id)
+            ->with('item')
+            ->latest()
+            ->get();
+
+        return view('purchases.chat', compact(
+            'purchase',
+            'item',
+            'me',
+            'partner',
+            'messages',
+            'editing',
+            'otherPurchases',
+            'isSeller'
+        ))->with('isChatView', true);
+    }
+
+    public function update(UpdateMessageRequest $request, Message $message)
+    {
+        $message->body = $request->input('body');
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('messages', 'public');
+            $message->image_path = $path;
+        }
+
+        $message->save();
+
+        return redirect()->route('purchases.chat', ['purchase' => $message->purchase_id])
+            ->with('success', 'メッセージを更新しました');
+    }
+
+    public function destroy(Message $message)
+    {
+        $message->delete();
+
+        return redirect()->back()->with('success', 'メッセージを削除しました');
     }
 }

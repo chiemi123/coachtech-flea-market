@@ -40,8 +40,11 @@
                 <!-- 右側: ナビゲーション -->
                 @if (!request()->routeIs('verification.notice'))
                 <nav class="header-nav">
+                    {{-- チャット画面で購入者のみ「取引を完了する」ボタン表示 --}}
+                    @yield('header-extra')
+
                     @auth
-                    @if (!request()->routeIs('purchases.chat'))
+                    @if (empty($isChatView))
                     <form class="form" action="{{ route('logout') }}" method="post">
                         @csrf
                         <button class="header-nav__button">ログアウト</button>
@@ -56,7 +59,6 @@
                     <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
                     @endif
                     @endauth
-                    @yield('header-extra') <!-- 他のページで追加メニューを入れられる -->
                 </nav>
                 @endif
             </div>
