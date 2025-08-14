@@ -49,8 +49,8 @@ class StripeWebhookController extends Controller
                 return response()->json(['status' => 'success']);
             }
 
-            //  クレジットカード決済の場合は即 `completed` にする
-            $status = ($payment_method === 'card') ? 'completed' : 'pending';
+            //  クレジットカード決済の場合は即 `paid` にする
+            $status = 'paid';
 
 
             //  購入データを `pending` 状態で保存
@@ -88,7 +88,8 @@ class StripeWebhookController extends Controller
             }
         }
 
-        //  コンビニ支払いの完了を検知 → `status` を `completed` に更新
+        // コンビニ支払いの完了を検知 → `status` を `paid` に更新
+
         if ($event['type'] === 'checkout.session.async_payment_succeeded') {
             $session = $event['data']['object'];
             $session_id = $session['id'];
@@ -111,13 +112,13 @@ class StripeWebhookController extends Controller
             // 🚀 `status` を `completed` に更新し、商品を `sold_out` にする
             DB::beginTransaction();
             try {
-                $purchase->update(['status' => 'completed']);
+                $purchase->update(['status' => 'paid']);
 
                 // ✅ 商品の `sold_out` フラグを更新
                 Item::where('id', $purchase->item_id)->update(['sold_out' => 1]);
 
                 DB::commit();
-                Log::info("Webhook: 購入データが `completed` に更新されました session_id: $session_id ");
+                Log::info("Webhook: 購入データが `paid` に更新されました session_id: $session_id ");
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error("Webhook: 購入完了処理エラー: " . $e->getMessage());

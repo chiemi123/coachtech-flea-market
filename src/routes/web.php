@@ -125,6 +125,9 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::post('/purchases/{purchase}/messages', [MessageController::class, 'store']);
     Route::post('/purchases/{purchase}/ratings', [RatingController::class, 'store'])->name('ratings.store');
 
+    Route::get('/messages/{message}/edit', [MessageController::class, 'edit'])->name('messages.edit')->middleware('can:update,message');
+    Route::put('/messages/{message}', [MessageController::class, 'update'])->name('messages.update')->middleware('can:update,message');
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy')->middleware('can:delete,message');
 });
 
 // ===========================

@@ -6,7 +6,8 @@
 
 {{-- ヘッダー右側のアクション（購入者だけ表示したい想定） --}}
 @section('header-extra')
-@if(isset($isSeller) && !$isSeller && $purchase->status !== 'completed')
+
+@if (!$isSeller && $purchase->status === 'paid')
 <form method="POST" action="{{ route('purchases.complete', $purchase) }}" style="display:inline;">
     @csrf
     <button type="submit" class="finish-btn">取引を完了する</button>
@@ -17,22 +18,21 @@
 @section('title', '取引チャット')
 
 @section('content')
-<div class="chat-wrap {{ $otherPurchases->isNotEmpty() ? 'with-sidebar' : 'no-sidebar' }}" data-purchase-id="{{ $purchase->id }}">
-    {{-- 購入者でも表示：空でなければ出す --}}
-    @if($otherPurchases->isNotEmpty())
+<div class="chat-wrap with-sidebar" data-purchase-id="{{ $purchase->id }}">
     <aside class="sidebar" aria-label="その他の取引">
         <div class="title">その他の取引</div>
         <ul class="sidebar-list">
-            @foreach($otherPurchases as $p)
+            @forelse($otherPurchases as $p)
             <li class="sidebar-item {{ $p->id === $purchase->id ? 'is-active' : '' }}">
                 <a href="{{ route('purchases.chat', $p->id) }}">
                     <span class="sidebar-title">{{ $p->item->name }}</span>
                 </a>
             </li>
-            @endforeach
+            @empty
+            <li class="sidebar-item disabled">他の取引はありません</li>
+            @endforelse
         </ul>
     </aside>
-    @endif
 
     {{-- 会話パネル --}}
     <main class="chat-main">
@@ -88,16 +88,36 @@
             $avatar = $avatar ?: asset('images/default-avatar.png');
             @endphp
 
-            <div class="msg-row {{ $mine ? 'is-me' : 'is-other' }}">
+            <div class="msg-row {{ $mine ? 'is-me' : 'is-other' }} {{ isset($editing) && $editing->id === $m->id ? 'edit-form-wrapper' : '' }}">
                 <div class="msg-head">
                     <img class="avatar" src="{{ $avatar }}" alt="{{ $uname }}">
                     <span class="name">{{ $uname }}</span>
                 </div>
 
-                <div class="msg-bubble">
-                    @if($time)
-                    <div class="msg-meta"><span class="time">{{ $time }}</span></div>
-                    @endif
+                <div class="msg-content-wrapper">
+                    <div class="msg-bubble">
+                        @if($time)
+                        <div class="msg-meta"><span class="time">{{ $time }}</span></div>
+                        @endif
+                        {{-- ✏️ 編集モードかどうか判定 --}}
+                        @if(isset($editing) && $editing->id === $m->id)
+                        <form action="{{ route('messages.update', $m) }}" method="POST" enctype="multipart/form-data" class="edit-form">
+                            @csrf
+                            @method('PUT')
+
+                            <textarea name="body" rows="3" class="edit-textarea">{{ old('body', $m->body) }}</textarea>
+
+                            <div class="edit-image-input">
+                                <input type="file" name="image">
+                            </div>
+                    </div>
+                    <div class="edit-form-actions">
+                        <button type="submit" class="edit-submit">更新</button>
+                        <a href="{{ route('purchases.chat', ['purchase' => $m->purchase_id]) }}" class="edit-cancel">キャンセル</a>
+                    </div>
+                    </form>
+                    @else
+
                     <div class="msg-body">{{ $m->body }}</div>
 
                     @if(!empty($m->image_path))
@@ -106,69 +126,88 @@
                     </div>
                     @endif
                 </div>
-            </div>
-            @empty
-            <p>最初のメッセージを送ってみましょう。</p>
-            @endforelse
-        </section>
 
+                {{-- 編集・削除ボタン（自分の投稿のみ） --}}
+                @if(Gate::check('update', $m) || Gate::check('delete', $m))
+                <div class="msg-actions">
+                    @can('update', $m)
+                    <a href="{{ route('messages.edit', $m) }}">編集</a>
+                    @endcan
 
-
-        {{-- 送信ステータス & 上部に全体エラー（任意） --}}
-        @if (session('status'))
-        <div class="alert alert-success" role="status">{{ session('status') }}</div>
-        @endif
-        @if ($errors->any())
-        <div class="alert alert-danger" role="alert">
-            入力内容に誤りがあります。各項目をご確認ください。
-        </div>
-        @endif
-
-        {{-- 入力フォーム --}}
-        <section class="chat-footer">
-            <form class="chat-form" id="chat-form"
-                action="{{ url('/purchases/' . $purchase->id . '/messages') }}"
-                method="POST" enctype="multipart/form-data" novalidate>
-                @csrf
-
-                {{-- 本文 --}}
-                <textarea
-                    class="chat-textarea @error('body') is-invalid @enderror"
-                    name="body"
-                    placeholder="取引メッセージを記入してください"
-                    maxlength="400"
-                    aria-label="メッセージ入力"
-                    aria-invalid="@error('body') true @else false @enderror"
-                    aria-describedby="@error('body') body-error @enderror">{{ old('body') }}</textarea>
-                @error('body')
-                <p id="body-error" class="form-error" role="alert">{{ $message }}</p>
-                @enderror
-
-                <div class="input-row">
-                    <label for="chat-image">画像を追加</label>
-                    <input
-                        type="file"
-                        id="chat-image"
-                        name="image"
-                        accept=".png,.jpeg"
-                        class="@error('image') is-invalid @enderror"
-                        aria-invalid="@error('image') true @else false @enderror"
-                        aria-describedby="@error('image') image-error @enderror">
-                    @error('image')
-                    <p id="image-error" class="form-error" role="alert">{{ $message }}</p>
-                    @enderror
-
-                    <button class="send-btn" type="submit" aria-label="送信">
-                        <img src="{{ asset('images/icons/send.jpg') }}" alt="送信">
-                    </button>
+                    @can('delete', $m)
+                    <form action="{{ route('messages.destroy', $m) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit">削除</button>
+                    </form>
+                    @endcan
                 </div>
-            </form>
-        </section>
-    </main>
+                @endif
+                @endif
+            </div>
+</div>
+@empty
+<p>最初のメッセージを送ってみましょう。</p>
+@endforelse
+</section>
+
+
+
+{{-- 送信ステータス & 上部に全体エラー（任意） --}}
+@if (session('status'))
+<div class="alert alert-success" role="status">{{ session('status') }}</div>
+@endif
+@if ($errors->any())
+<div class="alert alert-danger" role="alert">
+    入力内容に誤りがあります。各項目をご確認ください。
+</div>
+@endif
+
+{{-- 入力フォーム --}}
+<section class="chat-footer">
+    <form class="chat-form" id="chat-form"
+        action="{{ url('/purchases/' . $purchase->id . '/messages') }}"
+        method="POST" enctype="multipart/form-data" novalidate>
+        @csrf
+
+        {{-- 本文 --}}
+        <textarea
+            class="chat-textarea @error('body') is-invalid @enderror"
+            name="body"
+            placeholder="取引メッセージを記入してください"
+            maxlength="400"
+            aria-label="メッセージ入力"
+            aria-invalid="@error('body') true @else false @enderror"
+            aria-describedby="@error('body') body-error @enderror">{{ old('body') }}</textarea>
+        @error('body')
+        <p id="body-error" class="form-error" role="alert">{{ $message }}</p>
+        @enderror
+
+        <div class="input-row">
+            <label for="chat-image">画像を追加</label>
+            <input
+                type="file"
+                id="chat-image"
+                name="image"
+                accept=".png,.jpeg"
+                class="@error('image') is-invalid @enderror"
+                aria-invalid="@error('image') true @else false @enderror"
+                aria-describedby="@error('image') image-error @enderror">
+            @error('image')
+            <p id="image-error" class="form-error" role="alert">{{ $message }}</p>
+            @enderror
+
+            <button class="send-btn" type="submit" aria-label="送信">
+                <img src="{{ asset('images/icons/send.jpg') }}" alt="送信">
+            </button>
+        </div>
+    </form>
+</section>
+</main>
 </div>
 @endsection
 
-@if($purchase->status === 'completed' && !$purchase->ratingBy($me))
+@if(session('show_rating_modal') && $purchase->status === 'completed' && !$purchase->ratingBy($me))
 {{-- 評価モーダル --}}
 <div class="modal is-open" id="complete-modal" aria-hidden="false">
     <div class="modal__backdrop"></div>
