@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
-use Stripe\PaymentIntent;
+
 use App\Http\Requests\PurchaseRequest;
-use App\Models\User;
 use App\Models\Item;
 use App\Models\Purchase;
 use App\Models\Address;
+use App\Notifications\TradeCompleted;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
@@ -188,7 +188,7 @@ class PurchaseController extends Controller
     {
         $user = auth()->user();
 
-        // 購入者のみ許可（任意でPolicy化可能）
+        // 購入者のみ許可
         abort_unless($purchase->user_id === $user->id, 403);
 
         // 冪等処理：未完了のときのみ更新
@@ -197,6 +197,12 @@ class PurchaseController extends Controller
                 'status' => 'completed',
                 'completed_at' => now(),
             ]);
+
+            // ✅ 出品者に通知を送信
+            $seller = optional($purchase->item)->user;
+            if ($seller) {
+                $seller->notify(new TradeCompleted($purchase));
+            }
         }
 
         return back()->with('status', '取引を完了しました。評価をお願いします。');

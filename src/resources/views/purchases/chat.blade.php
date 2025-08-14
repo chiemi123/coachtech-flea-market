@@ -205,11 +205,16 @@
 </div>
 @endif
 
-
 <script>
     document.getElementById('chat-form')?.addEventListener('submit', e => {
         const btn = e.target.querySelector('.send-btn');
         btn?.setAttribute('disabled', 'disabled');
+
+        // 送信時に入力内容をlocalStorageから削除
+        const textarea = document.querySelector('textarea[name="body"]');
+        if (textarea) {
+            localStorage.removeItem('chat_draft_{{ $purchase->id }}');
+        }
     });
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -245,6 +250,22 @@
 
         const checked = document.querySelector(".stars-fieldset input:checked");
         updateStars(checked ? checked.value : 0);
+
+        const textarea = document.querySelector('textarea[name="body"]');
+        const draftKey = 'chat_draft_{{ $purchase->id }}';
+
+        if (textarea) {
+            // 入力があるたびに保存
+            textarea.addEventListener('input', () => {
+                localStorage.setItem(draftKey, textarea.value);
+            });
+
+            // 読み込み時にdraftがあれば復元（old() より優先）
+            const saved = localStorage.getItem(draftKey);
+            if (saved && !textarea.value) {
+                textarea.value = saved;
+            }
+        }
     });
 
     // 戻る操作などでキャッシュからページを復元したときに、送信ボタンを有効にする
