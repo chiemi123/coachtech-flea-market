@@ -122,4 +122,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'id'                           // Item 主キー
         );
     }
+
+    public function getAverageRatingAttribute()
+    {
+        return round($this->receivedRatings()->avg('score'));
+    }
+
+    public function receivedRatings()
+    {
+        return $this->hasMany(Rating::class, 'ratee_id');
+    }
 }
