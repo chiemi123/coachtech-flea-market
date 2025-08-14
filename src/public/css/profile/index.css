@@ -59,6 +59,19 @@
     margin-left: 57px;
 }
 
+.stars {
+    display: inline-flex;
+    gap: 2px;
+    vertical-align: middle;
+}
+
+.stars img {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    object-fit: contain;
+}
+
 /* 編集ボタン */
 .profile__edit {
     flex-grow: 1;

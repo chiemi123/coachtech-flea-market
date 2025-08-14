@@ -35,14 +35,10 @@
             $score = $user->average_rating ?? 0;
             @endphp
 
-            @if($score)
-            <div class="muted">平均評価：{{ $score }} / 5</div>
-            @endif
-
             <div class="stars" role="img" aria-label="評価 {{ $score }} / 5">
                 @for ($i = 1; $i <= 5; $i++)
                     <img
-                    src="{{ asset('images/ratings/' . ($i <= $score ? 'Star7.png' : 'Star1.png')) }}"
+                    src="{{ asset('images/ratings/' . ($i <= $score ? 'Star1.png' : 'Star4.png')) }}"
                     alt=""
                     aria-hidden="true">
                     @endfor
@@ -108,8 +104,10 @@
                 @if ($purchasedItems->isEmpty())
                 <p class="profile__message">購入した商品はありません。</p>
                 @else
+
                 <ul class="profile__items">
-                    @foreach ($purchasedItems as $item)
+                    @foreach ($purchasedItems as $purchase)
+                    @php $item = $purchase->item; @endphp
                     <li class="profile__item">
                         <a href="{{ route('items.show', $item->id) }}">
                             <div class="profile__item-image">
@@ -124,6 +122,12 @@
                                 @endif
                             </div>
                             <h3>{{ $item->name }}</h3>
+                            {{-- ここから評価判定 --}}
+                            @if ($purchase->ratingBy($me))
+                            <span class="tag tag-success">評価済</span>
+                            @else
+                            <span class="tag tag-pending">未評価</span>
+                            @endif
                         </a>
                     </li>
                     @endforeach
@@ -140,6 +144,7 @@
                 @else
                 <ul class="txn-cards" role="list" aria-label="取引一覧">
                     @foreach ($purchases as $p)
+                    @if (!$p->ratingBy($me))
                     @php
                     $unread = (int)($p->unread_count ?? 0);
                     $img = $p->item->item_image ?? '';
@@ -164,6 +169,7 @@
                             </div>
                         </a>
                     </li>
+                    @endif
                     @endforeach
                 </ul>
                 @endif

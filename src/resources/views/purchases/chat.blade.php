@@ -17,7 +17,7 @@
 @section('title', '取引チャット')
 
 @section('content')
-<div class="chat-wrap" data-purchase-id="{{ $purchase->id }}">
+<div class="chat-wrap {{ $otherPurchases->isNotEmpty() ? 'with-sidebar' : 'no-sidebar' }}" data-purchase-id="{{ $purchase->id }}">
     {{-- 購入者でも表示：空でなければ出す --}}
     @if($otherPurchases->isNotEmpty())
     <aside class="sidebar" aria-label="その他の取引">
@@ -164,44 +164,92 @@
                 </div>
             </form>
         </section>
-
-        @if($purchase->status === 'completed' && !$purchase->ratingBy($me))
-        {{-- 評価モーダル --}}
-        <div class="modal is-open" id="complete-modal" aria-hidden="false">
-            <div class="modal__backdrop"></div>
-            <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-                <h3 id="modal-title">取引が完了しました。</h3>
-                <p class="modal__sub">今回の取引はいかがでしたか？</p>
-
-                <form method="post" action="{{ route('ratings.store', $purchase) }}">
-                    @csrf
-                    <input type="hidden" name="ratee_id" value="{{ $partner->id }}">
-
-                    <fieldset class="stars-fieldset">
-                        <legend class="sr-only">評価</legend>
-                        @for ($i = 5; $i >= 1; $i--)
-                        <input id="star{{ $i }}" type="radio" name="score" value="{{ $i }}" required>
-                        <label for="star{{ $i }}">
-                            <img src="{{ asset('images/ratings/star7.jpg') }}" alt="{{ $i }}点">
-                        </label>
-                        @endfor
-                    </fieldset>
-
-                    <div class="modal__actions">
-                        <button type="submit" class="btn-primary">評価して完了</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        @endif
-
     </main>
 </div>
 @endsection
+
+@if($purchase->status === 'completed' && !$purchase->ratingBy($me))
+{{-- 評価モーダル --}}
+<div class="modal is-open" id="complete-modal" aria-hidden="false">
+    <div class="modal__backdrop"></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <h3 id="modal-title" class="modal-title">取引が完了しました。</h3>
+        <p class="modal__sub">
+            @if ($purchase->user_id === $me->id)
+            今回の取引はいかがでしたか？
+            @elseif ($purchase->item->user_id === $me->id)
+            今回の取引相手はどうでしたか？
+            @endif
+        </p>
+
+        <form method="post" action="{{ route('ratings.store', $purchase) }}">
+            @csrf
+            <input type="hidden" name="ratee_id" value="{{ $partner->id }}">
+
+            <fieldset class="stars-fieldset">
+                @for ($i = 5; $i >= 1; $i--)
+                <input type="radio" name="score" id="star{{ $i }}" value="{{ $i }}" required>
+                <label for="star{{ $i }}" data-value="{{ $i }}">
+                    <img src="/images/ratings/Star9.png" alt="{{ $i }}点" class="star-img">
+                </label>
+                @endfor
+            </fieldset>
+
+            <div class="modal__actions">
+                <button type="submit" class="btn-primary" aria-label="評価を送信して取引を完了">
+                    送信する
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 
 <script>
     document.getElementById('chat-form')?.addEventListener('submit', e => {
         const btn = e.target.querySelector('.send-btn');
         btn?.setAttribute('disabled', 'disabled');
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const stars = document.querySelectorAll(".stars-fieldset label");
+        const grayStar = "/images/ratings/Star9.png";
+        const yellowStar = "/images/ratings/Star6.png";
+
+        function updateStars(selectedValue) {
+            stars.forEach((label) => {
+                const value = parseInt(label.dataset.value);
+                const img = label.querySelector("img");
+                img.src = (value <= selectedValue) ? yellowStar : grayStar;
+            });
+        }
+
+        stars.forEach((label) => {
+            const input = document.getElementById(label.getAttribute("for"));
+            label.setAttribute("data-value", input.value);
+
+            label.addEventListener("mouseenter", () => {
+                updateStars(label.dataset.value);
+            });
+
+            label.addEventListener("mouseleave", () => {
+                const checked = document.querySelector(".stars-fieldset input:checked");
+                updateStars(checked ? checked.value : 0);
+            });
+
+            input.addEventListener("change", () => {
+                updateStars(input.value);
+            });
+        });
+
+        const checked = document.querySelector(".stars-fieldset input:checked");
+        updateStars(checked ? checked.value : 0);
+    });
+
+    // 戻る操作などでキャッシュからページを復元したときに、送信ボタンを有効にする
+    window.addEventListener('pageshow', function(event) {
+        const btn = document.querySelector('.btn-primary');
+        if (btn) btn.disabled = false;
     });
 </script>

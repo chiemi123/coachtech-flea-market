@@ -10,10 +10,23 @@
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 /* レイアウト：サイドバー(左) + メイン(右) */
-.chat-wrap {
+.chat-wrap.with-sidebar {
+    min-height: 100vh;
     display: grid;
     grid-template-columns: 240px 1fr;
+}
+
+.chat-wrap.no-sidebar {
+    display: grid;
+    grid-template-columns: 1fr;
 }
 
 /* ---------- サイドバー ---------- */
@@ -68,7 +81,6 @@
 /* ---------- メインチャット ---------- */
 .chat-main {
     border: 1px solid #e5e7eb;
-    background: #fff;
     overflow: hidden;
     display: grid;
     padding: 10px 30px;
@@ -333,6 +345,114 @@
     object-fit: contain;
     display: block;
 }
+/* モーダル画面 */
+.modal.is-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* 他要素の上に表示 */
+    pointer-events: auto;
+}
+
+.modal__backdrop {
+    position: fixed; /* ← absoluteだと一部しか覆えない場合あり */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    z-index: 1000; /* モーダルより少し下、でも画面全体より上 */
+}
+
+.modal__panel {
+    position: relative;
+    background: #fdfce6;
+    border-radius: 15px;
+    border: solid 1px#000000;
+    width: 90%;
+    max-width: 600px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1010; /* backdropより前 */
+}
+
+.modal-title,
+.modal__sub {
+    text-align: left;
+}
+
+.modal-title {
+    height: 90px;
+    font-size: 35px;
+    font-weight: 400;
+    color: #000000;
+    border-bottom: solid 1px #000000;
+    margin: 0;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+}
+
+.modal__sub {
+    padding-left: 24px;
+    color: #868686;
+    margin: 10px 0 20px;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.stars-fieldset {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    border: none;
+    padding: 10px 0;
+    border-bottom: solid 1px #000000;
+}
+
+.stars-fieldset input {
+    display: none;
+}
+
+.stars-fieldset label {
+    cursor: pointer;
+}
+
+.stars-fieldset label img {
+    width: 100px;
+    height: 100px;
+    transition: opacity 0.2s;
+}
+
+.modal__actions {
+    text-align: right;
+    padding: 0 15px;
+}
+
+.btn-primary {
+    background-color: #ff8282;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 400;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #e66;
+}
 
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 960px) {
@@ -470,5 +590,22 @@
     .send-btn img {
         width: 100%;
         height: 100%;
+    }
+    .modal__panel {
+        width: 90%;
+    }
+    .modal-title {
+        font-size: 22px;
+    }
+    .modal__sub {
+        font-size: 14px;
+    }
+    .stars-fieldset label img {
+        width: 50px;
+        height: 50px;
+    }
+    .btn-primary {
+        font-size: 18px;
+        padding: 8px 16px;
     }
 }

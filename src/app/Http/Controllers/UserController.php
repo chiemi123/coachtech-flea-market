@@ -18,42 +18,43 @@ class UserController extends Controller
      */
     public function index()
     {
-        /** @var User $user */
-        $user = Auth::user();
+        /** @var User $me */
+        $me = Auth::user();
+        $user = $me;
 
         // 出品した商品
-        $listedItems = Item::where('user_id', $user->id)->latest()->get();
+        $listedItems = Item::where('user_id', $me->id)->latest()->get();
 
         // 購入した商品
-        $purchasedItems = $user->purchases()
+        $purchasedItems = $me->purchases() // ← 自分が購入したデータ
+            ->where('status', 'completed')
             ->with(['item' => fn($q) => $q->withTrashed()])
-            ->latest('purchases.created_at')
             ->get()
-            ->pluck('item');
+            ->filter(fn($purchase) => $purchase->ratingBy($me));
 
 
-        // 進行中ステータス（必要に応じて追加・変更）
-        $inProgressStatuses = ['pending', 'paid', 'shipping'];
-
-        // 取引中 + 未読数 + last_message_atで並べ替え
-        $purchases = Purchase::participating($user->id)
-            ->whereIn('status', $inProgressStatuses)
+        // 取引中 + 未読数（評価未完了のcompletedも含める）
+        $purchases = Purchase::participating($me->id)
+            ->where(function ($q) use ($me) {
+                $q->whereIn('status', ['pending', 'paid', 'shipping']) // 通常の進行中
+                    ->orWhere(function ($q2) use ($me) {
+                        $q2->where('status', 'completed')
+                            ->whereDoesntHave('ratings', fn($r) => $r->where('rater_id', $me->id)); // 評価未完了のcompleted
+                    });
+            })
             ->with([
                 'item:id,name,item_image,price,user_id',
             ])
             ->withCount([
-                'messages as unread_count' => function ($q) use ($user) {
-                    $q->where('user_id', '<>', $user->id)
-                        ->whereDoesntHave(
-                            'reads',
-                            fn($r) =>
-                            $r->where('user_id', $user->id)
-                        );
+                'messages as unread_count' => function ($q) use ($me) {
+                    $q->where('user_id', '<>', $me->id)
+                        ->whereDoesntHave('reads', fn($r) => $r->where('user_id', $me->id));
                 },
             ])
-            ->orderByDesc('last_message_at') // カラムがあるのでこれでOK
+            ->orderByDesc('last_message_at')
             ->get();
 
+        // 未読合計（評価済のcompletedは含まれない）
         $inProgressUnreadTotal = $purchases->sum('unread_count');
 
         return view('profile.index', compact(
@@ -61,7 +62,8 @@ class UserController extends Controller
             'listedItems',
             'purchasedItems',
             'purchases',
-            'inProgressUnreadTotal'
+            'inProgressUnreadTotal',
+            'me'
         ));
     }
 

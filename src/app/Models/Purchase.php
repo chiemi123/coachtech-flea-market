@@ -50,8 +50,11 @@ class Purchase extends Model
 
     public function ratingBy($user)
     {
-        return $this->ratings()->where('rater_id', $user->id)->exists();
+        return Rating::where('purchase_id', $this->id)
+            ->where('rater_id', $user->id)
+            ->first();
     }
+
 
     public function ratings()
     {
