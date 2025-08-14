@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Purchase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
@@ -50,6 +51,21 @@ class ChatController extends Controller
             ])
             ->orderByDesc('last_message_at')
             ->get();
+
+        // 自分がまだ読んでいない相手のメッセージを既読にする
+        $unreadMessages = $purchase->messages()
+            ->where('user_id', '!=', $me->id)
+            ->whereDoesntHave('reads', fn($q) => $q->where('user_id', $me->id))
+            ->get();
+
+        DB::transaction(function () use ($unreadMessages, $me) {
+            foreach ($unreadMessages as $message) {
+                $message->reads()->create([
+                    'user_id' => $me->id,
+                    'read_at' => now(),
+                ]);
+            }
+        });
 
         return view('purchases.chat', [
             'purchase'       => $purchase,
