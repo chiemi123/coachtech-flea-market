@@ -192,11 +192,13 @@ class PurchaseController extends Controller
         abort_unless($purchase->user_id === $user->id, 403);
 
         // 冪等処理：未完了のときのみ更新
-        if ($purchase->status !== 'paid') {
+        if ($purchase->status === 'paid') {
             $purchase->update([
                 'status' => 'completed',
                 'completed_at' => now(),
             ]);
+
+            $purchase->refresh();
 
             // ✅ 出品者に通知を送信
             $seller = optional($purchase->item)->user;
@@ -205,9 +207,10 @@ class PurchaseController extends Controller
             }
         }
 
-        return back()->with([
-            'status' => '取引を完了しました。評価をお願いします。',
-            'show_rating_modal' => true,
-        ]);
+        return redirect()->route('purchases.chat', $purchase)
+            ->with([
+                'success' => '取引を完了しました。評価をお願いします。',
+                'show_rating_modal' => true,
+            ]);
     }
 }

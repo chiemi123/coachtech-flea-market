@@ -44,7 +44,7 @@ class MessageReceived extends Notification
             ->greeting($notifiable->name . ' さん')
             ->line('新しいメッセージが届いています。')
             ->line('内容：' . $this->message->body)
-            ->action('チャット画面を開く', url("/chat/{$this->message->purchase_id}"))
+            ->action('チャット画面を開く', route('purchases.chat', $this->message->purchase_id))
             ->line('ご確認ください。');
     }
 }

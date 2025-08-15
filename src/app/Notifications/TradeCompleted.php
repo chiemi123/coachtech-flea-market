@@ -43,7 +43,10 @@ class TradeCompleted extends Notification
             ->subject('取引が完了しました')
             ->greeting($notifiable->name . ' さん')
             ->line('購入者が商品に対して取引完了の操作を行いました。')
-            ->action('取引詳細を確認する', url("/purchases/{$this->purchase->id}"))
+            ->action(
+                '取引詳細を確認する',
+                route('purchases.chat', $this->purchase->id) . '?show_rating_modal=1'
+            )
             ->line('ご確認の上、評価をお願いいたします。');
     }
 }

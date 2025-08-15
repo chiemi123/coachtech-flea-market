@@ -12,8 +12,7 @@ class ChatController extends Controller
     {
         $me = Auth::user();
 
-        // 取引の基本情報
-        $purchase->load(['item.user', 'user']);
+        $purchase = Purchase::with(['item.user', 'user'])->findOrFail($purchase->id);
 
         // アクセス権：買い手 or 出品者のみ
         abort_unless(

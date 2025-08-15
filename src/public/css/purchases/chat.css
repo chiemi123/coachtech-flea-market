@@ -155,7 +155,7 @@ body {
 
 /* 取引完了ボタン（購入者のみ表示想定） */
 .finish-btn {
-    margin-right: 40px;
+    margin: 16px 40px 0 0;
     padding: 10px 15px;
     border: 1px solid #ff8282;
     color: #fff;
