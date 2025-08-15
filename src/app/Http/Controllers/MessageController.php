@@ -46,7 +46,7 @@ class MessageController extends Controller
             $receiver->notify(new MessageReceived($message));
         }
 
-        return back()->with('status', 'メッセージを送信しました。');
+        return back()->with('success', 'メッセージを送信しました。');
     }
 
     public function edit(Message $message)

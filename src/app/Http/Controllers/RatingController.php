@@ -33,6 +33,6 @@ class RatingController extends Controller
         // 要件(FN014)：評価送信後は「商品一覧」へ遷移
         // ルート名はプロジェクトに合わせて変更
         return redirect()->route('items.index')
-            ->with('status', '評価を送信しました。ありがとうございます。');
+            ->with('success', '評価を送信しました。ありがとうございます。');
     }
 }

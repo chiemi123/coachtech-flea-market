@@ -151,18 +151,6 @@
 @endforelse
 </section>
 
-
-
-{{-- 送信ステータス & 上部に全体エラー（任意） --}}
-@if (session('status'))
-<div class="alert alert-success" role="status">{{ session('status') }}</div>
-@endif
-@if ($errors->any())
-<div class="alert alert-danger" role="alert">
-    入力内容に誤りがあります。各項目をご確認ください。
-</div>
-@endif
-
 {{-- 入力フォーム --}}
 <section class="chat-footer">
     <form class="chat-form" id="chat-form"
@@ -178,7 +166,7 @@
             maxlength="400"
             aria-label="メッセージ入力"
             aria-invalid="@error('body') true @else false @enderror"
-            aria-describedby="@error('body') body-error @enderror">{{ old('body') }}</textarea>
+            aria-describedby="@error('body') body-error @enderror"></textarea>
         @error('body')
         <p id="body-error" class="form-error" role="alert">{{ $message }}</p>
         @enderror
@@ -207,7 +195,10 @@
 </div>
 @endsection
 
-@if(session('show_rating_modal') && $purchase->status === 'completed' && !$purchase->ratingBy($me))
+@if((session('show_rating_modal') || request('show_rating_modal')) &&
+$purchase->status === 'completed' &&
+!$purchase->ratingBy($me))
+
 {{-- 評価モーダル --}}
 <div class="modal is-open" id="complete-modal" aria-hidden="false">
     <div class="modal__backdrop"></div>
