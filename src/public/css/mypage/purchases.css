@@ -1,0 +1,140 @@
+/* 取引中カード専用（共通トークンは index.css の :root を使用） */
+
+/* グリッド：出品/購入カードと同じ 290×320 のタイル */
+.txn-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 290px);
+    grid-auto-rows: 320px;
+    column-gap: 71.5px;
+    row-gap: 50px;
+    list-style: none;
+    padding: 0 0 0 40px;
+    margin: 0;
+    justify-content: center;
+}
+.txn-card {
+    list-style: none;
+}
+
+/* タイル（余白なし・角丸/枠あり） */
+.txn-card > a.purchase-card {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none; /* 出品/購入カードに合わせて枠なし */
+    box-shadow: none;
+    background: transparent;
+    text-decoration: none;
+}
+
+.txn-card > a.purchase-card:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* サムネ（画像） */
+.txn-thumb {
+    position: relative;
+    width: 290px;
+    height: 290px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: transparent;
+}
+.txn-thumb img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    object-position: center;
+    display: block;
+}
+
+/* 未読バッジ：画像の左上固定 */
+.txn-thumb .unread-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1;
+    background: #ff0000;
+    color: #fff;
+    z-index: 2;
+    box-shadow: 0 0 0 2px #ff0000;
+}
+
+.txn-item-name {
+    font-size: 25px;
+    font-weight: 400;
+    color: #000;
+    margin-top: 8px;
+    padding: 0 8px;
+    line-height: 1.4;
+    display: block;
+}
+
+/* 空状態（任意） */
+.empty {
+    color: var(--muted);
+    padding: 32px 0;
+    text-align: center;
+}
+
+/* レスポンシブ */
+/* 取引中も出品/購入と同じ“自動列”に追随 */
+@media (max-width: 1360px) {
+    .txn-cards {
+        grid-template-columns: repeat(3, 290px);
+        column-gap: 40px;
+        row-gap: 30px;
+    }
+}
+@media (max-width: 980px) {
+    .txn-cards {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 280px;
+        gap: 20px;
+    }
+}
+/* ===== 768px 以下：取引中カードの見た目を整える ===== */
+@media (max-width: 767px) {
+    /* 1列・中央寄せ・適度な最大幅 */
+    .txn-cards {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 16px;
+        padding: 0;
+    }
+
+    /* カードの枠と角丸を統一（アンカーの余白は0に） */
+    .txn-card > a.purchase-card {
+        width: min(100%, 460px);
+        padding: 0;
+        line-height: 0;
+        border-radius: 4px;
+        background: #fff;
+    }
+
+    /* 画像は比率固定＋トリミングでバランスよく */
+    .txn-thumb {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .txn-thumb img {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        display: block;
+        object-fit: cover; /* 余白なしで中央トリミング */
+        object-position: center;
+    }
+}

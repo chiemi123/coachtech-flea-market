@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\User;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Http\Requests\AddressRequest;
 use App\Http\Requests\ProfileRequest;
@@ -17,19 +18,55 @@ class UserController extends Controller
      */
     public function index()
     {
-        // 現在ログイン中のユーザーを取得
-        $user = Auth::user();
+        /** @var User $me */
+        $me = Auth::user();
+        $user = $me;
 
-        // 出品した商品を取得
-        $listedItems = Item::where('user_id', $user->id)->get();
+        // 出品した商品
+        $listedItems = Item::where('user_id', $me->id)->latest()->get();
 
-        // 購入した商品を取得
-        $purchasedItems = $user->purchasedItems; // ユーザーが購入した商品（リレーション経由で取得）
+        // 購入した商品
+        $purchasedItems = $me->purchases() // ← 自分が購入したデータ
+            ->where('status', 'completed')
+            ->with(['item' => fn($q) => $q->withTrashed()])
+            ->get()
+            ->filter(fn($purchase) => $purchase->ratingBy($me));
 
 
+        // 取引中 + 未読数（評価未完了のcompletedも含める）
+        $purchases = Purchase::participating($me->id)
+            ->where(function ($q) use ($me) {
+                $q->whereIn('status', ['pending', 'paid', 'shipping']) // 通常の進行中
+                    ->orWhere(function ($q2) use ($me) {
+                        $q2->where('status', 'completed')
+                            ->whereDoesntHave('ratings', fn($r) => $r->where('rater_id', $me->id)); // 評価未完了のcompleted
+                    });
+            })
+            ->with([
+                'item:id,name,item_image,price,user_id',
+            ])
+            ->withCount([
+                'messages as unread_count' => function ($q) use ($me) {
+                    $q->where('user_id', '<>', $me->id)
+                        ->whereDoesntHave('reads', fn($r) => $r->where('user_id', $me->id));
+                },
+            ])
+            ->orderByDesc('last_message_at')
+            ->get();
 
-        return view('profile.index', compact('user', 'listedItems', 'purchasedItems'));
+        // 未読合計（評価済のcompletedは含まれない）
+        $inProgressUnreadTotal = $purchases->sum('unread_count');
+
+        return view('profile.index', compact(
+            'user',
+            'listedItems',
+            'purchasedItems',
+            'purchases',
+            'inProgressUnreadTotal',
+            'me'
+        ));
     }
+
 
     /**
      * プロフィール設定画面

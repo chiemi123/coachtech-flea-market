@@ -5,6 +5,9 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -104,7 +107,7 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::post('/purchase/checkout/{id}', [PurchaseController::class, 'checkout'])->name('purchase.checkout');
 
     // 購入処理
-    Route::post('/purchase/{item_id}/complete', [PurchaseController::class, 'complete'])->name('purchase.complete');
+    Route::post('/purchases/{purchase}/complete', [PurchaseController::class, 'complete'])->name('purchases.complete');
 
     // 送付先住所変更画面item_
     Route::get('/purchase/address/{item_id}', [AddressController::class, 'edit'])->name('address.edit');
@@ -115,6 +118,16 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
 
     // 商品出品処理
     Route::post('/sell', [ItemController::class, 'store'])->name('sell.store');
+
+    // 追加機能を実装用
+    Route::get('/purchases/{purchase}/chat', [ChatController::class, 'show'])->name('purchases.chat');
+    Route::get('/purchases/{purchase}/messages', [MessageController::class, 'index']);
+    Route::post('/purchases/{purchase}/messages', [MessageController::class, 'store']);
+    Route::post('/purchases/{purchase}/ratings', [RatingController::class, 'store'])->name('ratings.store');
+
+    Route::get('/messages/{message}/edit', [MessageController::class, 'edit'])->name('messages.edit')->middleware('can:update,message');
+    Route::put('/messages/{message}', [MessageController::class, 'update'])->name('messages.update')->middleware('can:update,message');
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy')->middleware('can:delete,message');
 });
 
 // ===========================

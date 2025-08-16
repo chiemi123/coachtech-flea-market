@@ -40,13 +40,18 @@
                 <!-- 右側: ナビゲーション -->
                 @if (!request()->routeIs('verification.notice'))
                 <nav class="header-nav">
+                    {{-- チャット画面で購入者のみ「取引を完了する」ボタン表示 --}}
+                    @yield('header-extra')
+
                     @auth
+                    @if (empty($isChatView))
                     <form class="form" action="{{ route('logout') }}" method="post">
                         @csrf
                         <button class="header-nav__button">ログアウト</button>
                     </form>
                     <a href="{{ route('profile.index') }}">マイページ</a>
                     <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
+                    @endif
                     @else
                     @if (!request()->routeIs('login') && !request()->routeIs('register'))
                     <a href="{{ route('login') }}">ログイン</a>
@@ -54,7 +59,6 @@
                     <a href="{{ route('sell.create') }}" class="sell-button">出品</a>
                     @endif
                     @endauth
-                    @yield('header-extra') <!-- 他のページで追加メニューを入れられる -->
                 </nav>
                 @endif
             </div>
@@ -68,7 +72,11 @@
         </div>
         @endif
 
-        @if (!request()->routeIs('register') && !request()->routeIs('login'))
+        @if (
+        !request()->routeIs('register') &&
+        !request()->routeIs('login') &&
+        !request()->routeIs('purchases.chat') &&
+        !request()->routeIs('messages.edit'))
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
