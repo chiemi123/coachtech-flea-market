@@ -72,7 +72,11 @@
         </div>
         @endif
 
-        @if (!request()->routeIs('register') && !request()->routeIs('login'))
+        @if (
+        !request()->routeIs('register') &&
+        !request()->routeIs('login') &&
+        !request()->routeIs('purchases.chat') &&
+        !request()->routeIs('messages.edit'))
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul>

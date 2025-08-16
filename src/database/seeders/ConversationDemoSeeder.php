@@ -4,16 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-// モデル
 use App\Models\User;
 use App\Models\Item;
 use App\Models\Purchase;
-use App\Models\Message;
 use App\Models\MessageRead;
-use App\Models\Address;
 
 class ConversationDemoSeeder extends Seeder
 {
@@ -93,10 +89,13 @@ class ConversationDemoSeeder extends Seeder
                 [
                     'address_id'      => $address->id,
                     'payment_method'  => 'card',
-                    'status'          => 'pending',
+                    'status'          => 'paid',
                     'last_message_at' => now()->subMinutes(10),
                 ]
             );
+
+            $itemA->update(['sold_out' => 1]);
+
             $seedThread(
                 $purchaseA,
                 $buyer,    // firstSender
@@ -113,10 +112,13 @@ class ConversationDemoSeeder extends Seeder
                 [
                     'address_id'      => $address->id,
                     'payment_method'  => 'card',
-                    'status'          => 'pending',
+                    'status'          => 'paid',
                     'last_message_at' => now()->subMinutes(4),
                 ]
             );
+
+            $itemB->update(['sold_out' => 1]);
+
             // ここは順番を反転（最後が sellerB になる）
             if (!$purchaseB->messages()->exists()) {
                 $t1 = Carbon::now()->subMinutes(3);

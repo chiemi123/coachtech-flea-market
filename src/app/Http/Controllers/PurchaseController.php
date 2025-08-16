@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
+
 class PurchaseController extends Controller
 {
     public function __construct()
@@ -127,54 +128,13 @@ class PurchaseController extends Controller
         return redirect($checkoutSession->url);
     }
 
-    //  決済成功後の処理（DBを更新）
     public function success(Request $request)
     {
-        Stripe::setApiKey(config('services.stripe.secret'));
-
-        //  セッションIDを取得
-        $session_id = $request->query('session_id');
-        if (!$session_id) {
-            return redirect()->route('items.index')->withErrors(['error' => '決済情報が取得できませんでした。']);
-        }
-
-        //  Checkout セッション情報を取得
-        try {
-            $checkoutSession = \Stripe\Checkout\Session::retrieve($session_id);
-        } catch (\Exception $e) {
-            Log::error("success(): Checkout Session の取得に失敗: " . $e->getMessage());
-            return redirect()->route('items.index')->withErrors(['error' => '決済情報が見つかりませんでした。']);
-        }
-
-        //  `metadata` から `item_id`、`address_id`、`user_id` を取得
-        $item_id = $checkoutSession->metadata->item_id ?? null;
-        $address_id = $checkoutSession->metadata->address_id ?? null;
-        $user_id = $checkoutSession->metadata->user_id ?? null;
-
-        Log::info("success() メソッドで取得したデータ", [
-            'user_id' => $user_id,
-            'item_id' => $item_id,
-            'address_id' => $address_id,
-            'session_id' => $session_id,
-        ]);
-
-        //  `metadata` に必要な情報が含まれていない場合
-        if (!$item_id || !$user_id || !$address_id) {
-            Log::error("success(): metadata が不足しています");
-            return redirect()->route('items.index')->withErrors(['error' => '決済情報に不備があります。']);
-        }
-
-        //  Webhook がすでに処理したか確認
-        $existingPurchase = Purchase::where('transaction_id', $session_id)->first();
-        if (!$existingPurchase) {
-            Log::warning("success(): Webhook による購入データが見つかりません。");
-            return redirect()->route('items.index')->withErrors(['error' => '決済データが確認できません。数分後に再度ご確認ください。']);
-        }
-
-        //  セッションデータをクリア
+        // WebhookでDB処理は完了している前提
         session()->forget('payment_method');
 
-        return redirect()->route('profile.index')->with('success', '決済が完了しました。購入ありがとうございます！');
+        return redirect()->route('profile.index')
+            ->with('success', '決済が完了しました。購入ありがとうございます！');
     }
 
     public function cancel()

@@ -10,7 +10,7 @@
     background: #000;
     height: 82px;
     width: 100%;
-    margin: 0 auto; /* 水平中央に配置 */
+    margin: 0;
     display: flex;
     align-items: center; /* ヘッダー内の全要素を垂直中央に配置 */
 }
@@ -127,7 +127,6 @@
 
 .alert {
     padding: 10px 20px;
-    margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: 5px;
     font-size: 14px;

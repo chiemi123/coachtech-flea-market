@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreRatingRequest;
 use App\Models\Rating;
 use App\Models\Purchase;

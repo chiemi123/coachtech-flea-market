@@ -122,12 +122,6 @@
                                 @endif
                             </div>
                             <h3>{{ $item->name }}</h3>
-                            {{-- ここから評価判定 --}}
-                            @if ($purchase->ratingBy($me))
-                            <span class="tag tag-success">評価済</span>
-                            @else
-                            <span class="tag tag-pending">未評価</span>
-                            @endif
                         </a>
                     </li>
                     @endforeach
@@ -167,6 +161,7 @@
                                 </span>
                                 @endif
                             </div>
+                            <h3 class="txn-item-name">{{ $p->item->name }}</h3>
                         </a>
                     </li>
                     @endif
