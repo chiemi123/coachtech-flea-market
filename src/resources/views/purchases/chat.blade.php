@@ -25,7 +25,9 @@
             @forelse($otherPurchases as $p)
             <li class="sidebar-item {{ $p->id === $purchase->id ? 'is-active' : '' }}">
                 <a href="{{ route('purchases.chat', $p->id) }}">
-                    <span class="sidebar-title">{{ $p->item->name }}</span>
+                    <span class="sidebar-title">
+                        {{ optional($p->item)->name ?? '商品名なし' }}
+                    </span>
                 </a>
             </li>
             @empty
@@ -151,6 +153,13 @@
 @endforelse
 </section>
 
+@error('body')
+<p id="body-error" class="form-error" role="alert">{{ $message }}</p>
+@enderror
+@error('image')
+<p id="image-error" class="form-error" role="alert">{{ $message }}</p>
+@enderror
+
 {{-- 入力フォーム --}}
 <section class="chat-footer">
     <form class="chat-form" id="chat-form"
@@ -167,9 +176,6 @@
             aria-label="メッセージ入力"
             aria-invalid="@error('body') true @else false @enderror"
             aria-describedby="@error('body') body-error @enderror"></textarea>
-        @error('body')
-        <p id="body-error" class="form-error" role="alert">{{ $message }}</p>
-        @enderror
 
         <div class="input-row">
             <label for="chat-image">画像を追加</label>
@@ -181,9 +187,6 @@
                 class="@error('image') is-invalid @enderror"
                 aria-invalid="@error('image') true @else false @enderror"
                 aria-describedby="@error('image') image-error @enderror">
-            @error('image')
-            <p id="image-error" class="form-error" role="alert">{{ $message }}</p>
-            @enderror
 
             <button class="send-btn" type="submit" aria-label="送信">
                 <img src="{{ asset('images/icons/send.jpg') }}" alt="送信">
@@ -236,18 +239,41 @@ $purchase->status === 'completed' &&
 @endif
 
 <script>
-    document.getElementById('chat-form')?.addEventListener('submit', e => {
-        const btn = e.target.querySelector('.send-btn');
-        btn?.setAttribute('disabled', 'disabled');
-
-        // 送信時に入力内容をlocalStorageから削除
-        const textarea = document.querySelector('textarea[name="body"]');
-        if (textarea) {
-            localStorage.removeItem('chat_draft_{{ $purchase->id }}');
-        }
-    });
-
     document.addEventListener("DOMContentLoaded", function() {
+        // ⭐ 保存キーを URL パスから生成（例: /purchases/5/messages）
+        const draftKey = 'chat_draft_' + location.pathname;
+        const textarea = document.querySelector('textarea[name="body"]');
+
+        // ⭐ 入力を保存する処理
+        if (textarea) {
+            textarea.addEventListener('input', () => {
+                localStorage.setItem(draftKey, textarea.value);
+            });
+
+            // ⭐ ページ読み込み時に draft を復元（リロード時以外）
+            if (performance.navigation.type !== 1 && !textarea.value) {
+                const saved = localStorage.getItem(draftKey);
+                if (saved) {
+                    textarea.value = saved;
+                }
+            }
+        }
+
+        // ⭐ 送信時に draft を削除する
+        const form = document.getElementById('chat-form');
+        form?.addEventListener('submit', function() {
+            if (textarea) {
+                localStorage.removeItem(draftKey);
+            }
+        });
+
+        // ⭐ 送信ボタンを有効化（キャッシュ復元時など）
+        window.addEventListener('pageshow', function() {
+            const btn = document.querySelector('.send-btn');
+            if (btn) btn.disabled = false;
+        });
+
+        // ⭐ 評価モーダルのスター処理（そのまま）
         const stars = document.querySelectorAll(".stars-fieldset label");
         const grayStar = "/images/ratings/Star9.png";
         const yellowStar = "/images/ratings/Star6.png";
@@ -280,27 +306,5 @@ $purchase->status === 'completed' &&
 
         const checked = document.querySelector(".stars-fieldset input:checked");
         updateStars(checked ? checked.value : 0);
-
-        const textarea = document.querySelector('textarea[name="body"]');
-        const draftKey = 'chat_draft_{{ $purchase->id }}';
-
-        if (textarea) {
-            // 入力があるたびに保存
-            textarea.addEventListener('input', () => {
-                localStorage.setItem(draftKey, textarea.value);
-            });
-
-            // 読み込み時にdraftがあれば復元（old() より優先）
-            const saved = localStorage.getItem(draftKey);
-            if (saved && !textarea.value) {
-                textarea.value = saved;
-            }
-        }
-    });
-
-    // 戻る操作などでキャッシュからページを復元したときに、送信ボタンを有効にする
-    window.addEventListener('pageshow', function(event) {
-        const btn = document.querySelector('.btn-primary');
-        if (btn) btn.disabled = false;
     });
 </script>

@@ -15,22 +15,17 @@
   Profile 共通
 ========================= */
 .profile {
-    max-width: 1512px;
     margin: 0 auto;
 }
 
 /* プロフィールヘッダー */
 .profile__header {
-    position: relative;
     width: 100%;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    text-align: center;
-    justify-content: flex-start;
-    gap: 20px;
+    justify-content: center; /* ← 中央に配置 */
+    gap: 40px;
     padding: 20px;
-    left: 299px; /* 既存レイアウトを維持（不要なら外す） */
 }
 
 .profile__image {
@@ -49,14 +44,18 @@
 }
 
 /* ユーザー情報 */
+.profile__info {
+    align-items: center;
+    margin: 0 15px;
+}
+
 .profile__info h2 {
-    width: 250px;
-    height: 65px;
+    width: 100%;
+    height: auto;
     font-size: 36px;
     font-weight: 700;
     line-height: 65px;
     color: #000;
-    margin-left: 57px;
 }
 
 .stars {
@@ -74,8 +73,9 @@
 
 /* 編集ボタン */
 .profile__edit {
-    flex-grow: 1;
+    margin: 0 15px;
     display: flex;
+    justify-content: center;
 }
 .profile__edit .btn {
     text-align: center;
@@ -90,7 +90,7 @@
     color: #ff5555;
     background-color: #fff;
     transition: background-color 0.3s, color 0.3s;
-    margin-left: 250px;
+    margin: 0 15px;
 }
 .profile__edit .btn:hover {
     background-color: red;
@@ -104,7 +104,7 @@
     position: absolute;
     top: 385px;
     height: 47px;
-    width: 1512px;
+    width: 100%;
     font-size: 24px;
     font-weight: 700;
     color: #5f5f5f;
@@ -165,8 +165,7 @@
 .profile__tabs-content {
     position: absolute;
     top: 106px;
-    margin: 0 29px;
-    width: 1374.52px;
+    width: 100%;
     height: 716.61px;
 }
 
@@ -229,7 +228,7 @@
 .profile__item h3 {
     font-size: 25px;
     font-weight: 400;
-    margin: 5px 0;
+    margin: 0;
     color: #000;
     height: 30px;
     display: flex;
@@ -256,27 +255,58 @@
 /* =========================
   Responsive
 ========================= */
-/* =========== ① Laptop～（1512px未満）: はみ出し防止・余白を縮める =========== */
-/* ① 1360px未満：はみ出し防止（PC見た目は維持） */
-@media (max-width: 1360px) {
-    .profile {
-        max-width: 100%;
-        padding: 0 16px;
+/* =========== ① 1540px〜1400px：少しずつ縮める =========== */
+@media (max-width: 1540px) {
+    .profile__items {
+        column-gap: 50px;
     }
-    .profile__header {
-        left: 0;
-    } /* PC専用のleftを無効化 */
     .profile__tabs {
         width: 100%;
-    } /* 1512px固定をやめる */
-    .profile__tabs-content {
-        width: auto;
-        margin: 0 16px;
     }
 }
 
+@media (max-width: 1400px) {
+    .profile__items {
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 40px;
+        padding-left: 20px;
+    }
+    .profile__tabs-content {
+        margin: 0 20px;
+    }
+    .profile__edit .btn {
+        width: 100%;
+        max-width: 260px;
+        font-size: 20px;
+    }
+}
 /* ② 1024px以下：タブの absolute を解除（ヘッダーが切れる原因を解消） */
 @media (max-width: 1024px) {
+    .profile__header {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        gap: 30px;
+        padding: 12px 0;
+    }
+
+    .profile__info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* ← これが重要 */
+        gap: 4px; /* ユーザー名と星の間隔も調整可 */
+    }
+
+    .profile__edit {
+        display: flex;
+        flex-grow: unset;
+    }
+
+    .profile__edit .btn {
+        font-size: 18px;
+        padding: 10px;
+    }
+
     .profile__tabs {
         position: relative;
         top: auto;
@@ -285,7 +315,6 @@
     }
     .profile__tabs-content {
         position: static; /* ← absolute をやめる */
-        width: 100%;
         height: auto; /* ← 固定値解除 */
         margin: 12px 0 0;
     }
@@ -293,7 +322,6 @@
     /* 商品グリッドは2列に、左パディングを外して中央寄せ */
     .profile__items {
         grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 250px;
         column-gap: 20px;
         row-gap: 20px;
         padding-left: 0;
@@ -301,88 +329,69 @@
     }
 }
 
-/* ③ 768px以下：1列＆ヘッダー/タブをモバイル寄せ（あなたの追記に＋α） */
 @media (max-width: 768px) {
     .profile {
         padding: 0 12px;
     }
 
     .profile__header {
-        left: 0;
         width: 100%;
         justify-content: center;
         text-align: center;
-        gap: 10px;
+        gap: 20px;
         padding: 12px 0;
     }
+
     .profile__image img {
         width: 88px;
         height: 88px;
     }
+
     .profile__info h2 {
         font-size: 20px;
         margin-left: 0;
+        text-align: left;
     }
 
-    .profile__edit {
-        display: flex;
-        justify-content: flex-end;
-    }
     .profile__edit .btn {
         width: 100%;
-        max-width: 320px;
+        max-width: 260px;
         font-size: 18px;
-        margin-left: 0;
     }
 
-    /* ★タブも absolute→通常フローに（768でも効かせる） */
-    .profile__tabs {
-        position: relative;
-        top: auto;
-        width: 100%;
-    }
-    .profile__tabs-content {
-        position: static;
-        width: 100%;
-        height: auto;
-        margin-top: 12px;
-    }
-
-    /* 2列 */
     .profile__items {
         grid-auto-rows: auto;
         row-gap: 16px;
         padding: 0;
     }
+
     .profile__item {
         width: 100%;
         max-width: 480px;
         margin: 0 auto;
     }
+
     .profile__item img {
         width: 100%;
         height: clamp(180px, 45vw, 280px);
         object-fit: contain;
     }
 
-    /* 画像とタイトルを “縦に積む” */
-    .profile__item a {
-        display: block; /* ← inline-block を block に */
-    }
-
     .profile__item-image {
-        display: block;
-        margin-bottom: 8px; /* 画像とタイトルの間隔 */
+        margin-bottom: 8px;
     }
 
-    /* タイトルは普通のブロックにして中央寄せ */
     .profile__item h3 {
-        display: block; /* ← flex をやめる */
         margin: 8px 0 0;
+        display: block;
+    }
+
+    .profile__item-sold {
+        margin-left: 40px;
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
     .profile {
         padding: 0 8px;
     }

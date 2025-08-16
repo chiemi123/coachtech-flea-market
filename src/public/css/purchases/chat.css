@@ -377,6 +377,13 @@ body {
     color: #2563eb;
 }
 
+.form-error {
+    color: #ff5555; /* 濃い赤 */
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 0 12px;
+}
+
 /* フッター（送信エリア） */
 .chat-footer {
     display: flex;
@@ -574,19 +581,6 @@ body {
 
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 768px) {
-    .chat-wrap.with-sidebar {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
-    }
-
-    .sidebar {
-        order: 1;
-    }
-
-    .chat-main {
-        order: 2;
-    }
-
     .item-thumb {
         width: 100px;
         height: 100px;
@@ -603,6 +597,19 @@ body {
 
 /* スマホ表示用 */
 @media (max-width: 480px) {
+    .chat-wrap.with-sidebar {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .sidebar {
+        order: 1;
+    }
+
+    .chat-main {
+        order: 2;
+    }
+
     .chat-wrap.with-sidebar,
     .chat-main,
     .chat-header,
