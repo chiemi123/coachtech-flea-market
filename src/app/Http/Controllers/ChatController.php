@@ -69,6 +69,22 @@ class ChatController extends Controller
             }
         });
 
+        $alreadyRated = $purchase->ratingBy($me);
+        $partnerHasRated = $purchase->ratingBy($purchase->user); // 購入者の評価
+        $isWaitingForPartner = $isSeller && !$partnerHasRated;
+
+        if (
+            $purchase->status === 'completed' &&
+            !$alreadyRated &&
+            !$isWaitingForPartner &&
+            !session()->has('show_rating_modal') &&
+            !request()->has('show_rating_modal')
+        ) {
+            return redirect()->route('purchases.chat', $purchase)
+                ->with('show_rating_modal', true);
+        }
+
+
         return view('purchases.chat', [
             'purchase'       => $purchase,
             'item'           => $purchase->item,
