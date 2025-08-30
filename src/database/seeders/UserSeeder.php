@@ -37,6 +37,7 @@ class UserSeeder extends Seeder
         $aAvatar    = $this->copyPublicToStorage($defaultSrc, 'avatars/demo_a.png');
         $bAvatar    = $this->copyPublicToStorage($defaultSrc, 'avatars/demo_b.png');
         $cAvatar    = $this->copyPublicToStorage($defaultSrc, 'avatars/demo_c.png');
+        $dAvatar = $this->copyPublicToStorage($defaultSrc, 'avatars/demo_d.png');
 
         // 3) 作成（email をキーに updateOrCreate 推奨）
         User::updateOrCreate(
@@ -81,7 +82,7 @@ class UserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'demo_c@example.com'],
             [
-                'name'          => 'ユーザーC（購入者）',
+                'name'          => 'ユーザーC（購入者1）',
                 'password'      => Hash::make('password123'),
                 'profile_image' => $cAvatar,
                 'username'      => 'user_c',
@@ -91,8 +92,21 @@ class UserSeeder extends Seeder
             ]
         );
 
+        User::updateOrCreate(
+            ['email' => 'demo_d@example.com'],
+            [
+                'name'          => 'ユーザーD（購入者2）',
+                'password'      => Hash::make('password123'),
+                'profile_image' => $dAvatar,
+                'username'      => 'user_d',
+                'postal_code'   => '100-0004',
+                'address'       => '東京都千代田区永田町1-1',
+                'building_name' => 'デモビルD 401',
+            ]
+        );
+
         if (method_exists($this->command, 'info')) {
-            $this->command->info('UserSeeder: test, demo_a, demo_b, demo_c を用意しました。');
+            $this->command->info('UserSeeder: test, demo_a, demo_b, demo_c, demo_d を用意しました。');
         }
     }
 }

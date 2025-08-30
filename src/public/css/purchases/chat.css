@@ -582,7 +582,7 @@ body {
 }
 
 /* ---------- レスポンシブ ---------- */
-@media screen and (max-width: 851px) and (min-width: 768px) {
+@media screen and (max-width: 855px) and (min-width: 768px) {
     .chat-profile {
         gap: 0;
         padding: 8px 16px;
@@ -596,6 +596,9 @@ body {
         flex-grow: 1; /* ボタンを右に押し出す */
         font-size: 20px;
         word-break: break-word;
+    }
+    .item-name {
+        font-size: 40px;
     }
     .chat-profile form {
         display: flex;

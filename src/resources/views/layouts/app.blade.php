@@ -25,7 +25,12 @@
                 </a>
 
                 <!-- 検索フォーム（商品一覧画面、商品詳細画面、マイリスト画面のみ表示） -->
-                @if (request()->routeIs('items.index') || request()->routeIs('items.show') || request()->routeIs('items.mylist'))
+                @if (
+                request()->routeIs('items.index') ||
+                request()->routeIs('items.show') ||
+                request()->routeIs('items.mylist') ||
+                request()->routeIs('profile.index')
+                )
                 <form action="{{ request()->routeIs('items.mylist') ? route('items.mylist') : route('items.index') }}"
                     method="GET" class="search-form"
                     x-data="{ search: '{{ request('search') }}', timeout: null }">
