@@ -157,7 +157,7 @@
     display: block;
 }
 
-@media screen and (min-width: 768px) and (max-width: 850px) {
+@media screen and (min-width: 768px) and (max-width: 855px) {
     /* 📌 ヘッダー全体の幅を画面サイズにフィット */
     .header {
         width: 100%;
@@ -192,7 +192,7 @@
         left: auto; /* PC用の `left` をリセット */
         width: 90%;
         height: 100%; /* `.search-form` の高さと一致させる */
-        font-size: 18px;
+        font-size: 16px;
         padding: 8px 10px;
         border-radius: 5px;
     }

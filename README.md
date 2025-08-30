@@ -36,7 +36,7 @@
 
 ## 使用技術（実行環境）
 
--   PHP7.4
+-   PHP8.1
 -   Laravel8.83.27
 -   MySQL8.0.26
 -   Docker
@@ -45,18 +45,19 @@
 
 ## ダミーデータ（Seeder）
 
-開発時に利用できるユーザーアカウントを **4 名分** 作成済みです。  
-プロフィール画像は `src/public/images/seed/avatars/` に準備された画像が `storage/app/public/avatars/` にコピーされ、  
-ユーザーごとに割り当てられます。
+開発時に利用できるユーザーアカウントを **5 名分** 作成済みです。  
+プロフィール画像は `src/public/images/seed/avatars/` に準備された画像が `storage/app/public/avatars/` に  
+コピーされ、ユーザーごとに割り当てられます。
 
 ### 作成されるユーザー一覧
 
-| 名前                 | メールアドレス     | パスワード  | ユーザー名 | プロフィール画像      |
-| -------------------- | ------------------ | ----------- | ---------- | --------------------- |
-| テストユーザー       | test@example.com   | password123 | test_user  | avatars/test_user.png |
-| ユーザー A           | demo_a@example.com | password123 | user_a     | avatars/demo_a.png    |
-| ユーザー B           | demo_b@example.com | password123 | user_b     | avatars/demo_b.png    |
-| ユーザー C（購入者） | demo_c@example.com | password123 | user_c     | avatars/demo_c.png    |
+| 名前                  | メールアドレス     | パスワード  | ユーザー名 | プロフィール画像      |
+| --------------------- | ------------------ | ----------- | ---------- | --------------------- |
+| テストユーザー        | test@example.com   | password123 | test_user  | avatars/test_user.png |
+| ユーザー A            | demo_a@example.com | password123 | user_a     | avatars/demo_a.png    |
+| ユーザー B            | demo_b@example.com | password123 | user_b     | avatars/demo_b.png    |
+| ユーザー C（購入者1）  | demo_c@example.com | password123 | user_c     | avatars/demo_c.png    |
+| ユーザー D（購入者2） | demo_d@example.com | password123 | user_d     | avatars/demo_d.png    |
 
 ---
 

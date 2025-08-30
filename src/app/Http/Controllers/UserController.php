@@ -51,7 +51,7 @@ class UserController extends Controller
                         ->whereDoesntHave('reads', fn($r) => $r->where('user_id', $me->id));
                 },
             ])
-            ->orderByDesc('last_message_at')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         // 未読合計（評価済のcompletedは含まれない）
