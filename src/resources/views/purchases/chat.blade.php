@@ -232,29 +232,49 @@ $purchase->status === 'completed' &&
 </div>
 @endif
 
+@section('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // ⭐ 保存キーを URL パスから生成（例: /purchases/5/messages）
         const draftKey = 'chat_draft_' + location.pathname;
         const textarea = document.querySelector('textarea[name="body"]');
+        const form = document.getElementById('chat-form');
 
-        // ⭐ 入力を保存する処理
+        // ⭐ オートリサイズ関数
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
+        // ⭐ Enterキーでの送信やリロードを防止
+        if (textarea && form) {
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); // 改行も送信も防ぐ
+                }
+            });
+        }
+
+        // ⭐ 入力保存とオートリサイズ
         if (textarea) {
             textarea.addEventListener('input', () => {
-                localStorage.setItem(draftKey, textarea.value);
+                autoResize(textarea); // 高さを自動調整
+                localStorage.setItem(draftKey, textarea.value); // 入力内容を保存
             });
 
-            // ⭐ ページ読み込み時に draft を復元（リロード時以外）
-            if (performance.navigation.type !== 1 && !textarea.value) {
+            // ⭐ 入力内容の復元（リロード含め常に実行）
+            if (!textarea.value) {
                 const saved = localStorage.getItem(draftKey);
                 if (saved) {
                     textarea.value = saved;
+                    autoResize(textarea); // 復元後にも高さ調整
                 }
+            } else {
+                autoResize(textarea); // 初期に何か入っていた場合もリサイズ
             }
         }
 
         // ⭐ 送信時に draft を削除する
-        const form = document.getElementById('chat-form');
         form?.addEventListener('submit', function() {
             if (textarea) {
                 localStorage.removeItem(draftKey);
@@ -302,3 +322,4 @@ $purchase->status === 'completed' &&
         updateStars(checked ? checked.value : 0);
     });
 </script>
+@endsection

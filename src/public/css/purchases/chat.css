@@ -21,7 +21,7 @@ body {
 .chat-wrap.with-sidebar {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 240px minmax(0, 1fr);
 }
 
 /* ---------- サイドバー ---------- */
@@ -76,12 +76,10 @@ body {
 /* ---------- メインチャット ---------- */
 .chat-main {
     border: 1px solid #e5e7eb;
-    overflow: hidden;
-    display: grid;
     padding: 10px 0;
-    grid-template-rows: auto 1fr auto; /* header / timeline / footer */
     min-height: 60vh;
 }
+
 /* プロフィール行 */
 .chat-profile {
     height: 100px;
@@ -171,13 +169,11 @@ body {
     background: #fff5f5;
 }
 
-/* タイムライン（本文だけスクロール） */
+/* タイムライン */
 .chat-timeline {
     padding: 16px;
     display: grid;
     gap: 18px;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
 }
 
 /* 行コンテナ：上=ヘッダ(アイコン+名前)、下=吹き出し */
@@ -262,7 +258,9 @@ body {
 
 /* ラッパー：吹き出しとアクションを横並びに */
 .msg-content-wrapper {
-    width: 460px;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -402,7 +400,7 @@ body {
 .chat-textarea {
     flex: 1 1 auto;
     height: 44px;
-    line-height: 44px;
+    line-height: 1.5;
     padding: 0 12px;
     border: 1px solid #5f5f5f;
     border-radius: 4px;
@@ -587,19 +585,25 @@ body {
         gap: 0;
         padding: 8px 16px;
     }
+
     .profile-thumb {
         width: 50px;
         height: 50px;
     }
+
     .profile-name {
         font-weight: bold;
-        flex-grow: 1; /* ボタンを右に押し出す */
+        flex-grow: 1;
         font-size: 20px;
         word-break: break-word;
+        min-width: 0; /* ← 追加 */
     }
+
     .item-name {
         font-size: 40px;
+        word-break: break-word; /* ← 長い商品名対応 */
     }
+
     .chat-profile form {
         display: flex;
         align-items: center;
@@ -609,8 +613,7 @@ body {
         margin: 12px 5px 0;
         border: none;
         border-radius: 50px;
-        font-size: 15px;
-        font-weight: 500;
+        font-size: 13px;
         cursor: pointer;
         line-height: 1.4;
         display: inline-block;
@@ -628,11 +631,68 @@ body {
         height: 50px;
     }
 
-    /* 吹き出し幅を画面に応じて調整 */
+    /* 吹き出し */
     .msg-bubble {
         max-width: 100%;
         width: auto;
         word-wrap: break-word;
+    }
+
+    /* コンテンツラッパーを縮める */
+    .msg-content-wrapper {
+        width: auto;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    /* チャットメインを縮める */
+    .chat-main {
+        width: 100%;
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .chat-wrap.with-sidebar {
+        min-width: 0;
+    }
+
+    /* 行は1行のまま */
+    .chat-footer {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .chat-textarea {
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 44px;
+    }
+
+    .chat-textarea::placeholder {
+        font-size: 15px;
+    }
+
+    /* 右側ボタン群は幅固定寄りにして折り返さない */
+    .input-row {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* ラベルが折り返されないように＋少しだけコンパクトに */
+    .input-row label {
+        white-space: nowrap;
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+
+    /* 送信ボタンも少しだけ小さくして余白を確保（任意） */
+    .send-btn {
+        width: 60px;
+        padding: 6px;
     }
 }
 
