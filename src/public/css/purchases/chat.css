@@ -414,6 +414,7 @@ body {
     color: #7b7b7b;
     font-size: 20px;
     font-weight: 700;
+    line-height: 2;
 }
 
 .input-row {
@@ -672,6 +673,7 @@ body {
 
     .chat-textarea::placeholder {
         font-size: 15px;
+        line-height: 2.7;
     }
 
     /* 右側ボタン群は幅固定寄りにして折り返さない */
